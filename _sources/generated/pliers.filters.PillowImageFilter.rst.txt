@@ -1,0 +1,11 @@
+pliers.filters.PillowImageFilter
+================================
+
+.. currentmodule:: pliers.filters
+
+.. autoclass:: PillowImageFilter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

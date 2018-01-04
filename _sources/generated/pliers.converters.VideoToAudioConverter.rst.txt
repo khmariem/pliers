@@ -1,0 +1,11 @@
+pliers.converters.VideoToAudioConverter
+=======================================
+
+.. currentmodule:: pliers.converters
+
+.. autoclass:: VideoToAudioConverter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

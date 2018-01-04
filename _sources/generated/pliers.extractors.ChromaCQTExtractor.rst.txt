@@ -1,0 +1,11 @@
+pliers.extractors.ChromaCQTExtractor
+====================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: ChromaCQTExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

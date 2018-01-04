@@ -1,0 +1,446 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.stimuli.text &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.stimuli.text</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.stimuli.text</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39; Classes that represent text or sequences of text. &#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">six.moves.urllib.request</span> <span class="k">import</span> <span class="n">urlopen</span>
+<span class="kn">from</span> <span class="nn">pliers.support.decorators</span> <span class="k">import</span> <span class="n">requires_nltk_corpus</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">Stim</span>
+
+
+<div class="viewcode-block" id="TextStim"><a class="viewcode-back" href="../../../generated/pliers.stimuli.TextStim.html#pliers.stimuli.TextStim">[docs]</a><span class="k">class</span> <span class="nc">TextStim</span><span class="p">(</span><span class="n">Stim</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Any simple text stimulus--most commonly a single word.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (str): Path to input file, if one exists.</span>
+<span class="sd">        text (str): Text value to store. If none is provided, value is read</span>
+<span class="sd">            from filename.</span>
+<span class="sd">        onset (float): Optional onset of the text presentation (in secs) with</span>
+<span class="sd">            respect to some more general context or timeline the user wishes</span>
+<span class="sd">            to keep track of.</span>
+<span class="sd">        duration (float): Optional duration of the TextStim, in seconds.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_default_file_extension</span> <span class="o">=</span> <span class="s1">&#39;.txt&#39;</span>
+
+<div class="viewcode-block" id="TextStim.__init__"><a class="viewcode-back" href="../../../generated/pliers.stimuli.TextStim.html#pliers.stimuli.TextStim.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;text[</span><span class="si">%s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="n">text</span><span class="p">[:</span><span class="mi">40</span><span class="p">]</span>  <span class="c1"># Truncate at 40 chars</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TextStim</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">onset</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ComplexTextStim"><a class="viewcode-back" href="../../../generated/pliers.stimuli.ComplexTextStim.html#pliers.stimuli.ComplexTextStim">[docs]</a><span class="k">class</span> <span class="nc">ComplexTextStim</span><span class="p">(</span><span class="n">Stim</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; A collection of text stims (e.g., a story), typically ordered and with</span>
+<span class="sd">    onsets and/or durations associated with each element.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (str): The filename to read from. Must be tab-delimited text.</span>
+<span class="sd">            Files must always contain a column containing the text of each</span>
+<span class="sd">            stimulus in the collection. Optionally, additional columns can be</span>
+<span class="sd">            included that contain duration and onset information. If a header</span>
+<span class="sd">            row is present in the file, valid columns must be labeled as</span>
+<span class="sd">            &#39;text&#39;, &#39;onset&#39;, and &#39;duration&#39; where available (though only text</span>
+<span class="sd">            is mandatory). If no header is present in the file, the columns</span>
+<span class="sd">            argument will be used to infer the indices of the key columns.</span>
+<span class="sd">        onset (float): Optional onset of the ComplexTextStim relative to some</span>
+<span class="sd">            more general context.</span>
+<span class="sd">        duration (float): Optional duration of the ComplexTextStim withing some</span>
+<span class="sd">            more general context.</span>
+<span class="sd">        columns (str): Optional specification of column order. An abbreviated</span>
+<span class="sd">            string denoting the column position of text, onset, and duration</span>
+<span class="sd">            in the file. Use t for text, o for onset, d for duration. For</span>
+<span class="sd">            example, passing &#39;ot&#39; indicates that the first column contains</span>
+<span class="sd">            the onsets and the second contains the text. E.g., passing &#39;tod&#39;</span>
+<span class="sd">            indicates that the first three columns contain text, onset, and</span>
+<span class="sd">            duration information, respectively. Note that if the input file</span>
+<span class="sd">            contains a header row, the columns argument will be ignored.</span>
+<span class="sd">        default_duration (float): the duration to assign to any text elements</span>
+<span class="sd">            in the collection that do not have an explicit value provided</span>
+<span class="sd">            in the input file.</span>
+<span class="sd">        elements (list): An optional list of TextStims that comprise the</span>
+<span class="sd">            ComplexTextStim. If both the filename and elements arguments are</span>
+<span class="sd">            passed, the TextStims in elements will be appended to the ones</span>
+<span class="sd">            extracted from the file.</span>
+<span class="sd">        text (str): Optional multi-token string to convert to a</span>
+<span class="sd">            ComplexTextStim.</span>
+<span class="sd">        unit (str): The unit of segmentation. Either &#39;word&#39; or &#39;sentence&#39;.</span>
+<span class="sd">            Ignored if text is None.</span>
+<span class="sd">        tokenizer: Optional tokenizer to use if initializing from text. If</span>
+<span class="sd">            passed, will override the default nltk tokenizers. If a string is</span>
+<span class="sd">            passed, it is interpreted as a capturing regex and passed to</span>
+<span class="sd">            re.findall(). Otherwise, must be an object that implements a</span>
+<span class="sd">            tokenize() method and returns a list of tokens. Ignored if text is</span>
+<span class="sd">            None.</span>
+<span class="sd">        language (str): The language to use; passed to nltk. Only used if</span>
+<span class="sd">            tokenizer is None. Defaults to English. Ignored if text is None.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_default_file_extension</span> <span class="o">=</span> <span class="s1">&#39;.txt&#39;</span>
+
+<div class="viewcode-block" id="ComplexTextStim.__init__"><a class="viewcode-back" href="../../../generated/pliers.stimuli.ComplexTextStim.html#pliers.stimuli.ComplexTextStim.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">default_duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;word&#39;</span><span class="p">,</span>
+                 <span class="n">tokenizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s1">&#39;english&#39;</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">elements</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">text</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least one of the &#39;filename&#39;, &#39;elements&#39;, or &quot;</span>
+                             <span class="s2">&quot;text arguments must be specified.&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">ComplexTextStim</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">onset</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;srt&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_from_srt</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">default_duration</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">elements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_from_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span>
+
+    <span class="k">def</span> <span class="nf">_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">default_duration</span><span class="p">):</span>
+        <span class="n">tod_names</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">:</span> <span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="s1">&#39;duration&#39;</span><span class="p">}</span>
+
+        <span class="n">first_row</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">first_row</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">tod_names</span><span class="o">.</span><span class="n">values</span><span class="p">())):</span>
+            <span class="n">col_names</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">col_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">tod_names</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">]</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">col_names</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s1">&#39;onset&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">r</span><span class="p">:</span>
+                <span class="n">elem</span> <span class="o">=</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">duration</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">duration</span> <span class="o">=</span> <span class="n">default_duration</span>
+                <span class="n">elem</span> <span class="o">=</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">],</span> <span class="n">duration</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_elem</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;onset</span><span class="se">\t</span><span class="s1">text</span><span class="se">\t</span><span class="s1">duration</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="se">\t</span><span class="si">{}</span><span class="se">\t</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">onset</span><span class="p">,</span>
+                                              <span class="n">elem</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+                                              <span class="n">elem</span><span class="o">.</span><span class="n">duration</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_from_srt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">pysrt</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pysrt</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">list_</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_sec</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+
+            <span class="n">end_</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_sec</span><span class="p">(</span><span class="n">end_</span><span class="p">)</span> <span class="o">-</span> <span class="n">start_time</span>
+
+            <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;\s+&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">list_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">duration</span><span class="p">]</span>
+
+        <span class="c1"># Convert to pandas DataFrame</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;onset&quot;</span><span class="p">,</span> <span class="s2">&quot;duration&quot;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">list_</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">elem</span> <span class="o">=</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_elem</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_elem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">):</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">onset</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">onset</span>
+        <span class="n">elem</span><span class="o">.</span><span class="n">onset</span> <span class="o">=</span> <span class="n">offset</span> <span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">onset</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">elem</span><span class="o">.</span><span class="n">onset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Iterate text elements. &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">elem</span>
+
+    <span class="k">def</span> <span class="nf">_to_sec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tup</span><span class="p">):</span>
+        <span class="n">hours</span><span class="p">,</span> <span class="n">mins</span><span class="p">,</span> <span class="n">secs</span><span class="p">,</span> <span class="n">msecs</span> <span class="o">=</span> <span class="n">tup</span>
+        <span class="n">total_msecs</span> <span class="o">=</span> <span class="p">(</span><span class="n">hours</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">mins</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="p">(</span><span class="n">secs</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">+</span> <span class="n">msecs</span>
+        <span class="n">total_secs</span> <span class="o">=</span> <span class="n">total_msecs</span> <span class="o">/</span> <span class="mf">1000.</span>
+        <span class="k">return</span> <span class="n">total_secs</span>
+
+    <span class="k">def</span> <span class="nf">_from_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span> <span class="n">language</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">tokenizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+                <span class="n">tokens</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tokens</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">nltk</span>
+
+            <span class="nd">@requires_nltk_corpus</span>
+            <span class="k">def</span> <span class="nf">tokenize_text</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s1">&#39;word&#39;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">nltk</span><span class="o">.</span><span class="n">word_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">unit</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;sent&#39;</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">nltk</span><span class="o">.</span><span class="n">sent_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;unit must be either &#39;word&#39; or &#39;sentence&#39;&quot;</span><span class="p">)</span>
+
+            <span class="n">tokens</span> <span class="o">=</span> <span class="n">tokenize_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="c1"># TODO: track order as a separate attribute from duration, because we</span>
+        <span class="c1"># can&#39;t treat serial position as if it were time in seconds.</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tokens</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_elem</span><span class="p">(</span><span class="n">TextStim</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

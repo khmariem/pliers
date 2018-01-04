@@ -1,0 +1,469 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Stims &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="index.html"/>
+        <link rel="next" title="Transformers" href="transformers.html"/>
+        <link rel="prev" title="Basic concepts" href="basic-concepts.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Stims</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#types-of-stims">Types of Stims</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#compoundstim-classes">CompoundStim classes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#intelligent-loading">Intelligent loading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#iterable-stims">Iterable Stims</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#timing-information">Timing information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transformation-history">Transformation history</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Stims</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/stimuli.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="stims">
+<h1>Stims<a class="headerlink" href="#stims" title="Permalink to this headline">¶</a></h1>
+<p>The core data object used in pliers is something called a <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> (short for stimulus). A <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> instance is a lightweight wrapper around any one of several standard file or data types: a video file, an image, an audio file, or some text. Under the hood, pliers uses other Python libraries to support most operations on the original files (e.g., MoviePy for video and audio files, and pillow/PIL for images).</p>
+<div class="section" id="initialization">
+<h2>Initialization<a class="headerlink" href="#initialization" title="Permalink to this headline">¶</a></h2>
+<p>We can minimally initialize new <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> instances by passing in a filename to the appropriate class initializer. Alternatively, some <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> types also accept a data argument that allows initialization from an appropriate data type instead of a file (e.g., a numpy array for images, a string for text, etc.). Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pliers.stimuli</span> <span class="kn">import</span> <span class="n">VideoStim</span><span class="p">,</span> <span class="n">ImageStim</span><span class="p">,</span> <span class="n">TextStim</span>
+
+<span class="c1"># Initialize from files</span>
+<span class="n">vs</span> <span class="o">=</span> <span class="n">VideoStim</span><span class="p">(</span><span class="s1">&#39;my_video_file.mp4&#39;</span><span class="p">)</span>
+<span class="n">img1</span> <span class="o">=</span> <span class="n">ImageStim</span><span class="p">(</span><span class="s1">&#39;first_image.jpg&#39;</span><span class="p">)</span>
+
+<span class="c1"># Initialize a TextStim from a string</span>
+<span class="n">text</span> <span class="o">=</span> <span class="n">TextStim</span><span class="p">(</span><span class="s2">&quot;this sentence will be represented as a single token of text&quot;</span><span class="p">)</span>
+
+<span class="c1"># Initialize an ImageStim from a random RGB array</span>
+<span class="n">img_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">img2</span> <span class="o">=</span> <span class="n">ImageStim</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">img_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In general, users will rarely have a need to directly manipulate <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> classes, beyond them passing them around to <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a>s. In fact, it’s often not necessary to initialize <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>s at all, as you can generally pass a list of string filenames to any <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> (with some caveats discussed below).</p>
+<p>All Stim classes expose a number of attributes that provide some information about the associated stimulus. Most notably, the <code class="code py python docutils literal"><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">filename</span></span></code> and <code class="code py python docutils literal"><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">name</span></span></code> attributes store the names of the source file (e.g., my_movie.mp4) and an (optional) derived name, respectively.</p>
+</div>
+<div class="section" id="types-of-stims">
+<h2>Types of Stims<a class="headerlink" href="#types-of-stims" title="Permalink to this headline">¶</a></h2>
+<p>At present, Pliers supports 4 primary types of stimuli: video files (<a class="reference internal" href="generated/pliers.stimuli.VideoStim.html#pliers.stimuli.VideoStim" title="pliers.stimuli.VideoStim"><code class="xref py py-class docutils literal"><span class="pre">VideoStim</span></code></a>), audio files (AudioStim), images (<a class="reference internal" href="generated/pliers.stimuli.ImageStim.html#pliers.stimuli.ImageStim" title="pliers.stimuli.ImageStim"><code class="xref py py-class docutils literal"><span class="pre">ImageStim</span></code></a>), and text (<a class="reference internal" href="generated/pliers.stimuli.TextStim.html#pliers.stimuli.TextStim" title="pliers.stimuli.TextStim"><code class="xref py py-class docutils literal"><span class="pre">TextStim</span></code></a>). Some of these Stim classes also have derivative or related subclasses that provide additional functionality. For example, the <a class="reference internal" href="generated/pliers.stimuli.ComplexTextStim.html#pliers.stimuli.ComplexTextStim" title="pliers.stimuli.ComplexTextStim"><code class="xref py py-class docutils literal"><span class="pre">ComplexTextStim</span></code></a> class internally stores a collection of <a class="reference internal" href="generated/pliers.stimuli.TextStim.html#pliers.stimuli.TextStim" title="pliers.stimuli.TextStim"><code class="xref py py-class docutils literal"><span class="pre">TextStim</span></code></a>s; most commonly, it is used to represent a sequence of words (e.g., as in a paragraph of coherent text), where each word is represented as a single TextStim, and the <a class="reference internal" href="generated/pliers.stimuli.ComplexTextStim.html#pliers.stimuli.ComplexTextStim" title="pliers.stimuli.ComplexTextStim"><code class="xref py py-class docutils literal"><span class="pre">ComplexTextStim</span></code></a> essentialy serves as a container that provides some extra tools (in particular, it provides useful methods for initializing multiple TextStims from a single data source and retaining onset and duration information for each word). Similarly, a <a class="reference internal" href="generated/pliers.stimuli.VideoFrameStim.html#pliers.stimuli.VideoFrameStim" title="pliers.stimuli.VideoFrameStim"><code class="xref py py-class docutils literal"><span class="pre">VideoFrameStim</span></code></a> is a subclass of <a class="reference internal" href="generated/pliers.stimuli.ImageStim.html#pliers.stimuli.ImageStim" title="pliers.stimuli.ImageStim"><code class="xref py py-class docutils literal"><span class="pre">ImageStim</span></code></a> that stores information about its location within an associated <a class="reference internal" href="generated/pliers.stimuli.VideoStim.html#pliers.stimuli.VideoStim" title="pliers.stimuli.VideoStim"><code class="xref py py-class docutils literal"><span class="pre">VideoStim</span></code></a>.</p>
+<p>The current <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> hierarchy in pliers (ignoring <a class="reference internal" href="generated/pliers.stimuli.CompoundStim.html#pliers.stimuli.CompoundStim" title="pliers.stimuli.CompoundStim"><code class="xref py py-class docutils literal"><span class="pre">CompoundStim</span></code></a> classes discussed below) includes:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.stimuli.AudioStim.html#pliers.stimuli.AudioStim" title="pliers.stimuli.AudioStim"><code class="xref py py-obj docutils literal"><span class="pre">AudioStim</span></code></a>([filename,&nbsp;onset,&nbsp;sampling_rate,&nbsp;…])</td>
+<td>Represents an audio clip.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.stimuli.ImageStim.html#pliers.stimuli.ImageStim" title="pliers.stimuli.ImageStim"><code class="xref py py-obj docutils literal"><span class="pre">ImageStim</span></code></a>([filename,&nbsp;onset,&nbsp;duration,&nbsp;data,&nbsp;url])</td>
+<td>Represents a static image.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.stimuli.TextStim.html#pliers.stimuli.TextStim" title="pliers.stimuli.TextStim"><code class="xref py py-obj docutils literal"><span class="pre">TextStim</span></code></a>([filename,&nbsp;text,&nbsp;onset,&nbsp;duration,&nbsp;url])</td>
+<td>Any simple text stimulus–most commonly a single word.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.stimuli.VideoStim.html#pliers.stimuli.VideoStim" title="pliers.stimuli.VideoStim"><code class="xref py py-obj docutils literal"><span class="pre">VideoStim</span></code></a>([filename,&nbsp;onset,&nbsp;url])</td>
+<td>A video.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.stimuli.VideoFrameStim.html#pliers.stimuli.VideoFrameStim" title="pliers.stimuli.VideoFrameStim"><code class="xref py py-obj docutils literal"><span class="pre">VideoFrameStim</span></code></a>(video,&nbsp;frame_num[,&nbsp;duration,&nbsp;…])</td>
+<td>A single frame of video.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.stimuli.VideoFrameCollectionStim.html#pliers.stimuli.VideoFrameCollectionStim" title="pliers.stimuli.VideoFrameCollectionStim"><code class="xref py py-obj docutils literal"><span class="pre">VideoFrameCollectionStim</span></code></a>([filename,&nbsp;…])</td>
+<td>A collection of video frames.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.stimuli.ComplexTextStim.html#pliers.stimuli.ComplexTextStim" title="pliers.stimuli.ComplexTextStim"><code class="xref py py-obj docutils literal"><span class="pre">ComplexTextStim</span></code></a>([filename,&nbsp;onset,&nbsp;duration,&nbsp;…])</td>
+<td>A collection of text stims (e.g., a story), typically ordered and with onsets and/or durations associated with each element.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="compoundstim-classes">
+<h3>CompoundStim classes<a class="headerlink" href="#compoundstim-classes" title="Permalink to this headline">¶</a></h3>
+<p>In many real-world applications, we need to extract features from objects more complex than just text, audio, or images. To facilitate analysis of a wider range of objects, pliers defines a <a class="reference internal" href="generated/pliers.stimuli.CompoundStim.html#pliers.stimuli.CompoundStim" title="pliers.stimuli.CompoundStim"><code class="xref py py-class docutils literal"><span class="pre">CompoundStim</span></code></a> class that serves as a unified container for any number of other <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> classes. Every <a class="reference internal" href="generated/pliers.stimuli.CompoundStim.html#pliers.stimuli.CompoundStim" title="pliers.stimuli.CompoundStim"><code class="xref py py-class docutils literal"><span class="pre">CompoundStim</span></code></a> class defines which <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> classes it’s allowed to contain as components. These components are automatically available as attributes of the <a class="reference internal" href="generated/pliers.stimuli.CompoundStim.html#pliers.stimuli.CompoundStim" title="pliers.stimuli.CompoundStim"><code class="xref py py-class docutils literal"><span class="pre">CompoundStim</span></code></a> with standard Python variable names based on the class names (e.g., <a class="reference internal" href="generated/pliers.stimuli.ImageStim.html#pliers.stimuli.ImageStim" title="pliers.stimuli.ImageStim"><code class="xref py py-class docutils literal"><span class="pre">ImageStim</span></code></a> and <a class="reference internal" href="generated/pliers.stimuli.ComplexTextStim.html#pliers.stimuli.ComplexTextStim" title="pliers.stimuli.ComplexTextStim"><code class="xref py py-class docutils literal"><span class="pre">ComplexTextStim</span></code></a> components would be available at <code class="code py python docutils literal"><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">image</span></span></code> and <code class="code py python docutils literal"><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">complex_text</span></span></code>, respectively).</p>
+<p>For example, pliers defines a <a class="reference internal" href="generated/pliers.stimuli.TranscribedAudioCompoundStim.html#pliers.stimuli.TranscribedAudioCompoundStim" title="pliers.stimuli.TranscribedAudioCompoundStim"><code class="xref py py-class docutils literal"><span class="pre">TranscribedAudioCompoundStim</span></code></a> that’s used to represent an audio clip that’s been transcribed. This object internally stores both an <a class="reference internal" href="generated/pliers.stimuli.AudioStim.html#pliers.stimuli.AudioStim" title="pliers.stimuli.AudioStim"><code class="xref py py-class docutils literal"><span class="pre">AudioStim</span></code></a> (containing the audio) and a <a class="reference internal" href="generated/pliers.stimuli.ComplexTextStim.html#pliers.stimuli.ComplexTextStim" title="pliers.stimuli.ComplexTextStim"><code class="xref py py-class docutils literal"><span class="pre">ComplexTextStim</span></code></a> (containing the transcribed text tokens and associated timing information). A <a class="reference internal" href="generated/pliers.stimuli.TranscribedAudioCompoundStim.html#pliers.stimuli.TranscribedAudioCompoundStim" title="pliers.stimuli.TranscribedAudioCompoundStim"><code class="xref py py-class docutils literal"><span class="pre">TranscribedAudioCompoundStim</span></code></a> is initialized by passing in exactly one of each of these components (e.g., <code class="code py python docutils literal"><span class="name"><span class="pre">tac</span></span> <span class="operator"><span class="pre">=</span></span> <span class="name"><span class="pre">TranscribedAudioComponentStim</span></span><span class="punctuation"><span class="pre">(</span></span><span class="name"><span class="pre">audio</span></span><span class="punctuation"><span class="pre">,</span></span> <span class="name"><span class="pre">text</span></span><span class="punctuation"><span class="pre">)</span></span></code>).</p>
+<p>One of the nice features of <a class="reference internal" href="generated/pliers.stimuli.CompoundStim.html#pliers.stimuli.CompoundStim" title="pliers.stimuli.CompoundStim"><code class="xref py py-class docutils literal"><span class="pre">CompoundStim</span></code></a> classes is that any pliers <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> will automatically detect and process matching components inside the <a class="reference internal" href="generated/pliers.stimuli.CompoundStim.html#pliers.stimuli.CompoundStim" title="pliers.stimuli.CompoundStim"><code class="xref py py-class docutils literal"><span class="pre">CompoundStim</span></code></a>. For example, the <a class="reference internal" href="generated/pliers.stimuli.TranscribedAudioCompoundStim.html#pliers.stimuli.TranscribedAudioCompoundStim" title="pliers.stimuli.TranscribedAudioCompoundStim"><code class="xref py py-class docutils literal"><span class="pre">TranscribedAudioCompoundStim</span></code></a> can be passed to any <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> that accepts either an <a class="reference internal" href="generated/pliers.stimuli.AudioStim.html#pliers.stimuli.AudioStim" title="pliers.stimuli.AudioStim"><code class="xref py py-class docutils literal"><span class="pre">AudioStim</span></code></a> or a <a class="reference internal" href="generated/pliers.stimuli.ComplexTextStim.html#pliers.stimuli.ComplexTextStim" title="pliers.stimuli.ComplexTextStim"><code class="xref py py-class docutils literal"><span class="pre">ComplexTextStim</span></code></a> as input. This means that we don’t have to worry about specifying complicated rules for determining what input to provide to Transformers; in most cases, we can get the intended behavior just by naively passing <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>s to a <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a>.</p>
+<p>Consider this code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pliers.stimuli</span> <span class="kn">import</span> <span class="n">TranscribedAudioCompoundStim</span>
+<span class="kn">from</span> <span class="nn">pliers.graph</span> <span class="kn">import</span> <span class="n">Graph</span>
+
+<span class="c1"># assume we have audio and text Stims we&#39;re passing in</span>
+<span class="n">tac</span> <span class="o">=</span> <span class="n">TranscribedAudioCompoundStim</span><span class="p">(</span><span class="n">audio</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+<span class="c1"># Construct a Graph with two extractors</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">([</span><span class="s1">&#39;PartOfSpeechExtractor&#39;</span><span class="p">,</span> <span class="s1">&#39;RMSEExtractor&#39;</span><span class="p">])</span>
+
+<span class="c1"># Apply the extractors to the Stim</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">tac</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The above code should complete gracefully, returning a pandas DataFrame that combines the part-of-speech information extracted from the text component of the <a class="reference internal" href="generated/pliers.stimuli.TranscribedAudioCompoundStim.html#pliers.stimuli.TranscribedAudioCompoundStim" title="pliers.stimuli.TranscribedAudioCompoundStim"><code class="xref py py-class docutils literal"><span class="pre">TranscribedAudioCompoundStim</span></code></a> with root-mean-square energy extracted from the audio component.</p>
+<p>Existing classes derived from <a class="reference internal" href="generated/pliers.stimuli.CompoundStim.html#pliers.stimuli.CompoundStim" title="pliers.stimuli.CompoundStim"><code class="xref py py-class docutils literal"><span class="pre">CompoundStim</span></code></a> include:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.stimuli.CompoundStim.html#pliers.stimuli.CompoundStim" title="pliers.stimuli.CompoundStim"><code class="xref py py-obj docutils literal"><span class="pre">CompoundStim</span></code></a>(elements)</td>
+<td>A container for an arbitrary set of Stim elements.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.stimuli.TranscribedAudioCompoundStim.html#pliers.stimuli.TranscribedAudioCompoundStim" title="pliers.stimuli.TranscribedAudioCompoundStim"><code class="xref py py-obj docutils literal"><span class="pre">TranscribedAudioCompoundStim</span></code></a>(audio,&nbsp;text)</td>
+<td>An AudioStim with an associated text transcription.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.stimuli.TweetStim.html#pliers.stimuli.TweetStim" title="pliers.stimuli.TweetStim"><code class="xref py py-obj docutils literal"><span class="pre">TweetStim</span></code></a>(status)</td>
+<td>Represents the text and associated media from a single tweet.</td>
+</tr>
+</tbody>
+</table>
+<p>Beyond these predefined classes, new <a class="reference internal" href="generated/pliers.stimuli.CompoundStim.html#pliers.stimuli.CompoundStim" title="pliers.stimuli.CompoundStim"><code class="xref py py-class docutils literal"><span class="pre">CompoundStim</span></code></a> classes are usually very easy to define. For example, here’s the entire definition of the <a class="reference internal" href="generated/pliers.stimuli.TranscribedAudioCompoundStim.html#pliers.stimuli.TranscribedAudioCompoundStim" title="pliers.stimuli.TranscribedAudioCompoundStim"><code class="xref py py-class docutils literal"><span class="pre">TranscribedAudioCompoundStim</span></code></a> in pliers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TranscribedAudioCompoundStim</span><span class="p">(</span><span class="n">CompoundStim</span><span class="p">):</span>
+
+    <span class="n">_allowed_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">AudioStim</span><span class="p">,</span> <span class="n">ComplexTextStim</span><span class="p">)</span>
+    <span class="n">_allow_multiple</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">_primary</span> <span class="o">=</span> <span class="n">AudioStim</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">audio</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TranscribedAudioCompoundStim</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="n">audio</span><span class="p">,</span> <span class="n">text</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>As you can see, not much work is required. All we have to do is indicate (a) which <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> types are allowed as components of the <a class="reference internal" href="generated/pliers.stimuli.CompoundStim.html#pliers.stimuli.CompoundStim" title="pliers.stimuli.CompoundStim"><code class="xref py py-class docutils literal"><span class="pre">CompoundStim</span></code></a>, (b) whether or not multiple instances of the same type are allowed (in this case, it doesn’t make sense to allow a transcribed audio clip to contain multiple audio clips or text transcriptions), and (c) what the primary component type is (which is used to define the name and original filename of the <a class="reference internal" href="generated/pliers.stimuli.CompoundStim.html#pliers.stimuli.CompoundStim" title="pliers.stimuli.CompoundStim"><code class="xref py py-class docutils literal"><span class="pre">CompoundStim</span></code></a> as a whole).</p>
+</div>
+</div>
+<div class="section" id="intelligent-loading">
+<h2>Intelligent loading<a class="headerlink" href="#intelligent-loading" title="Permalink to this headline">¶</a></h2>
+<p>In most cases, Stim instances don’t have to be initialized directly by the user, as pliers will usually be able to infer the correct file type if filenames are passed directly to a <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> (i.e., my_extractor.transform(‘my_file.mp4’) will usually work, without first needing to do something like stim = VideoStim(‘my_file.mp4)). That said, it’s generally a good idea to explicitly initialize one’s Stims, because the initializers often take useful additional arguments, and file-type detection is also not completely foolproof.</p>
+<p>As a sort of half-way approach that allows you to explicitly create a set of Stim objects, but doesn’t require you to import a bunch of Stim classes, or even know what type of object you need, there’s also a convenient load_stims method that attempts to intelligently guess the correct file type using python-magic (this is what pliers uses internally if you pass filenames directly to a <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a>). The following two examples produce identical results:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Approach 1: initialize each Stim directly</span>
+<span class="kn">from</span> <span class="nn">pliers.stimuli</span> <span class="kn">import</span> <span class="n">VideoStim</span><span class="p">,</span> <span class="n">ImageStim</span><span class="p">,</span> <span class="n">AudioStim</span><span class="p">,</span> <span class="n">TextStim</span>
+<span class="n">stims</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">VideoStim</span><span class="p">(</span><span class="s1">&#39;my_video.mp4&#39;</span><span class="p">),</span>
+    <span class="n">ImageStim</span><span class="p">(</span><span class="s1">&#39;my_image.jpg&#39;</span><span class="p">),</span>
+    <span class="n">AudioStim</span><span class="p">(</span><span class="s1">&#39;my_audio.wav&#39;</span><span class="p">),</span>
+    <span class="n">ComplexTextStim</span><span class="p">(</span><span class="s1">&#39;my_text.txt&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="c1"># Approach 2: a shorter but potentially fallible alternative</span>
+<span class="kn">from</span> <span class="nn">pliers.stimuli</span> <span class="kn">import</span> <span class="n">load_stims</span>
+<span class="n">stims</span> <span class="o">=</span> <span class="n">load_stims</span><span class="p">([</span><span class="s1">&#39;my_video.mp4&#39;</span><span class="p">,</span> <span class="s1">&#39;my_image.jpg&#39;</span><span class="p">,</span> <span class="s1">&#39;my_audio.wav&#39;</span><span class="p">,</span> <span class="s1">&#39;my_text.txt&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>As you can see, mixed file types (and hence, heterogeneous lists of Stims) are supported–though, again, we encourage you to use homogeneous lists wherever possible, for clarity.</p>
+</div>
+<div class="section" id="iterable-stims">
+<h2>Iterable Stims<a class="headerlink" href="#iterable-stims" title="Permalink to this headline">¶</a></h2>
+<p>Some <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> classes are naturally iterable, so pliers makes it easy to iterate their elements. For example, a <a class="reference internal" href="generated/pliers.stimuli.VideoStim.html#pliers.stimuli.VideoStim" title="pliers.stimuli.VideoStim"><code class="xref py py-class docutils literal"><span class="pre">VideoStim</span></code></a> is made up of a series of <a class="reference internal" href="generated/pliers.stimuli.VideoFrameStim.html#pliers.stimuli.VideoFrameStim" title="pliers.stimuli.VideoFrameStim"><code class="xref py py-class docutils literal"><span class="pre">VideoFrameStim</span></code></a>s, and a <a class="reference internal" href="generated/pliers.stimuli.ComplexTextStim.html#pliers.stimuli.ComplexTextStim" title="pliers.stimuli.ComplexTextStim"><code class="xref py py-class docutils literal"><span class="pre">ComplexTextStim</span></code></a> is made up of <a class="reference internal" href="generated/pliers.stimuli.TextStim.html#pliers.stimuli.TextStim" title="pliers.stimuli.TextStim"><code class="xref py py-class docutils literal"><span class="pre">TextStim</span></code></a>s. Looping over the constituent elements is trivial:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pliers.stimuli</span> <span class="kn">import</span> <span class="n">ComplexTextStim</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cts</span> <span class="o">=</span> <span class="n">ComplexTextStim</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;This class method uses the default nltk word tokenizer, which will split this sentence into a list of TextStims, each representing a single word.&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">cts</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="k">print</span><span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<span class="go">&quot;This&quot;</span>
+<span class="go">&quot;class&quot;</span>
+<span class="go">&quot;method&quot;</span>
+<span class="gp">...</span>
+</pre></div>
+</div>
+<p>You can also directly access the constituent elements within the containing Stim if you need to (e.g., <code class="code py python docutils literal"><span class="name"><span class="pre">VideoStim</span></span><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">frames</span></span></code> or <code class="code py python docutils literal"><span class="name"><span class="pre">ComplexTextStim</span></span><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">elements</span></span></code>). Note that, for efficiency reasons, these properties will typically return generators rather than lists (e.g., retrieving the <code class="code py python docutils literal"><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">frames</span></span></code> property of a <a class="reference internal" href="generated/pliers.stimuli.VideoStim.html#pliers.stimuli.VideoStim" title="pliers.stimuli.VideoStim"><code class="xref py py-class docutils literal"><span class="pre">VideoStim</span></code></a> will return a generator that reads frames lazily). You can always explicitly convert the generator to a list (e.g., <code class="code py python docutils literal"><span class="name"><span class="pre">frames</span></span> <span class="operator"><span class="pre">=</span></span> <span class="name builtin"><span class="pre">list</span></span><span class="punctuation"><span class="pre">(</span></span><span class="name"><span class="pre">video</span></span><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">frames</span></span><span class="punctuation"><span class="pre">)</span></span></code>), just be aware that your memory footprint may instantly balloon in cases where you’re working with large media files.</p>
+</div>
+<div class="section" id="timing-information">
+<h2>Timing information<a class="headerlink" href="#timing-information" title="Permalink to this headline">¶</a></h2>
+<p>Some <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> classes inherently have a temporal dimension (e.g., <a class="reference internal" href="generated/pliers.stimuli.VideoStim.html#pliers.stimuli.VideoStim" title="pliers.stimuli.VideoStim"><code class="xref py py-class docutils literal"><span class="pre">VideoStim</span></code></a> and <a class="reference internal" href="generated/pliers.stimuli.AudioStim.html#pliers.stimuli.AudioStim" title="pliers.stimuli.AudioStim"><code class="xref py py-class docutils literal"><span class="pre">AudioStim</span></code></a>). However, even a static <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> instance such as an <a class="reference internal" href="generated/pliers.stimuli.ImageStim.html#pliers.stimuli.ImageStim" title="pliers.stimuli.ImageStim"><code class="xref py py-class docutils literal"><span class="pre">ImageStim</span></code></a> or a <a class="reference internal" href="generated/pliers.stimuli.TextStim.html#pliers.stimuli.TextStim" title="pliers.stimuli.TextStim"><code class="xref py py-class docutils literal"><span class="pre">TextStim</span></code></a> will often be assigned <code class="code py python docutils literal"><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">onset</span></span></code> and <code class="code py python docutils literal"><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">duration</span></span></code> properties during initialization. Typically, this happens because the static <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> is understood to be embedded within some temporal context. Consider the following code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vs</span> <span class="o">=</span> <span class="n">VideoStim</span><span class="p">(</span><span class="s1">&#39;my_video.mp4&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame_200</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">get_frame</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">frame_200</span><span class="o">.</span><span class="n">onset</span><span class="p">,</span> <span class="n">frame_200</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
+<span class="go">6.666666666666667, 0.03333333333333333</span>
+</pre></div>
+</div>
+<p>Assume the above video runs at ~30 frames per second. Then, when we retrieve the 200th video frame, the result is a <a class="reference internal" href="generated/pliers.stimuli.VideoFrameStim.html#pliers.stimuli.VideoFrameStim" title="pliers.stimuli.VideoFrameStim"><code class="xref py py-class docutils literal"><span class="pre">VideoFrameStim</span></code></a> that, in addition to storing a numpy array in its <code class="code py python docutils literal"><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">data</span></span></code> attribute (i.e., the actual image content of the frame), also keeps track of (a) the onset of the frame (in seconds) relative to the start of the source video file, and (b) the duration for which the <a class="reference internal" href="generated/pliers.stimuli.VideoFrameStim.html#pliers.stimuli.VideoFrameStim" title="pliers.stimuli.VideoFrameStim"><code class="xref py py-class docutils literal"><span class="pre">VideoFrameStim</span></code></a> is supposed to be presented (in this case 1/30 seconds).</p>
+<p>Although <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> onsets and/or durations will usually be set implicitly by pliers, in some cases it makes sense to explicitly set a <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>’s temporal properties at initialization. For example, suppose we’re processing log files from a psychology experiment where we presented a series of images to each subject in some predetermined temporal sequence. Even though each image is completely static, we may want pliers to keep track of the onset and duration of each image presentation with respect to the overall session. Assume we’ve processed our experiment log file to the point where we have a list of triples, with filename, onset, and duration of presentation as the elements in each tuple, respectively. Then we can easily construct a list of temporally aligned ImageStims:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># A list of images, with each tuple representing</span>
+<span class="c1"># the filename, onset, and duration, respectively.</span>
+<span class="n">image_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">&#39;image1.jpg&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;image2.jpg&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;image3.jpg&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="o">...</span>
+<span class="p">]</span>
+
+<span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">onset</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span> <span class="ow">in</span> <span class="n">image_list</span><span class="p">:</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">ImageStim</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="n">onset</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
+    <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If we now run the images list through one or more ImageExtractors, the resulting ExtractorResults or pandas DataFrame will automatically log the correct onset and duration.</p>
+</div>
+<div class="section" id="transformation-history">
+<h2>Transformation history<a class="headerlink" href="#transformation-history" title="Permalink to this headline">¶</a></h2>
+<p>Although most <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> instances are initialized directly from a media file, in some cases, <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>s will be dynamically generated by applying a Converter or Filter to one or more other <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>s. For example, pliers implements several different API-based speech recognition converters, all of which take an <a class="reference internal" href="generated/pliers.stimuli.AudioStim.html#pliers.stimuli.AudioStim" title="pliers.stimuli.AudioStim"><code class="xref py py-class docutils literal"><span class="pre">AudioStim</span></code></a> as input, and return a <a class="reference internal" href="generated/pliers.stimuli.ComplexTextStim.html#pliers.stimuli.ComplexTextStim" title="pliers.stimuli.ComplexTextStim"><code class="xref py py-class docutils literal"><span class="pre">ComplexTextStim</span></code></a> as output. Because the newly-generated <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> instance is not tied to a file, it’s important to have some way of tracking its provenance. To this end, every <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> contains a .history attribute. The history is represented as an object of class TransformationLog, which is just a glorified namedtuple. It contains fields that track the name, class, and/or filename of the source (or original) <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>, the newly generated <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>, and the <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> responsible for the transformation.</p>
+<p>For example, this code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pliers.converters</span> <span class="kn">import</span> <span class="n">VideoToAudioConverter</span>
+<span class="kn">from</span> <span class="nn">pliers.stimuli</span> <span class="kn">import</span> <span class="n">VideoStim</span>
+
+<span class="n">video</span> <span class="o">=</span> <span class="n">VideoStim</span><span class="p">(</span><span class="s1">&#39;../pliers/tests/data/video/obama_speech.mp4&#39;</span><span class="p">)</span>
+<span class="n">audio</span> <span class="o">=</span> <span class="n">VideoToAudioConverter</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">video</span><span class="p">)</span>
+<span class="n">audio</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Produces this output:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>source_name</td>
+<td>obama_speech.mp4</td>
+</tr>
+<tr class="row-even"><td>source_file</td>
+<td>../pliers/tests/data/video/obama_speech.mp4</td>
+</tr>
+<tr class="row-odd"><td>source_class</td>
+<td>VideoStim</td>
+</tr>
+<tr class="row-even"><td>result_name</td>
+<td>obama_speech.wav</td>
+</tr>
+<tr class="row-odd"><td>result_file</td>
+<td>../pliers/tests/data/video/obama_speech.wav</td>
+</tr>
+<tr class="row-even"><td>result_class</td>
+<td>AudioStim</td>
+</tr>
+<tr class="row-odd"><td>transformer_class</td>
+<td>VideoToAudioConverter</td>
+</tr>
+<tr class="row-even"><td>transformer_params</td>
+<td>{}</td>
+</tr>
+</tbody>
+</table>
+<p>Here we only have a single row (in the above table, the first row contains what would normally be displayed as the column names), but every transformation we perform will log another row in the <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>’s history. In cases with more than one transformation, the history object will also have a parent field, which stores a reference to the previous transformation in the chain. This means that TransformationLog objects basically form a linked list that allows us to trace the full history of any <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> all the way back to some source file. If we ask for the string representation of a history object (i.e., <code class="code py python docutils literal"><span class="name builtin"><span class="pre">str</span></span><span class="punctuation"><span class="pre">(</span></span><span class="name"><span class="pre">history</span></span><span class="punctuation"><span class="pre">)</span></span></code>), we get a compact representation of the full trajectory. So, for example, if we load a <a class="reference internal" href="generated/pliers.stimuli.VideoStim.html#pliers.stimuli.VideoStim" title="pliers.stimuli.VideoStim"><code class="xref py py-class docutils literal"><span class="pre">VideoStim</span></code></a> that then gets converted in turn to an <a class="reference internal" href="generated/pliers.stimuli.AudioStim.html#pliers.stimuli.AudioStim" title="pliers.stimuli.AudioStim"><code class="xref py py-class docutils literal"><span class="pre">AudioStim</span></code></a> and then a <a class="reference internal" href="generated/pliers.stimuli.ComplexTextStim.html#pliers.stimuli.ComplexTextStim" title="pliers.stimuli.ComplexTextStim"><code class="xref py py-class docutils literal"><span class="pre">ComplexTextStim</span></code></a> (e.g., via speech-to-text transcription), the transformation history will look something like ‘VideoStim-&gt;VideoToAudioConverter/AudioStim-&gt;IBMSpeechAPIConverter/ComplexTextStim’.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="transformers.html" class="btn btn-neutral float-right" title="Transformers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="basic-concepts.html" class="btn btn-neutral" title="Basic concepts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

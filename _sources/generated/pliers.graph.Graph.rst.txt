@@ -1,0 +1,11 @@
+pliers.graph.Graph
+==================
+
+.. currentmodule:: pliers.graph
+
+.. autoclass:: Graph
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

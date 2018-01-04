@@ -1,0 +1,11 @@
+pliers.filters.TokenRemovalFilter
+=================================
+
+.. currentmodule:: pliers.filters
+
+.. autoclass:: TokenRemovalFilter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

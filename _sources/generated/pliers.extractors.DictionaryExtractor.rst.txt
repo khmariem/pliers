@@ -1,0 +1,11 @@
+pliers.extractors.DictionaryExtractor
+=====================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: DictionaryExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

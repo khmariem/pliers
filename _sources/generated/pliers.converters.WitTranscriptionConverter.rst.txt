@@ -1,0 +1,11 @@
+pliers.converters.WitTranscriptionConverter
+===========================================
+
+.. currentmodule:: pliers.converters
+
+.. autoclass:: WitTranscriptionConverter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

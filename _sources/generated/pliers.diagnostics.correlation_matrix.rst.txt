@@ -1,0 +1,6 @@
+pliers.diagnostics.correlation_matrix
+=====================================
+
+.. currentmodule:: pliers.diagnostics
+
+.. autofunction:: correlation_matrix

@@ -1,0 +1,6 @@
+pliers.stimuli.load_stims
+=========================
+
+.. currentmodule:: pliers.stimuli
+
+.. autofunction:: load_stims

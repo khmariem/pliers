@@ -1,0 +1,11 @@
+pliers.extractors.ChromaSTFTExtractor
+=====================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: ChromaSTFTExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

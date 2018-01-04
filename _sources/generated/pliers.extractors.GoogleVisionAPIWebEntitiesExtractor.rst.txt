@@ -1,0 +1,11 @@
+pliers.extractors.GoogleVisionAPIWebEntitiesExtractor
+=====================================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: GoogleVisionAPIWebEntitiesExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

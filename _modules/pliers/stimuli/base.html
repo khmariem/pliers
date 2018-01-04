@@ -1,0 +1,443 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.stimuli.base &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.stimuli.base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.stimuli.base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39; Base class for all Stims and associated functionality. &#39;&#39;&#39;</span>
+
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">isdir</span><span class="p">,</span> <span class="n">join</span><span class="p">,</span> <span class="n">basename</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="k">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">with_metaclass</span><span class="p">,</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">six.moves.urllib.request</span> <span class="k">import</span> <span class="n">urlopen</span>
+<span class="kn">from</span> <span class="nn">six.moves.urllib.parse</span> <span class="k">import</span> <span class="n">urlparse</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">pliers</span> <span class="k">import</span> <span class="n">config</span>
+<span class="kn">from</span> <span class="nn">pliers.utils</span> <span class="k">import</span> <span class="n">isiterable</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+
+
+<span class="k">class</span> <span class="nc">Stim</span><span class="p">(</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">)):</span>
+
+    <span class="sd">&#39;&#39;&#39; Base class for all classes in the Stim hierarchy.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (str): Path to input file, if one exists.</span>
+<span class="sd">        onset (float): Optional onset of the Stim (in seconds) with</span>
+<span class="sd">            respect to some more general context or timeline the user wishes</span>
+<span class="sd">            to keep track of.</span>
+<span class="sd">        duration (float): Optional duration of the Stim, in seconds.</span>
+<span class="sd">        name (str): Optional name to give the Stim instance. If None is</span>
+<span class="sd">            provided, the name will be derived from the filename if one is</span>
+<span class="sd">            defined. If no filename is defined, name will be an empty string.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">onset</span> <span class="o">=</span> <span class="n">onset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_history</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@contextmanager</span>
+    <span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Return the source filename of the current Stim. &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">):</span>
+            <span class="n">tf</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mktemp</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_file_extension</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">tf</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Return stimulus history. &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_history</span>
+
+    <span class="nd">@history</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">history</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_history</span> <span class="o">=</span> <span class="n">history</span>
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">onset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_get_stim_class</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="c1"># Takes a lowercase variable name (e.g., &#39;video&#39; or &#39;complex_text&#39;) and</span>
+    <span class="c1"># attempts to map it to a valid pliers Stim class (e.g., VideoStim or</span>
+    <span class="c1"># ComplexTextStim).</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;stim&#39;</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">+=</span> <span class="s1">&#39;stim&#39;</span>
+
+    <span class="kn">import</span> <span class="nn">pliers</span>
+    <span class="n">stims</span> <span class="o">=</span> <span class="n">pliers</span><span class="o">.</span><span class="n">stimuli</span><span class="o">.</span><span class="n">__all__</span>
+
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">stims</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pliers</span><span class="o">.</span><span class="n">stimuli</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+
+    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;No Stim class matches &#39;</span><span class="si">%s</span><span class="s2">&#39; (case-insensitive).&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="load_stims"><a class="viewcode-back" href="../../../generated/pliers.stimuli.load_stims.html#pliers.stimuli.load_stims">[docs]</a><span class="k">def</span> <span class="nf">load_stims</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fail_silently</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Load one or more stimuli directly from file, inferring/extracting</span>
+<span class="sd">    metadata as needed.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source (str or list): The location to load the stim(s) from. Can be</span>
+<span class="sd">            the path to a directory, to a single file, or a list of filenames.</span>
+<span class="sd">        dtype (str): The type of stim to load. If dtype is None, relies on the</span>
+<span class="sd">            filename extension for guidance. If dtype is provided, must be</span>
+<span class="sd">            one of &#39;video&#39;, &#39;image&#39;, &#39;audio&#39;, or &#39;text&#39;.</span>
+<span class="sd">        fail_silently (bool): If True do not raise error when trying to load a</span>
+<span class="sd">            missing stimulus from a list of sources.</span>
+
+<span class="sd">    Returns: A list of Stims.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.video</span> <span class="k">import</span> <span class="n">VideoStim</span><span class="p">,</span> <span class="n">ImageStim</span>
+    <span class="kn">from</span> <span class="nn">.audio</span> <span class="k">import</span> <span class="n">AudioStim</span>
+    <span class="kn">from</span> <span class="nn">.text</span> <span class="k">import</span> <span class="n">TextStim</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+        <span class="n">return_list</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">return_list</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">stims</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">stim_map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="n">ImageStim</span><span class="p">,</span>
+        <span class="s1">&#39;video&#39;</span><span class="p">:</span> <span class="n">VideoStim</span><span class="p">,</span>
+        <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="n">TextStim</span><span class="p">,</span>
+        <span class="s1">&#39;audio&#39;</span><span class="p">:</span> <span class="n">AudioStim</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">load_file</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">magic</span>  <span class="c1"># requires libmagic, so import here</span>
+        <span class="n">mime</span> <span class="o">=</span> <span class="n">magic</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">mime</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mime</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="n">mime</span> <span class="o">=</span> <span class="n">mime</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">mime</span> <span class="o">=</span> <span class="n">mime</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">mime</span> <span class="ow">in</span> <span class="n">stim_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">stim_map</span><span class="p">[</span><span class="n">mime</span><span class="p">](</span><span class="n">source</span><span class="p">)</span>
+            <span class="n">stims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">load_url</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">main_type</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">info</span><span class="p">()</span><span class="o">.</span><span class="n">get_content_maintype</span><span class="p">()</span>  <span class="c1"># Py3</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">main_type</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">info</span><span class="p">()</span><span class="o">.</span><span class="n">getmaintype</span><span class="p">()</span>  <span class="c1"># Py2</span>
+        <span class="k">if</span> <span class="n">main_type</span> <span class="ow">in</span> <span class="n">stim_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">stim_map</span><span class="p">[</span><span class="n">main_type</span><span class="p">](</span><span class="n">url</span><span class="o">=</span><span class="n">source</span><span class="p">)</span>
+            <span class="n">stims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">source</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">urlparse</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">scheme</span><span class="p">):</span>
+            <span class="n">load_url</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">isdir</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">glob</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">)):</span>
+                <span class="n">load_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">exists</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+            <span class="n">load_file</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">return_list</span> <span class="ow">and</span> <span class="n">fail_silently</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;File not found&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_list</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">stims</span>
+
+    <span class="k">return</span> <span class="n">stims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<span class="k">def</span> <span class="nf">_log_transformation</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">trans</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">log_transformations</span> <span class="ow">or</span> \
+            <span class="p">(</span><span class="n">trans</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">trans</span><span class="o">.</span><span class="n">_loggable</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">_log_transformation</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">trans</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">)</span>
+
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Stim</span><span class="p">):</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">result</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">filename</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">])</span>
+    <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">trans</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="n">tr_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">trans</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">trans</span><span class="o">.</span><span class="n">_log_attributes</span><span class="p">]</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">trans</span><span class="o">.</span><span class="n">_log_attributes</span><span class="p">,</span> <span class="n">tr_attrs</span><span class="p">))))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">])</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">history</span>
+    <span class="n">string</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">string</span> <span class="o">+=</span> <span class="s1">&#39;-&gt;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+    <span class="n">values</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">string</span><span class="p">,</span> <span class="n">parent</span><span class="p">])</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="n">TransformationLog</span><span class="p">(</span><span class="o">*</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+<span class="n">_trans_log</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;TransformationLog&#39;</span><span class="p">,</span> <span class="s2">&quot;source_name source_file &quot;</span> <span class="o">+</span>
+                        <span class="s2">&quot;source_class result_name result_file result_class &quot;</span> <span class="o">+</span>
+                        <span class="s2">&quot; transformer_class transformer_params string parent&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">TransformationLog</span><span class="p">(</span><span class="n">_trans_log</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;A namedtuple that stores information about a single transformation. &#39;&#39;&#39;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span>
+
+    <span class="k">def</span> <span class="nf">to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_append_row</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">history</span><span class="p">):</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">history</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">_append_row</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">rows</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">_append_row</span><span class="p">([],</span> <span class="bp">self</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fields</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

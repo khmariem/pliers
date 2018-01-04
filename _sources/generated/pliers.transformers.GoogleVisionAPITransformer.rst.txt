@@ -1,0 +1,11 @@
+pliers.transformers.GoogleVisionAPITransformer
+==============================================
+
+.. currentmodule:: pliers.transformers
+
+.. autoclass:: GoogleVisionAPITransformer
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

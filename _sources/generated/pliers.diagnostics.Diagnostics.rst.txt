@@ -1,0 +1,11 @@
+pliers.diagnostics.Diagnostics
+==============================
+
+.. currentmodule:: pliers.diagnostics
+
+.. autoclass:: Diagnostics
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

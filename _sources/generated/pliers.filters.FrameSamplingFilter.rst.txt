@@ -1,0 +1,11 @@
+pliers.filters.FrameSamplingFilter
+==================================
+
+.. currentmodule:: pliers.filters
+
+.. autoclass:: FrameSamplingFilter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

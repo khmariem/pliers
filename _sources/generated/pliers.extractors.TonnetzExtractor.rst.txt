@@ -1,0 +1,11 @@
+pliers.extractors.TonnetzExtractor
+==================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: TonnetzExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

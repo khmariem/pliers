@@ -1,0 +1,435 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.graph.Graph &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../index.html"/>
+        <link rel="up" title="Pliers API Reference" href="../reference.html"/>
+        <link rel="next" title="pliers.graph.Node" href="pliers.graph.Node.html"/>
+        <link rel="prev" title="pliers.extractors.merge_results" href="pliers.extractors.merge_results.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config.html">Configuring pliers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Pliers API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#module-pliers.converters">Converters (<code class="docutils literal"><span class="pre">pliers.converters</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#module-pliers.datasets">Dataset utilities (<code class="docutils literal"><span class="pre">pliers.datasets</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#module-pliers.diagnostics">Diagnostic utilities (<code class="docutils literal"><span class="pre">pliers.diagnostics</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#module-pliers.extractors">Extractors (<code class="docutils literal"><span class="pre">pliers.extractors</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#module-pliers.filters">Filters (<code class="docutils literal"><span class="pre">pliers.filters</span></code>)</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../reference.html#module-pliers.graph">Graph construction (<code class="docutils literal"><span class="pre">pliers.graph</span></code>)</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pliers.graph.Graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pliers.graph.Node.html">pliers.graph.Node</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#module-pliers.stimuli">Stimuli (<code class="docutils literal"><span class="pre">pliers.stimuli</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#module-pliers.transformers">Transformers (<code class="docutils literal"><span class="pre">pliers.transformers</span></code>)</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../reference.html">Pliers API Reference</a> &raquo;</li>
+        
+      <li>pliers.graph.Graph</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/pliers.graph.Graph.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pliers-graph-graph">
+<h1>pliers.graph.Graph<a class="headerlink" href="#pliers-graph-graph" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pliers.graph.Graph">
+<em class="property">class </em><code class="descclassname">pliers.graph.</code><code class="descname">Graph</code><span class="sig-paren">(</span><em>nodes=None</em>, <em>spec=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Graph-like structure that represents an entire pliers workflow.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (<em>list</em><em>, </em><a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – Optional nodes to add to the Graph at construction.
+If a dict, must have a ‘roots’ key. If a list, each element must be
+in one of the forms accepted by add_nodes().</li>
+<li><strong>spec</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – An optional path to a .json file containing the graph
+specification.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pliers.graph.Graph.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>nodes=None</em>, <em>spec=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pliers.graph.Graph.add_node">
+<code class="descname">add_node</code><span class="sig-paren">(</span><em>transformer</em>, <em>name=None</em>, <em>children=None</em>, <em>parent=None</em>, <em>parameters={}</em>, <em>return_node=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.add_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.add_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a node to the current graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>transformer</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><a class="reference internal" href="pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><em>Transformer</em></a>) – The pliers Transformer to use at
+the to-be-added node. Either a case-insensitive string giving
+the name of a Transformer class, or an initialized Transformer
+instance.</li>
+<li><strong>name</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Optional name to give this Node.</li>
+<li><strong>children</strong> (<em>list</em>) – Optional list of child nodes (i.e., nodes to pass
+the to-be-added node’s Transformer output to).</li>
+<li><strong>parent</strong> (<a class="reference internal" href="pliers.graph.Node.html#pliers.graph.Node" title="pliers.graph.Node"><em>Node</em></a>) – Optional node from which the to-be-added Node
+receives its input.</li>
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) – Optional keyword arguments to pass onto the
+Transformer initialized at this Node if a string is passed to
+the ‘transformer’ argument. Ignored if an already-initialized
+Transformer is passed.</li>
+<li><strong>return_node</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If True, returns the initialized Node instance.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><dl class="docutils">
+<dt>The initialized Node instance if return_node is True,</dt>
+<dd><p class="first last">None otherwise.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pliers.graph.Graph.add_nodes">
+<code class="descname">add_nodes</code><span class="sig-paren">(</span><em>nodes</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.add_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.add_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds one or more nodes to the current graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nodes</strong> (<em>list</em>) – <p>A list of nodes to add. Each element must be one of
+the following:</p>
+<ul>
+<li>A dict containing keyword args to pass onto to the Node init.</li>
+<li>An iterable containing 1 - 3 elements. The first element is
+mandatory, and specifies the Transformer at that node. The
+second element (optional) is an iterable of child nodes
+(specified in the same format). The third element
+(optional) is a string giving the (unique) name of the
+node.</li>
+<li>A Node instance.</li>
+<li>A Transformer instance.</li>
+</ul>
+</li>
+<li><strong>parent</strong> (<a class="reference internal" href="pliers.graph.Node.html#pliers.graph.Node" title="pliers.graph.Node"><em>Node</em></a>) – Optional parent node (i.e., the node containing the
+pliers Transformer from which the to-be-created nodes receive
+their inputs).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pliers.graph.Graph.draw">
+<code class="descname">draw</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render a plot of the graph via pygraphviz.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Path to save the generated image to.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pliers.graph.Graph.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>stim</em>, <em>merge=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the graph by calling all Transformers in sequence.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stim</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>Stim</em><em>, </em><em>list</em>) – One or more valid inputs to any
+Transformer’s ‘transform’ call.</li>
+<li><strong>merge</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If True, all results are merged into a single pandas
+DataFrame before being returned. If False, a list of
+ExtractorResult objects is returned (one per Extractor/Stim
+combination).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pliers.graph.Graph.run_node">
+<code class="descname">run_node</code><span class="sig-paren">(</span><em>node</em>, <em>stim</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.run_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.run_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the Transformer at a specific node.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>node</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><a class="reference internal" href="pliers.graph.Node.html#pliers.graph.Node" title="pliers.graph.Node"><em>Node</em></a>) – If a string, the name of the Node in the current
+Graph. Otherwise the Node instance to execute.</li>
+<li><strong>stim</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>stim</em><em>, </em><em>list</em>) – Any valid input to the Transformer stored
+at the target node.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pliers.graph.Graph.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>stim</em>, <em>merge=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pliers.graph.Graph.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the graph by calling all Transformers in sequence.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stim</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>Stim</em><em>, </em><em>list</em>) – One or more valid inputs to any
+Transformer’s ‘transform’ call.</li>
+<li><strong>merge</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If True, all results are merged into a single pandas
+DataFrame before being returned. If False, a list of
+ExtractorResult objects is returned (one per Extractor/Stim
+combination).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pliers.graph.Node.html" class="btn btn-neutral float-right" title="pliers.graph.Node" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pliers.extractors.merge_results.html" class="btn btn-neutral" title="pliers.extractors.merge_results" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

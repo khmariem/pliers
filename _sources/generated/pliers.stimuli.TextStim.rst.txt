@@ -1,0 +1,11 @@
+pliers.stimuli.TextStim
+=======================
+
+.. currentmodule:: pliers.stimuli
+
+.. autoclass:: TextStim
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

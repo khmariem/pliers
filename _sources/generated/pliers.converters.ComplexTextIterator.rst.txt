@@ -1,0 +1,11 @@
+pliers.converters.ComplexTextIterator
+=====================================
+
+.. currentmodule:: pliers.converters
+
+.. autoclass:: ComplexTextIterator
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

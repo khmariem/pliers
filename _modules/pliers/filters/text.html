@@ -1,0 +1,373 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.filters.text &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.filters.text</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.filters.text</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39; Filters that operate on TextStim inputs. &#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">nltk</span>
+<span class="kn">import</span> <span class="nn">string</span>
+
+<span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">nltk</span> <span class="k">import</span> <span class="n">stem</span>
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="k">import</span> <span class="n">word_tokenize</span>
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="k">import</span> <span class="o">*</span> <span class="c1"># noqa</span>
+<span class="kn">from</span> <span class="nn">nltk.tokenize.api</span> <span class="k">import</span> <span class="n">TokenizerI</span>
+<span class="kn">from</span> <span class="nn">pliers.stimuli.text</span> <span class="k">import</span> <span class="n">TextStim</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">Filter</span>
+
+
+<span class="k">class</span> <span class="nc">TextFilter</span><span class="p">(</span><span class="n">Filter</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Base class for all TextFilters. &#39;&#39;&#39;</span>
+
+    <span class="n">_input_type</span> <span class="o">=</span> <span class="n">TextStim</span>
+
+
+<div class="viewcode-block" id="WordStemmingFilter"><a class="viewcode-back" href="../../../generated/pliers.filters.WordStemmingFilter.html#pliers.filters.WordStemmingFilter">[docs]</a><span class="k">class</span> <span class="nc">WordStemmingFilter</span><span class="p">(</span><span class="n">TextFilter</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Nltk-based word stemming Filter.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stemmer (str, Stemmer): If a string, must be the name of one of the</span>
+<span class="sd">            stemming modules available in nltk.stem. Valid values are</span>
+<span class="sd">            &#39;porter&#39;, &#39;snowball&#39;, &#39;isri&#39;, &#39;lancaster&#39;, &#39;regexp&#39;, &#39;wordet&#39;,</span>
+<span class="sd">            or &#39;rslp&#39;. Alternatively, an initialized nltk StemmerI instance</span>
+<span class="sd">            can be passed.</span>
+<span class="sd">        tokenize (bool): if True, apply the stemmer to each token in the</span>
+<span class="sd">            TextStim, otherwise treat the whole TextStim as one token to stem.</span>
+<span class="sd">        args, kwargs: Optional positional and keyword args passed onto the</span>
+<span class="sd">            nltk stemmer.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">stemmers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;porter&#39;</span><span class="p">:</span> <span class="s1">&#39;PorterStemmer&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;snowball&#39;</span><span class="p">:</span> <span class="s1">&#39;SnowballStemmer&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;lancaster&#39;</span><span class="p">:</span> <span class="s1">&#39;LancasterStemmer&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;isri&#39;</span><span class="p">:</span> <span class="s1">&#39;ISRIStemmer&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;regexp&#39;</span><span class="p">:</span> <span class="s1">&#39;RegexpStemmer&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;rslp&#39;</span><span class="p">:</span> <span class="s1">&#39;RSLPStemmer&#39;</span>
+    <span class="p">}</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;stemmer&#39;</span><span class="p">,</span> <span class="s1">&#39;tokenize&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WordStemmingFilter.__init__"><a class="viewcode-back" href="../../../generated/pliers.filters.WordStemmingFilter.html#pliers.filters.WordStemmingFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stemmer</span><span class="o">=</span><span class="s1">&#39;porter&#39;</span><span class="p">,</span> <span class="n">tokenize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stemmer</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">stemmer</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stemmers</span><span class="p">:</span>
+                <span class="n">valid</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stemmers</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid stemmer &#39;</span><span class="si">%s</span><span class="s2">&#39;; please use one of </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span>
+                                 <span class="p">(</span><span class="n">stemmer</span><span class="p">,</span> <span class="n">valid</span><span class="p">))</span>
+            <span class="n">stemmer</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">stem</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stemmers</span><span class="p">[</span><span class="n">stemmer</span><span class="p">])(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stemmer</span><span class="p">,</span> <span class="p">(</span><span class="n">stem</span><span class="o">.</span><span class="n">StemmerI</span><span class="p">,</span> <span class="n">stem</span><span class="o">.</span><span class="n">WordNetLemmatizer</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;stemmer must be either a valid string, or an &quot;</span>
+                             <span class="s2">&quot;instance of class StemmerI.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stemmer</span> <span class="o">=</span> <span class="n">stemmer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tokenize</span> <span class="o">=</span> <span class="n">tokenize</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WordStemmingFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenize</span><span class="p">:</span>
+            <span class="n">tokens</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">stemmed</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">stemmer</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">tok</span><span class="p">)</span> <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stemmed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stemmer</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">stemmed</span><span class="p">,</span> <span class="n">stim</span><span class="o">.</span><span class="n">onset</span><span class="p">,</span> <span class="n">stim</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TokenizingFilter"><a class="viewcode-back" href="../../../generated/pliers.filters.TokenizingFilter.html#pliers.filters.TokenizingFilter">[docs]</a><span class="k">class</span> <span class="nc">TokenizingFilter</span><span class="p">(</span><span class="n">TextFilter</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Tokenizes a TextStim into several word TextStims.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tokenizer (nltk Tokenizer or str): a nltk Tokenizer</span>
+<span class="sd">            (or the name of one) to tokenize with. Will use</span>
+<span class="sd">            the word_tokenize method if None is specified.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;tokenizer&#39;</span><span class="p">,)</span>
+
+<div class="viewcode-block" id="TokenizingFilter.__init__"><a class="viewcode-back" href="../../../generated/pliers.filters.TokenizingFilter.html#pliers.filters.TokenizingFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">TokenizerI</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">tokenizer</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">tokenizer</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TokenizingFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="p">:</span>
+            <span class="n">tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tokens</span> <span class="o">=</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">stims</span> <span class="o">=</span> <span class="p">[</span><span class="n">TextStim</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">stim</span><span class="o">.</span><span class="n">onset</span><span class="p">,</span> <span class="n">stim</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
+                 <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">stims</span></div>
+
+
+<div class="viewcode-block" id="TokenRemovalFilter"><a class="viewcode-back" href="../../../generated/pliers.filters.TokenRemovalFilter.html#pliers.filters.TokenRemovalFilter">[docs]</a><span class="k">class</span> <span class="nc">TokenRemovalFilter</span><span class="p">(</span><span class="n">TextFilter</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Removes tokens (e.g., stopwords, common words, punctuation) from a</span>
+<span class="sd">    TextStim.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tokens (list): a list of tokens (strings) to remove from a</span>
+<span class="sd">            TextStim. Will use nltk&#39;s default stopword list if none is</span>
+<span class="sd">            specified.</span>
+<span class="sd">        language (str): if using the default nltk stopwords, specifies</span>
+<span class="sd">            which language from which to use stopwords.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;tokens&#39;</span><span class="p">,</span> <span class="s1">&#39;language&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TokenRemovalFilter.__init__"><a class="viewcode-back" href="../../../generated/pliers.filters.TokenRemovalFilter.html#pliers.filters.TokenRemovalFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokens</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s1">&#39;english&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">language</span> <span class="o">=</span> <span class="n">language</span>
+        <span class="k">if</span> <span class="n">tokens</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">nltk</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;corpora/stopwords&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">LookupError</span><span class="p">:</span>
+                <span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s1">&#39;stopwords&#39;</span><span class="p">)</span>
+            <span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="k">import</span> <span class="n">stopwords</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">language</span><span class="p">))</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TokenRemovalFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">tok</span> <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">tok</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">]</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">stim</span><span class="o">.</span><span class="n">onset</span><span class="p">,</span> <span class="n">stim</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PunctuationRemovalFilter"><a class="viewcode-back" href="../../../generated/pliers.filters.PunctuationRemovalFilter.html#pliers.filters.PunctuationRemovalFilter">[docs]</a><span class="k">class</span> <span class="nc">PunctuationRemovalFilter</span><span class="p">(</span><span class="n">TokenRemovalFilter</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Removes punctuation from a TextStim. &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="PunctuationRemovalFilter.__init__"><a class="viewcode-back" href="../../../generated/pliers.filters.PunctuationRemovalFilter.html#pliers.filters.PunctuationRemovalFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokens</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PunctuationRemovalFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

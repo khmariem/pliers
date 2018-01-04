@@ -1,0 +1,6 @@
+pliers.datasets.fetch_dictionary
+================================
+
+.. currentmodule:: pliers.datasets
+
+.. autofunction:: fetch_dictionary

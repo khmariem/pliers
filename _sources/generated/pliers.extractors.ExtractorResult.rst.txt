@@ -1,0 +1,11 @@
+pliers.extractors.ExtractorResult
+=================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: ExtractorResult
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

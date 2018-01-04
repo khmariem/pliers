@@ -1,0 +1,530 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.extractors.text &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.extractors.text</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.extractors.text</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Extractors that operate primarily or exclusively on Text stimuli.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">pliers.stimuli.text</span> <span class="k">import</span> <span class="n">TextStim</span><span class="p">,</span> <span class="n">ComplexTextStim</span>
+<span class="kn">from</span> <span class="nn">pliers.extractors.base</span> <span class="k">import</span> <span class="n">Extractor</span><span class="p">,</span> <span class="n">ExtractorResult</span>
+<span class="kn">from</span> <span class="nn">pliers.support.exceptions</span> <span class="k">import</span> <span class="n">PliersError</span>
+<span class="kn">from</span> <span class="nn">pliers.support.decorators</span> <span class="k">import</span> <span class="n">requires_nltk_corpus</span>
+<span class="kn">from</span> <span class="nn">pliers.datasets.text</span> <span class="k">import</span> <span class="n">fetch_dictionary</span>
+<span class="kn">from</span> <span class="nn">pliers.transformers</span> <span class="k">import</span> <span class="n">BatchTransformerMixin</span>
+<span class="kn">from</span> <span class="nn">pliers.utils</span> <span class="k">import</span> <span class="n">attempt_to_import</span><span class="p">,</span> <span class="n">verify_dependencies</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">nltk</span>
+<span class="kn">from</span> <span class="nn">nltk.sentiment.vader</span> <span class="k">import</span> <span class="n">SentimentIntensityAnalyzer</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">string_types</span>
+
+<span class="n">keyedvectors</span> <span class="o">=</span> <span class="n">attempt_to_import</span><span class="p">(</span><span class="s1">&#39;gensim.models.keyedvectors&#39;</span><span class="p">,</span> <span class="s1">&#39;keyedvectors&#39;</span><span class="p">,</span>
+                                 <span class="p">[</span><span class="s1">&#39;KeyedVectors&#39;</span><span class="p">])</span>
+<span class="n">sklearn_text</span> <span class="o">=</span> <span class="n">attempt_to_import</span><span class="p">(</span><span class="s1">&#39;sklearn.feature_extraction.text&#39;</span><span class="p">,</span> <span class="s1">&#39;sklearn_text&#39;</span><span class="p">,</span>
+                                 <span class="p">[</span><span class="s1">&#39;VectorizerMixin&#39;</span><span class="p">,</span> <span class="s1">&#39;CountVectorizer&#39;</span><span class="p">])</span>
+
+
+<span class="k">class</span> <span class="nc">TextExtractor</span><span class="p">(</span><span class="n">Extractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Base Text Extractor class; all subclasses can only be applied to text.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">_input_type</span> <span class="o">=</span> <span class="n">TextStim</span>
+
+
+<div class="viewcode-block" id="ComplexTextExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.ComplexTextExtractor.html#pliers.extractors.ComplexTextExtractor">[docs]</a><span class="k">class</span> <span class="nc">ComplexTextExtractor</span><span class="p">(</span><span class="n">Extractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Base ComplexTextStim Extractor class; all subclasses can only be</span>
+<span class="sd">    applied to ComplexTextStim instance.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">_input_type</span> <span class="o">=</span> <span class="n">ComplexTextStim</span>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Returns all words. &#39;&#39;&#39;</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="p">[(</span><span class="n">e</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">onset</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">stim</span><span class="o">.</span><span class="n">elements</span><span class="p">]</span>
+        <span class="n">vals</span><span class="p">,</span> <span class="n">onsets</span><span class="p">,</span> <span class="n">durations</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">props</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;word&#39;</span><span class="p">],</span> <span class="n">onsets</span><span class="p">,</span> <span class="n">durations</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DictionaryExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.DictionaryExtractor.html#pliers.extractors.DictionaryExtractor">[docs]</a><span class="k">class</span> <span class="nc">DictionaryExtractor</span><span class="p">(</span><span class="n">TextExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; A generic dictionary-based extractor that supports extraction of</span>
+<span class="sd">    arbitrary features contained in a lookup table.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dictionary (str, DataFrame): The dictionary containing the feature</span>
+<span class="sd">            values. Either a string giving the path to the dictionary file,</span>
+<span class="sd">            or a pandas DF. Format must be tab-delimited, with the first column</span>
+<span class="sd">            containing the text key used for lookup. Subsequent columns each</span>
+<span class="sd">            represent a single feature that can be used in extraction.</span>
+<span class="sd">        variables (list): Optional subset of columns to keep from the</span>
+<span class="sd">            dictionary.</span>
+<span class="sd">        missing: Value to insert if no lookup value is found for a text token.</span>
+<span class="sd">            Defaults to numpy&#39;s NaN.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;dictionary&#39;</span><span class="p">,</span> <span class="s1">&#39;variables&#39;</span><span class="p">,</span> <span class="s1">&#39;missing&#39;</span><span class="p">)</span>
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+
+<div class="viewcode-block" id="DictionaryExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.DictionaryExtractor.html#pliers.extractors.DictionaryExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">,</span> <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dictionary</span> <span class="o">=</span> <span class="n">dictionary</span>  <span class="c1"># for TranformationHistory logging</span>
+            <span class="n">dictionary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dictionary</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">dictionary</span>
+        <span class="k">if</span> <span class="n">variables</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">variables</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">variables</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span> <span class="o">=</span> <span class="n">variables</span>
+        <span class="c1"># Set up response when key is missing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">missing</span> <span class="o">=</span> <span class="n">missing</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DictionaryExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">stim</span><span class="o">.</span><span class="n">text</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">missing</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">stim</span><span class="o">.</span><span class="n">text</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">missing</span><span class="p">)</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">vals</span><span class="o">.</span><span class="n">values</span><span class="p">())]),</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
+                               <span class="n">features</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">vals</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span></div>
+
+
+<div class="viewcode-block" id="PredefinedDictionaryExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.PredefinedDictionaryExtractor.html#pliers.extractors.PredefinedDictionaryExtractor">[docs]</a><span class="k">class</span> <span class="nc">PredefinedDictionaryExtractor</span><span class="p">(</span><span class="n">DictionaryExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; A generic Extractor that maps words onto values via one or more</span>
+<span class="sd">    pre-defined dictionaries accessed via the web.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        variables (list or dict): A specification of the dictionaries and</span>
+<span class="sd">            column names to map the input TextStims onto. If a list, each</span>
+<span class="sd">            element must be a string with the format &#39;dict/column&#39;, where the</span>
+<span class="sd">            value before the slash gives the name of the dictionary, and the</span>
+<span class="sd">            value after the slash gives the name of the column in that</span>
+<span class="sd">            dictionary. These names can be found in the dictionaries.json</span>
+<span class="sd">            specification file under the datasets submodule. Examples of</span>
+<span class="sd">            valid values are &#39;affect/V.Mean.Sum&#39; and</span>
+<span class="sd">            &#39;subtlexusfrequency/Lg10WF&#39;. If a dict, the keys are the names of</span>
+<span class="sd">            the dictionary files (e.g., &#39;affect&#39;), and the values are lists</span>
+<span class="sd">            of columns to use (e.g., [&#39;V.Mean.Sum&#39;, &#39;V.SD.Sum&#39;]).</span>
+<span class="sd">        missing (object): Value to use when an entry for a word is missing in</span>
+<span class="sd">            a dictionary (defaults to numpy&#39;s NaN).</span>
+<span class="sd">        case_sensitive (bool): If True, entries in the dictionary are treated</span>
+<span class="sd">            as case-sensitive (e.g., &#39;John&#39; and &#39;john&#39; are different words).</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;variables&#39;</span><span class="p">,</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="s1">&#39;case_sensitive&#39;</span><span class="p">)</span>
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+
+<div class="viewcode-block" id="PredefinedDictionaryExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.PredefinedDictionaryExtractor.html#pliers.extractors.PredefinedDictionaryExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">case_sensitive</span> <span class="o">=</span> <span class="n">case_sensitive</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">_vars</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_vars</span><span class="p">:</span>
+                    <span class="n">_vars</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">_vars</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">variables</span> <span class="o">=</span> <span class="n">_vars</span>
+
+        <span class="n">dicts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">fetch_dictionary</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">case_sensitive</span><span class="p">:</span>
+                <span class="n">d</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">v</span><span class="p">:</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>
+            <span class="n">d</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+            <span class="n">dicts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+        <span class="n">dictionary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dicts</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PredefinedDictionaryExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">dictionary</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="n">missing</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="LengthExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.LengthExtractor.html#pliers.extractors.LengthExtractor">[docs]</a><span class="k">class</span> <span class="nc">LengthExtractor</span><span class="p">(</span><span class="n">TextExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts the length of the text in characters. &#39;&#39;&#39;</span>
+
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="nb">len</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">())]]),</span> <span class="n">stim</span><span class="p">,</span>
+                               <span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;text_length&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="NumUniqueWordsExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.NumUniqueWordsExtractor.html#pliers.extractors.NumUniqueWordsExtractor">[docs]</a><span class="k">class</span> <span class="nc">NumUniqueWordsExtractor</span><span class="p">(</span><span class="n">TextExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts the number of unique words used in the text. &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;tokenizer&#39;</span><span class="p">,)</span>
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+
+<div class="viewcode-block" id="NumUniqueWordsExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.NumUniqueWordsExtractor.html#pliers.extractors.NumUniqueWordsExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NumUniqueWordsExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">tokenizer</span></div>
+
+    <span class="nd">@requires_nltk_corpus</span>
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">text</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nltk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">num_words</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">num_words</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">nltk</span><span class="o">.</span><span class="n">word_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">num_words</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">num_words</span><span class="p">]]),</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
+                               <span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;num_unique_words&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="PartOfSpeechExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.PartOfSpeechExtractor.html#pliers.extractors.PartOfSpeechExtractor">[docs]</a><span class="k">class</span> <span class="nc">PartOfSpeechExtractor</span><span class="p">(</span><span class="n">BatchTransformerMixin</span><span class="p">,</span> <span class="n">TextExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Tags parts of speech in text with nltk. &#39;&#39;&#39;</span>
+
+    <span class="n">_batch_size</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span>
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+
+    <span class="nd">@requires_nltk_corpus</span>
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stims</span><span class="p">):</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">stims</span><span class="p">]</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">pos_tag</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pos</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">PliersError</span><span class="p">(</span>
+                <span class="s2">&quot;The number of words does not match the number of tagged words&quot;</span>
+                <span class="s2">&quot;returned by nltk&#39;s part-of-speech tagger.&quot;</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tagset</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;help/tagsets/upenn_tagset.pickle&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stims</span><span class="p">):</span>
+            <span class="n">pos_vector</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">tagset</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">pos_vector</span><span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ExtractorResult</span><span class="p">([</span><span class="n">pos_vector</span><span class="o">.</span><span class="n">values</span><span class="p">()],</span> <span class="n">s</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
+                                           <span class="n">features</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">pos_vector</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="WordEmbeddingExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.WordEmbeddingExtractor.html#pliers.extractors.WordEmbeddingExtractor">[docs]</a><span class="k">class</span> <span class="nc">WordEmbeddingExtractor</span><span class="p">(</span><span class="n">TextExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; An extractor that uses a word embedding file to look up embedding</span>
+<span class="sd">    vectors for text.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        embedding_file (str): path to a word embedding file. Assumed to be in</span>
+<span class="sd">            word2vec format compatible with gensim.</span>
+<span class="sd">        binary (bool): flag indicating whether embedding file is saved in a</span>
+<span class="sd">            binary format</span>
+<span class="sd">        prefix (str): prefix for feature names in the ExtractorResult.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;wvModel&#39;</span><span class="p">,</span> <span class="s1">&#39;prefix&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WordEmbeddingExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.WordEmbeddingExtractor.html#pliers.extractors.WordEmbeddingExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_file</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;embedding_dim&#39;</span><span class="p">):</span>
+        <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;keyedvectors&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wvModel</span> <span class="o">=</span> <span class="n">keyedvectors</span><span class="o">.</span><span class="n">KeyedVectors</span><span class="o">.</span><span class="n">load_word2vec_format</span><span class="p">(</span><span class="n">embedding_file</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="n">binary</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WordEmbeddingExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="n">num_dims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wvModel</span><span class="o">.</span><span class="n">vector_size</span>
+        <span class="k">if</span> <span class="n">stim</span><span class="o">.</span><span class="n">text</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wvModel</span><span class="p">:</span>
+            <span class="n">embedding_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wvModel</span><span class="p">[</span><span class="n">stim</span><span class="o">.</span><span class="n">text</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># UNKs will have zeroed-out vectors</span>
+            <span class="n">embedding_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_dims</span><span class="p">)</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_dims</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">([</span><span class="n">embedding_vector</span><span class="p">],</span>
+                               <span class="n">stim</span><span class="p">,</span>
+                               <span class="bp">self</span><span class="p">,</span>
+                               <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TextVectorizerExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.TextVectorizerExtractor.html#pliers.extractors.TextVectorizerExtractor">[docs]</a><span class="k">class</span> <span class="nc">TextVectorizerExtractor</span><span class="p">(</span><span class="n">BatchTransformerMixin</span><span class="p">,</span> <span class="n">TextExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Uses a scikit-learn Vectorizer to extract bag-of-features</span>
+<span class="sd">    from text.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        vectorizer (sklearn Vectorizer or str): a scikit-learn Vectorizer</span>
+<span class="sd">            (or the name in a string) to extract with. Will use the</span>
+<span class="sd">            CountVectorizer by default. Uses supporting *args and **kwargs.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;vectorizer&#39;</span><span class="p">,)</span>
+    <span class="n">_batch_size</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span>
+
+<div class="viewcode-block" id="TextVectorizerExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.TextVectorizerExtractor.html#pliers.extractors.TextVectorizerExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vectorizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;sklearn_text&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vectorizer</span><span class="p">,</span> <span class="n">sklearn_text</span><span class="o">.</span><span class="n">VectorizerMixin</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vectorizer</span> <span class="o">=</span> <span class="n">vectorizer</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vectorizer</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">vec</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sklearn_text</span><span class="p">,</span> <span class="n">vectorizer</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vectorizer</span> <span class="o">=</span> <span class="n">vec</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vectorizer</span> <span class="o">=</span> <span class="n">sklearn_text</span><span class="o">.</span><span class="n">CountVectorizer</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TextVectorizerExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stims</span><span class="p">):</span>
+        <span class="n">mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">([</span><span class="n">s</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stims</span><span class="p">])</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mat</span><span class="p">):</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">ExtractorResult</span><span class="p">([</span><span class="n">row</span><span class="p">],</span> <span class="n">stims</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="p">,</span>
+                                <span class="n">features</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vectorizer</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="VADERSentimentExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.VADERSentimentExtractor.html#pliers.extractors.VADERSentimentExtractor">[docs]</a><span class="k">class</span> <span class="nc">VADERSentimentExtractor</span><span class="p">(</span><span class="n">TextExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Uses nltk&#39;s VADER lexicon to extract (0.0-1.0) values for the positve,</span>
+<span class="sd">    neutral, and negative sentiment of a TextStim. Also returns a compound</span>
+<span class="sd">    score ranging from -1 (very negative) to +1 (very positive). &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;analyzer&#39;</span><span class="p">,)</span>
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+
+<div class="viewcode-block" id="VADERSentimentExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.VADERSentimentExtractor.html#pliers.extractors.VADERSentimentExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyzer</span> <span class="o">=</span> <span class="n">SentimentIntensityAnalyzer</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">VADERSentimentExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+    <span class="nd">@requires_nltk_corpus</span>
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyzer</span><span class="o">.</span><span class="n">polarity_scores</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sentiment_&#39;</span> <span class="o">+</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">scores</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">values</span><span class="p">())],</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
+                               <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

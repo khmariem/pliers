@@ -1,0 +1,11 @@
+pliers.converters.VideoToTextConverter
+======================================
+
+.. currentmodule:: pliers.converters
+
+.. autoclass:: VideoToTextConverter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

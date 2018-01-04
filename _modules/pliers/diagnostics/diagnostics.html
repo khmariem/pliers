@@ -1,0 +1,440 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.diagnostics.diagnostics &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.diagnostics.diagnostics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.diagnostics.diagnostics</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="k">import</span> <span class="n">mahalanobis</span>
+<span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="k">import</span> <span class="n">LinAlgError</span>
+
+
+<div class="viewcode-block" id="correlation_matrix"><a class="viewcode-back" href="../../../generated/pliers.diagnostics.correlation_matrix.html#pliers.diagnostics.correlation_matrix">[docs]</a><span class="k">def</span> <span class="nf">correlation_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns a pandas DataFrame with the pair-wise correlations of the columns.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: pandas DataFrame with columns to run diagnostics on</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">corr</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">corr</span></div>
+
+
+<div class="viewcode-block" id="eigenvalues"><a class="viewcode-back" href="../../../generated/pliers.diagnostics.eigenvalues.html#pliers.diagnostics.eigenvalues">[docs]</a><span class="k">def</span> <span class="nf">eigenvalues</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns a pandas Series with eigenvalues of the correlation matrix.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: pandas DataFrame with columns to run diagnostics on</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">eigvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">corr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">eigvals</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Eigenvalue&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="condition_indices"><a class="viewcode-back" href="../../../generated/pliers.diagnostics.condition_indices.html#pliers.diagnostics.condition_indices">[docs]</a><span class="k">def</span> <span class="nf">condition_indices</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns a pandas Series with condition indices of the df columns.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: pandas DataFrame with columns to run diagnostics on</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">eigvals</span> <span class="o">=</span> <span class="n">eigenvalues</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">cond_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eigvals</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">/</span> <span class="n">eigvals</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">cond_idx</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Condition index&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="variance_inflation_factors"><a class="viewcode-back" href="../../../generated/pliers.diagnostics.variance_inflation_factors.html#pliers.diagnostics.variance_inflation_factors">[docs]</a><span class="k">def</span> <span class="nf">variance_inflation_factors</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Computes the variance inflation factor (VIF) for each column in the df.</span>
+<span class="sd">    Returns a pandas Series of VIFs</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: pandas DataFrame with columns to run diagnostics on</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">corr_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">corr</span><span class="p">)</span>
+    <span class="n">vifs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">corr_inv</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">vifs</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;VIF&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="mahalanobis_distances"><a class="viewcode-back" href="../../../generated/pliers.diagnostics.mahalanobis_distances.html#pliers.diagnostics.mahalanobis_distances">[docs]</a><span class="k">def</span> <span class="nf">mahalanobis_distances</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns a pandas Series with Mahalanobis distances for each sample on the</span>
+<span class="sd">    axis.</span>
+
+<span class="sd">    Note: does not work well when # of observations &lt; # of dimensions</span>
+<span class="sd">    Will either return NaN in answer</span>
+<span class="sd">    or (in the extreme case) fail with a Singular Matrix LinAlgError</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: pandas DataFrame with columns to run diagnostics on</span>
+<span class="sd">        axis: 0 to find outlier rows, 1 to find outlier columns</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span> <span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">df</span>
+    <span class="n">means</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">inv_cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">cov</span><span class="p">())</span>
+    <span class="k">except</span> <span class="n">LinAlgError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">NAN</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                         <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Mahalanobis&#39;</span><span class="p">)</span>
+    <span class="n">dists</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">dists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mahalanobis</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">means</span><span class="p">,</span> <span class="n">inv_cov</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">dists</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Mahalanobis&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="variances"><a class="viewcode-back" href="../../../generated/pliers.diagnostics.variances.html#pliers.diagnostics.variances">[docs]</a><span class="k">def</span> <span class="nf">variances</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns a pandas Series with variances for each column</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: pandas DataFrame with columns to run diagnostics on</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Variances&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Diagnostics"><a class="viewcode-back" href="../../../generated/pliers.diagnostics.Diagnostics.html#pliers.diagnostics.Diagnostics">[docs]</a><span class="k">class</span> <span class="nc">Diagnostics</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Eigenvalues&#39;</span><span class="p">:</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">),</span>
+        <span class="s1">&#39;ConditionIndices&#39;</span><span class="p">:</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">),</span>
+        <span class="s1">&#39;VIFs&#39;</span><span class="p">:</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="s1">&#39;CorrelationMatrix&#39;</span><span class="p">:</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">),</span>
+        <span class="s1">&#39;RowMahalanobisDistances&#39;</span><span class="p">:</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="s1">&#39;ColumnMahalanobisDistances&#39;</span><span class="p">:</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="s1">&#39;Variances&#39;</span><span class="p">:</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mf">0.15</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="sd">&#39;&#39;&#39; Class for holding diagnostics of a design matrix &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="Diagnostics.__init__"><a class="viewcode-back" href="../../../generated/pliers.diagnostics.Diagnostics.html#pliers.diagnostics.Diagnostics.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">columns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Eigenvalues&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eigenvalues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">cols</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;ConditionIndices&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">condition_indices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">cols</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;VIFs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">variance_inflation_factors</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">cols</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;CorrelationMatrix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">correlation_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">cols</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;RowMahalanobisDistances&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mahalanobis_distances</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">cols</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;ColumnMahalanobisDistances&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mahalanobis_distances</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">cols</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Variances&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">variances</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">cols</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Diagnostics.summary"><a class="viewcode-back" href="../../../generated/pliers.diagnostics.Diagnostics.html#pliers.diagnostics.Diagnostics.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Displays diagnostics to the user</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stdout (bool): print results to the console</span>
+<span class="sd">            plot (bool): use Seaborn to plot results</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">stdout</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Collinearity summary:&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Eigenvalues&#39;</span><span class="p">],</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;ConditionIndices&#39;</span><span class="p">],</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;VIFs&#39;</span><span class="p">],</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;CorrelationMatrix&#39;</span><span class="p">]],</span>
+                            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Outlier summary:&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;RowMahalanobisDistances&#39;</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;ColumnMahalanobisDistances&#39;</span><span class="p">])</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Validity summary:&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Variances&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;CorrelationMatrix&#39;</span><span class="p">:</span>
+                    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span>
+                    <span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                    <span class="n">sns</span><span class="o">.</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Diagnostics.flag"><a class="viewcode-back" href="../../../generated/pliers.diagnostics.Diagnostics.html#pliers.diagnostics.Diagnostics.flag">[docs]</a>    <span class="k">def</span> <span class="nf">flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diagnostic</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns indices of diagnostic that satisfy (return True from) the</span>
+<span class="sd">        threshold predicate. Will use class-level default threshold if</span>
+<span class="sd">        None provided.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            diagnostic (str): name of the diagnostic</span>
+<span class="sd">            thresh (func): threshold function (boolean predicate) to apply to</span>
+<span class="sd">            each element</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">thresh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">thresh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span><span class="p">[</span><span class="n">diagnostic</span><span class="p">]</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="n">diagnostic</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">diagnostic</span> <span class="o">==</span> <span class="s1">&#39;CorrelationMatrix&#39;</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="n">thresh</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">thresh</span><span class="p">)</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Diagnostics.flag_all"><a class="viewcode-back" href="../../../generated/pliers.diagnostics.Diagnostics.html#pliers.diagnostics.Diagnostics.flag_all">[docs]</a>    <span class="k">def</span> <span class="nf">flag_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thresh_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns indices of (rows, columns) that satisfy flag() on any</span>
+<span class="sd">        diagnostic. Uses user-provided thresholds in thresh_dict/</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            thresh_dict (dict): dictionary of diagnostic-&gt;threshold functions</span>
+<span class="sd">            include (list): optional sublist of diagnostics to flag</span>
+<span class="sd">            exclude (list): optional sublist of diagnostics to not flag</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">thresh_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">thresh_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">row_idx</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">col_idx</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">include</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="k">if</span> <span class="n">include</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">include</span>
+        <span class="n">include</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">set</span><span class="p">(</span><span class="n">include</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">exclude</span><span class="p">))</span> <span class="k">if</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">include</span>
+        <span class="k">for</span> <span class="n">diagnostic</span> <span class="ow">in</span> <span class="n">include</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">diagnostic</span> <span class="ow">in</span> <span class="n">thresh_dict</span><span class="p">:</span>
+                <span class="n">flagged</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span><span class="p">(</span><span class="n">diagnostic</span><span class="p">,</span> <span class="n">thresh_dict</span><span class="p">[</span><span class="n">diagnostic</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">flagged</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span><span class="p">(</span><span class="n">diagnostic</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">diagnostic</span> <span class="o">==</span> <span class="s1">&#39;RowMahalanobisDistances&#39;</span><span class="p">:</span>
+                <span class="n">row_idx</span> <span class="o">=</span> <span class="n">row_idx</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">flagged</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">col_idx</span> <span class="o">=</span> <span class="n">col_idx</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">flagged</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">row_idx</span><span class="p">)),</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">col_idx</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

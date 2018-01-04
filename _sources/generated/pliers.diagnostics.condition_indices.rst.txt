@@ -1,0 +1,6 @@
+pliers.diagnostics.condition_indices
+====================================
+
+.. currentmodule:: pliers.diagnostics
+
+.. autofunction:: condition_indices

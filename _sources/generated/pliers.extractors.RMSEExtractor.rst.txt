@@ -1,0 +1,11 @@
+pliers.extractors.RMSEExtractor
+===============================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: RMSEExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

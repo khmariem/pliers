@@ -1,0 +1,11 @@
+pliers.extractors.MeanAmplitudeExtractor
+========================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: MeanAmplitudeExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

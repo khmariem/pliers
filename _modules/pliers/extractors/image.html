@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.extractors.image &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.extractors.image</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.extractors.image</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Extractors that operate primarily or exclusively on Image stimuli.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">pliers.stimuli.image</span> <span class="k">import</span> <span class="n">ImageStim</span>
+<span class="kn">from</span> <span class="nn">pliers.extractors.base</span> <span class="k">import</span> <span class="n">Extractor</span><span class="p">,</span> <span class="n">ExtractorResult</span>
+<span class="kn">from</span> <span class="nn">pliers.utils</span> <span class="k">import</span> <span class="n">attempt_to_import</span><span class="p">,</span> <span class="n">verify_dependencies</span><span class="p">,</span> <span class="n">listify</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+
+
+<span class="n">cv2</span> <span class="o">=</span> <span class="n">attempt_to_import</span><span class="p">(</span><span class="s1">&#39;cv2&#39;</span><span class="p">)</span>
+<span class="n">face_recognition</span> <span class="o">=</span> <span class="n">attempt_to_import</span><span class="p">(</span><span class="s1">&#39;face_recognition&#39;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ImageExtractor</span><span class="p">(</span><span class="n">Extractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Base Image Extractor class; all subclasses can only be applied to</span>
+<span class="sd">    images. &#39;&#39;&#39;</span>
+    <span class="n">_input_type</span> <span class="o">=</span> <span class="n">ImageStim</span>
+
+
+<div class="viewcode-block" id="BrightnessExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.BrightnessExtractor.html#pliers.extractors.BrightnessExtractor">[docs]</a><span class="k">class</span> <span class="nc">BrightnessExtractor</span><span class="p">(</span><span class="n">ImageExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Gets the average luminosity of the pixels in the image &#39;&#39;&#39;</span>
+
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">brightness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">/</span> <span class="mf">255.0</span>
+
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">brightness</span><span class="p">]]),</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
+                               <span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;brightness&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="SharpnessExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.SharpnessExtractor.html#pliers.extractors.SharpnessExtractor">[docs]</a><span class="k">class</span> <span class="nc">SharpnessExtractor</span><span class="p">(</span><span class="n">ImageExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Gets the degree of blur/sharpness of the image &#39;&#39;&#39;</span>
+
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;cv2&#39;</span><span class="p">])</span>
+        <span class="c1"># Taken from</span>
+        <span class="c1"># http://stackoverflow.com/questions/7765810/is-there-a-way-to-detect-if-an-image-is-blurry?lq=1</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">gray_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+
+        <span class="n">sharpness</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">convertScaleAbs</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">Laplacian</span><span class="p">(</span><span class="n">gray_image</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span> <span class="o">/</span> <span class="mf">255.0</span>
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">sharpness</span><span class="p">]]),</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
+                               <span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sharpness&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="VibranceExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.VibranceExtractor.html#pliers.extractors.VibranceExtractor">[docs]</a><span class="k">class</span> <span class="nc">VibranceExtractor</span><span class="p">(</span><span class="n">ImageExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Gets the variance of color channels of the image &#39;&#39;&#39;</span>
+
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">vibrance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">vibrance</span><span class="p">]]),</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
+                               <span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;vibrance&#39;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="SaliencyExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.SaliencyExtractor.html#pliers.extractors.SaliencyExtractor">[docs]</a><span class="k">class</span> <span class="nc">SaliencyExtractor</span><span class="p">(</span><span class="n">ImageExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Determines the saliency of the image using Itti &amp; Koch (1998) algorithm</span>
+<span class="sd">    implemented in pySaliencyMap &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">pliers.external.pysaliency</span> <span class="k">import</span> <span class="n">pySaliencyMap</span>
+        <span class="c1"># pySaliencyMap from https://github.com/akisato-/pySaliencyMap</span>
+        <span class="c1"># Initialize variables</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">sm</span> <span class="o">=</span> <span class="n">pySaliencyMap</span><span class="o">.</span><span class="n">pySaliencyMap</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+
+        <span class="c1"># Compute saliency maps and store full maps as derivatives</span>
+        <span class="n">stim</span><span class="o">.</span><span class="n">derivatives</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">stim</span><span class="o">.</span><span class="n">derivatives</span><span class="p">[</span><span class="s1">&#39;saliency_map&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">SMGetSM</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">stim</span><span class="o">.</span><span class="n">derivatives</span><span class="p">[</span><span class="s1">&#39;binarized_map&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">SMGetBinarizedSM</span><span class="p">(</span>
+            <span class="n">stim</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># thresholding done using Otsu</span>
+
+        <span class="c1"># Compute summary statistics</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">output</span><span class="p">[</span><span class="s1">&#39;max_saliency&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">derivatives</span><span class="p">[</span><span class="s1">&#39;saliency_map&#39;</span><span class="p">])</span>
+        <span class="n">output</span><span class="p">[</span><span class="s1">&#39;max_y&#39;</span><span class="p">],</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;max_x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="n">stim</span><span class="o">.</span><span class="n">derivatives</span><span class="p">[</span><span class="s1">&#39;saliency_map&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">output</span><span class="p">[</span><span class="s1">&#39;max_saliency&#39;</span><span class="p">])]</span>
+        <span class="n">output</span><span class="p">[</span><span class="s1">&#39;frac_high_saliency&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="n">stim</span><span class="o">.</span><span class="n">derivatives</span><span class="p">[</span><span class="s1">&#39;binarized_map&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">255.0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">values</span><span class="p">())]),</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
+                               <span class="n">features</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span></div>
+
+
+<span class="k">class</span> <span class="nc">FaceRecognitionFeatureExtractor</span><span class="p">(</span><span class="n">ImageExtractor</span><span class="p">):</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;face_recognition_kwargs&#39;</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">face_recognition_kwargs</span><span class="p">):</span>
+        <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;face_recognition&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">face_recognition_kwargs</span> <span class="o">=</span> <span class="n">face_recognition_kwargs</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">face_recognition</span><span class="o">.</span><span class="n">api</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feature</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">**</span><span class="n">face_recognition_kwargs</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">FaceRecognitionFeatureExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feature</span>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">feature_names</span> <span class="o">=</span> <span class="n">listify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="n">feature_names</span><span class="p">,</span>
+                               <span class="n">raw</span><span class="o">=</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+        <span class="n">n_faces</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">raw</span><span class="p">)</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_feature</span><span class="p">]</span> <span class="k">if</span> <span class="n">n_faces</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> \
+            <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_feature</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_faces</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+
+
+<span class="k">class</span> <span class="nc">FaceRecognitionFaceEncodingsExtractor</span><span class="p">(</span><span class="n">FaceRecognitionFeatureExtractor</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Uses the face_recognition package to extract a 128-dimensional encoding</span>
+<span class="sd">    for every face detected in an image. For details, see documentation for</span>
+<span class="sd">    face_recognition.api.face_encodings. &#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;face_encodings&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">FaceRecognitionFaceLandmarksExtractor</span><span class="p">(</span><span class="n">FaceRecognitionFeatureExtractor</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Uses the face_recognition package to extract the locations of named</span>
+<span class="sd">    features of faces in the image. For details, see documentation for</span>
+<span class="sd">    face_recognition.api.face_landmarks.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;face_landmarks&#39;</span>
+
+    <span class="k">def</span> <span class="nf">to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+        <span class="n">n_faces</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">raw</span><span class="p">)</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_feature</span> <span class="o">+</span> <span class="s1">&#39;_</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">n_faces</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> \
+            <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%%</span><span class="s1">s_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_feature</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_faces</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">face</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">raw</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">%</span> <span class="n">k</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+
+
+<span class="k">class</span> <span class="nc">FaceRecognitionFaceLocationsExtractor</span><span class="p">(</span><span class="n">FaceRecognitionFeatureExtractor</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Uses the face_recognition package to extract bounding boxes for all</span>
+<span class="sd">    faces in an image. For details, see documentation for</span>
+<span class="sd">    face_recognition.api.face_locations. &#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;face_locations&#39;</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

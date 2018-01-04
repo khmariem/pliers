@@ -1,0 +1,11 @@
+pliers.extractors.ChromaCENSExtractor
+=====================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: ChromaCENSExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

@@ -1,0 +1,6 @@
+pliers.transformers.get_transformer
+===================================
+
+.. currentmodule:: pliers.transformers
+
+.. autofunction:: get_transformer

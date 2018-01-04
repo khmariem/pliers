@@ -1,0 +1,11 @@
+pliers.extractors.GoogleVisionAPILabelExtractor
+===============================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: GoogleVisionAPILabelExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

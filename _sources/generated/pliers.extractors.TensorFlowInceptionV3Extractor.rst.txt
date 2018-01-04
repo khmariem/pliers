@@ -1,0 +1,11 @@
+pliers.extractors.TensorFlowInceptionV3Extractor
+================================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: TensorFlowInceptionV3Extractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

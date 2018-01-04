@@ -1,0 +1,11 @@
+pliers.extractors.VibranceExtractor
+===================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: VibranceExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

@@ -1,0 +1,11 @@
+pliers.stimuli.CompoundStim
+===========================
+
+.. currentmodule:: pliers.stimuli
+
+.. autoclass:: CompoundStim
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

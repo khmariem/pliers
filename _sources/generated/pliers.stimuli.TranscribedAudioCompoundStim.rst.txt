@@ -1,0 +1,11 @@
+pliers.stimuli.TranscribedAudioCompoundStim
+===========================================
+
+.. currentmodule:: pliers.stimuli
+
+.. autoclass:: TranscribedAudioCompoundStim
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

@@ -1,0 +1,11 @@
+pliers.filters.PunctuationRemovalFilter
+=======================================
+
+.. currentmodule:: pliers.filters
+
+.. autoclass:: PunctuationRemovalFilter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

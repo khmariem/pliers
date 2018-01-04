@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.extractors.api &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.extractors.api</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.extractors.api</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Extractors that interact with external (e.g., deep learning) services.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">contextlib</span> <span class="k">import</span> <span class="n">ExitStack</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">contextlib2</span> <span class="k">import</span> <span class="n">ExitStack</span>
+<span class="kn">from</span> <span class="nn">pliers.extractors.image</span> <span class="k">import</span> <span class="n">ImageExtractor</span>
+<span class="kn">from</span> <span class="nn">pliers.extractors.text</span> <span class="k">import</span> <span class="n">TextExtractor</span>
+<span class="kn">from</span> <span class="nn">pliers.extractors.base</span> <span class="k">import</span> <span class="n">Extractor</span><span class="p">,</span> <span class="n">ExtractorResult</span>
+<span class="kn">from</span> <span class="nn">pliers.transformers</span> <span class="k">import</span> <span class="n">BatchTransformerMixin</span>
+<span class="kn">from</span> <span class="nn">pliers.utils</span> <span class="k">import</span> <span class="p">(</span><span class="n">listify</span><span class="p">,</span> <span class="n">EnvironmentKeyMixin</span><span class="p">,</span> <span class="n">attempt_to_import</span><span class="p">,</span>
+                          <span class="n">verify_dependencies</span><span class="p">)</span>
+
+<span class="n">clarifai_client</span> <span class="o">=</span> <span class="n">attempt_to_import</span><span class="p">(</span><span class="s1">&#39;clarifai.rest.client&#39;</span><span class="p">,</span> <span class="s1">&#39;clarifai_client&#39;</span><span class="p">,</span>
+                                    <span class="p">[</span><span class="s1">&#39;ClarifaiApp&#39;</span><span class="p">,</span>
+                                     <span class="s1">&#39;Concept&#39;</span><span class="p">,</span>
+                                     <span class="s1">&#39;ModelOutputConfig&#39;</span><span class="p">,</span>
+                                     <span class="s1">&#39;ModelOutputInfo&#39;</span><span class="p">,</span>
+                                     <span class="s1">&#39;Image&#39;</span><span class="p">])</span>
+<span class="n">indicoio</span> <span class="o">=</span> <span class="n">attempt_to_import</span><span class="p">(</span><span class="s1">&#39;indicoio&#39;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">IndicoAPIExtractor</span><span class="p">(</span><span class="n">BatchTransformerMixin</span><span class="p">,</span> <span class="n">Extractor</span><span class="p">,</span>
+                         <span class="n">EnvironmentKeyMixin</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Base class for all Indico API Extractors</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        api_key (str): A valid API key for the Indico API. Only needs to be</span>
+<span class="sd">            passed the first time the extractor is initialized.</span>
+<span class="sd">        models (list): The names of the Indico models to use.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;models&#39;</span><span class="p">,</span> <span class="s1">&#39;model_names&#39;</span><span class="p">)</span>
+    <span class="n">_input_type</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">_batch_size</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">_env_keys</span> <span class="o">=</span> <span class="s1">&#39;INDICO_APP_KEY&#39;</span>
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">models</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;indicoio&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">api_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;INDICO_APP_KEY&#39;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A valid Indico API Key &quot;</span>
+                                 <span class="s2">&quot;must be passed the first time an Indico &quot;</span>
+                                 <span class="s2">&quot;extractor is initialized.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span>
+        <span class="n">indicoio</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span>
+
+        <span class="k">if</span> <span class="n">models</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must enter a valid list of models to use. &quot;</span>
+                             <span class="s2">&quot;Valid models: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allowed_models</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allowed_models</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported model </span><span class="si">{}</span><span class="s2"> specified. &quot;</span>
+                                 <span class="s2">&quot;Valid models: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allowed_models</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_names</span> <span class="o">=</span> <span class="n">models</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">indicoio</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">models</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IndicoAPIExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stims</span><span class="p">):</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">stim</span><span class="o">.</span><span class="n">data</span> <span class="k">for</span> <span class="n">stim</span> <span class="ow">in</span> <span class="n">stims</span> <span class="k">if</span> <span class="n">stim</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">]</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">stim</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stims</span><span class="p">):</span>
+            <span class="n">features</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scores</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">score</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
+                    <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">score</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">score</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span>
+                        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">])</span>
+
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ExtractorResult</span><span class="p">([</span><span class="n">data</span><span class="p">],</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
+                                           <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">,</span>
+                                           <span class="n">onsets</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">onset</span><span class="p">,</span>
+                                           <span class="n">durations</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">duration</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+
+
+<div class="viewcode-block" id="IndicoAPITextExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.IndicoAPITextExtractor.html#pliers.extractors.IndicoAPITextExtractor">[docs]</a><span class="k">class</span> <span class="nc">IndicoAPITextExtractor</span><span class="p">(</span><span class="n">TextExtractor</span><span class="p">,</span> <span class="n">IndicoAPIExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Uses to Indico API to extract features from text, such as</span>
+<span class="sd">    sentiment extraction.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="IndicoAPITextExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.IndicoAPITextExtractor.html#pliers.extractors.IndicoAPITextExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;indicoio&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allowed_models</span> <span class="o">=</span> <span class="n">indicoio</span><span class="o">.</span><span class="n">TEXT_APIS</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IndicoAPITextExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="IndicoAPIImageExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.IndicoAPIImageExtractor.html#pliers.extractors.IndicoAPIImageExtractor">[docs]</a><span class="k">class</span> <span class="nc">IndicoAPIImageExtractor</span><span class="p">(</span><span class="n">ImageExtractor</span><span class="p">,</span> <span class="n">IndicoAPIExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Uses to Indico API to extract features from Images, such as</span>
+<span class="sd">    facial emotion recognition or content filtering.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="IndicoAPIImageExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.IndicoAPIImageExtractor.html#pliers.extractors.IndicoAPIImageExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;indicoio&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allowed_models</span> <span class="o">=</span> <span class="n">indicoio</span><span class="o">.</span><span class="n">IMAGE_APIS</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IndicoAPIImageExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ClarifaiAPIExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.ClarifaiAPIExtractor.html#pliers.extractors.ClarifaiAPIExtractor">[docs]</a><span class="k">class</span> <span class="nc">ClarifaiAPIExtractor</span><span class="p">(</span><span class="n">BatchTransformerMixin</span><span class="p">,</span> <span class="n">ImageExtractor</span><span class="p">,</span>
+                           <span class="n">EnvironmentKeyMixin</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Uses the Clarifai API to extract tags of images.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        api_key (str): A valid API_KEY for the Clarifai API. Only needs to be</span>
+<span class="sd">            passed the first time the extractor is initialized.</span>
+<span class="sd">        model (str): The name of the Clarifai model to use. If None, defaults</span>
+<span class="sd">            to the general image tagger.</span>
+<span class="sd">        min_value (float): A value between 0.0 and 1.0 indicating the minimum</span>
+<span class="sd">            confidence required to return a prediction. Defaults to 0.0.</span>
+<span class="sd">        max_concepts (int): A value between 0 and 200 indicating the maximum</span>
+<span class="sd">            number of label predictions returned.</span>
+<span class="sd">        select_concepts (list): List of concepts (strings) to query from the</span>
+<span class="sd">            API. For example, [&#39;food&#39;, &#39;animal&#39;].</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="s1">&#39;model_name&#39;</span><span class="p">,</span> <span class="s1">&#39;min_value&#39;</span><span class="p">,</span> <span class="s1">&#39;max_concepts&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;select_concepts&#39;</span><span class="p">)</span>
+    <span class="n">_batch_size</span> <span class="o">=</span> <span class="mi">128</span>
+    <span class="n">_env_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;CLARIFAI_API_KEY&#39;</span><span class="p">,)</span>
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+
+<div class="viewcode-block" id="ClarifaiAPIExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.ClarifaiAPIExtractor.html#pliers.extractors.ClarifaiAPIExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s1">&#39;general-v1.3&#39;</span><span class="p">,</span> <span class="n">min_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">max_concepts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">select_concepts</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;clarifai_client&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">api_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CLARIFAI_API_KEY&#39;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A valid Clarifai API API_KEY &quot;</span>
+                                 <span class="s2">&quot;must be passed the first time a Clarifai &quot;</span>
+                                 <span class="s2">&quot;extractor is initialized.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">clarifai_client</span><span class="o">.</span><span class="n">ClarifaiApp</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="n">min_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_concepts</span> <span class="o">=</span> <span class="n">max_concepts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">select_concepts</span> <span class="o">=</span> <span class="n">select_concepts</span>
+        <span class="k">if</span> <span class="n">select_concepts</span><span class="p">:</span>
+            <span class="n">select_concepts</span> <span class="o">=</span> <span class="n">listify</span><span class="p">(</span><span class="n">select_concepts</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">select_concepts</span> <span class="o">=</span> <span class="p">[</span><span class="n">clarifai_client</span><span class="o">.</span><span class="n">Concept</span><span class="p">(</span><span class="n">concept_name</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+                                    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">select_concepts</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ClarifaiAPIExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stims</span><span class="p">):</span>
+        <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;clarifai_client&#39;</span><span class="p">])</span>
+        <span class="n">moc</span> <span class="o">=</span> <span class="n">clarifai_client</span><span class="o">.</span><span class="n">ModelOutputConfig</span><span class="p">(</span><span class="n">min_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_value</span><span class="p">,</span>
+                                                <span class="n">max_concepts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_concepts</span><span class="p">,</span>
+                                                <span class="n">select_concepts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">select_concepts</span><span class="p">)</span>
+        <span class="n">output_config</span> <span class="o">=</span> <span class="n">moc</span>
+        <span class="n">model_output_info</span> <span class="o">=</span> <span class="n">clarifai_client</span><span class="o">.</span><span class="n">ModelOutputInfo</span><span class="p">(</span><span class="n">output_config</span><span class="o">=</span><span class="n">output_config</span><span class="p">)</span>
+
+        <span class="c1"># ExitStack lets us use filename context managers simultaneously</span>
+        <span class="k">with</span> <span class="n">ExitStack</span><span class="p">()</span> <span class="k">as</span> <span class="n">stack</span><span class="p">:</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">get_filename</span><span class="p">())</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stims</span><span class="p">]</span>
+            <span class="n">imgs</span> <span class="o">=</span> <span class="p">[</span><span class="n">clarifai_client</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span> <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
+            <span class="n">tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">imgs</span><span class="p">,</span> <span class="n">model_output_info</span><span class="o">=</span><span class="n">model_output_info</span><span class="p">)</span>
+
+        <span class="n">extracted</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">res</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tags</span><span class="p">[</span><span class="s1">&#39;outputs&#39;</span><span class="p">]):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;concepts&#39;</span><span class="p">]</span>
+            <span class="n">concepts</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">concepts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+                <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span>
+            <span class="n">extracted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ExtractorResult</span><span class="p">([</span><span class="n">values</span><span class="p">],</span> <span class="n">stims</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                             <span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="n">concepts</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">extracted</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

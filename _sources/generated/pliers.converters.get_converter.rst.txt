@@ -1,0 +1,6 @@
+pliers.converters.get_converter
+===============================
+
+.. currentmodule:: pliers.converters
+
+.. autofunction:: get_converter

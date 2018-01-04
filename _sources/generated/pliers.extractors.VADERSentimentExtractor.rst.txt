@@ -1,0 +1,11 @@
+pliers.extractors.VADERSentimentExtractor
+=========================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: VADERSentimentExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

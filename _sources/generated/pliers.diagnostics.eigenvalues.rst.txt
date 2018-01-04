@@ -1,0 +1,6 @@
+pliers.diagnostics.eigenvalues
+==============================
+
+.. currentmodule:: pliers.diagnostics
+
+.. autofunction:: eigenvalues

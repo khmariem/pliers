@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.extractors.video &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.extractors.video</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.extractors.video</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Extractors that operate primarily or exclusively on Video stimuli.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">pliers.stimuli.video</span> <span class="k">import</span> <span class="n">VideoStim</span>
+<span class="kn">from</span> <span class="nn">pliers.extractors.base</span> <span class="k">import</span> <span class="n">Extractor</span><span class="p">,</span> <span class="n">ExtractorResult</span>
+<span class="kn">from</span> <span class="nn">pliers.utils</span> <span class="k">import</span> <span class="n">attempt_to_import</span><span class="p">,</span> <span class="n">verify_dependencies</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">cv2</span> <span class="o">=</span> <span class="n">attempt_to_import</span><span class="p">(</span><span class="s1">&#39;cv2&#39;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">VideoExtractor</span><span class="p">(</span><span class="n">Extractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Base Video Extractor class; all subclasses can only be applied to</span>
+<span class="sd">    video. &#39;&#39;&#39;</span>
+    <span class="n">_input_type</span> <span class="o">=</span> <span class="n">VideoStim</span>
+
+
+<div class="viewcode-block" id="FarnebackOpticalFlowExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.FarnebackOpticalFlowExtractor.html#pliers.extractors.FarnebackOpticalFlowExtractor">[docs]</a><span class="k">class</span> <span class="nc">FarnebackOpticalFlowExtractor</span><span class="p">(</span><span class="n">VideoExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts total amount of dense optical flow between every pair of video</span>
+<span class="sd">    frames.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pyr_scale (float): specifying the image scale (&lt;1) to build pyramids</span>
+<span class="sd">            for each image; pyr_scale=0.5 means a classical pyramid, where</span>
+<span class="sd">            each next layer is twice smaller than the previous one.</span>
+<span class="sd">        levels (int): number of pyramid layers including the initial image;</span>
+<span class="sd">            levels=1 means that no extra layers are created and only the</span>
+<span class="sd">            original images are used.</span>
+<span class="sd">        winsize (int): averaging window size; larger values increase the</span>
+<span class="sd">            algorithm robustness to image noise and give more chances for fast</span>
+<span class="sd">            motion detection, but yield more blurred motion field.</span>
+<span class="sd">        iterations (int): number of iterations the algorithm does at each</span>
+<span class="sd">            pyramid level</span>
+<span class="sd">        poly_n (int): size of the pixel neighborhood used to find polynomial</span>
+<span class="sd">            expansion in each pixel; larger values mean that the image will be</span>
+<span class="sd">            approximated with smoother surfaces, yielding more robust algorithm</span>
+<span class="sd">            and more blurred motion field, typically poly_n =5 or 7.</span>
+<span class="sd">        poly_sigma (float):  standard deviation of the Gaussian that is used to</span>
+<span class="sd">            smooth derivatives used as a basis for the polynomial expansion;</span>
+<span class="sd">            for poly_n=5, you can set poly_sigma=1.1, for poly_n=7, a good</span>
+<span class="sd">            value would be poly_sigma=1.5.</span>
+<span class="sd">        flags (int): operation flags, usually OPTFLOW_USE_INITIAL_FLOW or</span>
+<span class="sd">            OPTFLOW_FARNEBACK_GAUSSIAN</span>
+<span class="sd">        show (bool): flag for displaying flow image during extraction</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;pyr_scale&#39;</span><span class="p">,</span> <span class="s1">&#39;levels&#39;</span><span class="p">,</span> <span class="s1">&#39;winsize&#39;</span><span class="p">,</span> <span class="s1">&#39;iterations&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;poly_n&#39;</span><span class="p">,</span> <span class="s1">&#39;poly_sigma&#39;</span><span class="p">,</span> <span class="s1">&#39;flags&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FarnebackOpticalFlowExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.FarnebackOpticalFlowExtractor.html#pliers.extractors.FarnebackOpticalFlowExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pyr_scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">winsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                 <span class="n">poly_n</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">poly_sigma</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pyr_scale</span> <span class="o">=</span> <span class="n">pyr_scale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">levels</span> <span class="o">=</span> <span class="n">levels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">winsize</span> <span class="o">=</span> <span class="n">winsize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterations</span> <span class="o">=</span> <span class="n">iterations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">poly_n</span> <span class="o">=</span> <span class="n">poly_n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">poly_sigma</span> <span class="o">=</span> <span class="n">poly_sigma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">flags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show</span> <span class="o">=</span> <span class="n">show</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FarnebackOpticalFlowExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;cv2&#39;</span><span class="p">])</span>
+        <span class="n">flows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">onsets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">durations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stim</span><span class="p">):</span>
+
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">data</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">last_frame</span> <span class="o">=</span> <span class="n">frame</span>
+
+            <span class="n">flow</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">calcOpticalFlowFarneback</span><span class="p">(</span><span class="n">last_frame</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">pyr_scale</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">winsize</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterations</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">poly_n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">poly_sigma</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="p">)</span>
+            <span class="n">flow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">flow</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">:</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="n">flow</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int8&#39;</span><span class="p">))</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">last_frame</span> <span class="o">=</span> <span class="n">frame</span>
+            <span class="n">flows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flow</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+            <span class="n">onsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">onset</span><span class="p">)</span>
+            <span class="n">durations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">flows</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;total_flow&#39;</span><span class="p">],</span>
+                               <span class="n">onsets</span><span class="o">=</span><span class="n">onsets</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="n">durations</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

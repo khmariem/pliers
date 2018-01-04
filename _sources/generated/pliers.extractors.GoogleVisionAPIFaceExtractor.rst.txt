@@ -1,0 +1,11 @@
+pliers.extractors.GoogleVisionAPIFaceExtractor
+==============================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: GoogleVisionAPIFaceExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

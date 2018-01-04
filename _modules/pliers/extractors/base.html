@@ -1,0 +1,459 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.extractors.base &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.extractors.base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.extractors.base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39; Base Extractor class and associated functionality. &#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">with_metaclass</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pliers.transformers</span> <span class="k">import</span> <span class="n">Transformer</span>
+<span class="kn">from</span> <span class="nn">pliers.utils</span> <span class="k">import</span> <span class="n">isgenerator</span><span class="p">,</span> <span class="n">flatten</span>
+
+
+<div class="viewcode-block" id="Extractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor">[docs]</a><span class="k">class</span> <span class="nc">Extractor</span><span class="p">(</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">,</span> <span class="n">Transformer</span><span class="p">)):</span>
+
+    <span class="sd">&#39;&#39;&#39; Base class for all pliers Extractors.&#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="Extractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Extractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Extractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">stim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="k">if</span> <span class="n">isgenerator</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="k">else</span> <span class="n">result</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract</span><span class="p">(</span><span class="n">stim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">stim</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;No plotting method is defined for class &quot;</span>
+                                  <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ExtractorResult"><a class="viewcode-back" href="../../../generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult">[docs]</a><span class="k">class</span> <span class="nc">ExtractorResult</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Stores feature data produced by an Extractor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (ndarray, iterable): Extracted feature values. Either an ndarray</span>
+<span class="sd">            or an iterable. Can be either 1-d or 2-d.</span>
+<span class="sd">        stim (Stim): The input Stim object from which features were extracted.</span>
+<span class="sd">        extractor (Extractor): The Extractor object used in extraction.</span>
+<span class="sd">        features (list, ndarray): Optional names of extracted features. If</span>
+<span class="sd">            passed, must have as many elements as there are columns in data.</span>
+<span class="sd">        onsets (list, ndarray): Optional iterable giving the onsets of the</span>
+<span class="sd">            rows in data. Length must match the input data.</span>
+<span class="sd">        durations (list, ndarray): Optional iterable giving the durations</span>
+<span class="sd">            associated with the rows in data.</span>
+<span class="sd">        raw: The raw result (net of any containers or overhead) returned by</span>
+<span class="sd">            the underlying feature extraction tool. Can be an object of any</span>
+<span class="sd">            type.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="ExtractorResult.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="n">extractor</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">onsets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">durations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">raw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least one of &#39;data&#39; and &#39;raw&#39; must be a &quot;</span>
+                             <span class="s2">&quot;value other than None.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stim</span> <span class="o">=</span> <span class="n">stim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span> <span class="o">=</span> <span class="n">extractor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="n">features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="o">=</span> <span class="n">raw</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_history</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Eventually, the goal is to make raw mandatory, and always</span>
+        <span class="c1"># generate the .data property via calls to to_array() or to_df()</span>
+        <span class="c1"># implemented in the Extractor. But to avoid breaking the API without</span>
+        <span class="c1"># warning, we provide a backward-compatible version for the time being.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="p">,</span> <span class="s1">&#39;to_array&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="o">.</span><span class="n">to_array</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">onsets</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">onsets</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">onset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">onsets</span> <span class="o">=</span> <span class="n">onsets</span> <span class="k">if</span> <span class="n">onsets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="k">if</span> <span class="n">durations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">durations</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">durations</span> <span class="o">=</span> <span class="n">durations</span> <span class="k">if</span> <span class="n">durations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
+
+<div class="viewcode-block" id="ExtractorResult.to_df"><a class="viewcode-back" href="../../../generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult.to_df">[docs]</a>    <span class="k">def</span> <span class="nf">to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Convert current instance to a pandas DatasFrame.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            timing (bool): If True, adds columns for event onset and duration.</span>
+<span class="sd">                Note that these columns will be added even if there are no</span>
+<span class="sd">                valid values in the current object (NaNs will be inserted).</span>
+<span class="sd">            metadata (bool): If True, adds columns for key metadata (including</span>
+<span class="sd">                the name, filename, class, history, and source file of the</span>
+<span class="sd">                Stim).</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A pandas DataFrame.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="p">,</span> <span class="s1">&#39;to_df&#39;</span><span class="p">):</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Handle duplicate features</span>
+                <span class="n">counts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+                <span class="n">features</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">counts</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span> <span class="o">+</span> <span class="s1">&#39;_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">counts</span><span class="p">[</span><span class="n">f</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">features</span>
+
+        <span class="k">if</span> <span class="n">timing</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">durations</span><span class="p">)</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">onsets</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">metadata</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;stim_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stim</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stim</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stim</span><span class="o">.</span><span class="n">filename</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;history&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stim</span><span class="o">.</span><span class="n">history</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;source_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">source_file</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Returns the transformation history for the input Stim. &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_history</span>
+
+    <span class="nd">@history</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">history</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_history</span> <span class="o">=</span> <span class="n">history</span>
+
+<div class="viewcode-block" id="ExtractorResult.merge_features"><a class="viewcode-back" href="../../../generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult.merge_features">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">merge_features</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">extractor_names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                       <span class="n">flatten_columns</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Merge a list of ExtractorResults bound to the same Stim into a</span>
+<span class="sd">        single DataFrame.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            results (list, tuple): A list of ExtractorResult instances to merge</span>
+<span class="sd">            extractor_names (bool): if True, stores the associated Extractor</span>
+<span class="sd">                names in the top level of the column MultiIndex.</span>
+<span class="sd">            metadata (bool): if True, stores all ExtractorResult metadata</span>
+<span class="sd">            flatten_columns (bool): if True, flattens the resultant column</span>
+<span class="sd">                MultiIndex such that feature columns are in the format</span>
+<span class="sd">                &lt;extractor class&gt;_&lt;feature name&gt;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c1"># Make sure all ExtractorResults are associated with same Stim.</span>
+        <span class="n">stims</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">stim</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span>
+        <span class="n">dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stims</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;merge_features() can only be called on a set of &quot;</span>
+                             <span class="s2">&quot;ExtractorResults associated with the same Stim.&quot;</span><span class="p">)</span>
+
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">extractor</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span> <span class="k">if</span> <span class="n">extractor_names</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">extra_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;stim_name&#39;</span><span class="p">,</span> <span class="s1">&#39;source_file&#39;</span><span class="p">]</span>
+
+        <span class="c1"># If onsets are all NaN</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">]))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;If ExtractorResults do not specify onsets, &quot;</span>
+                                 <span class="s2">&quot;all ExtractorResults to merge must have &quot;</span>
+                                 <span class="s2">&quot;identical numbers of rows.&quot;</span><span class="p">)</span>
+            <span class="n">feature_dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">extra_columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">]</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">feature_dfs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="n">keys</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+        <span class="c1"># If onsets are specified</span>
+        <span class="k">elif</span> <span class="nb">all</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">notnull</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">]):</span>
+            <span class="n">feature_dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;onset&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">]</span>
+            <span class="n">feature_dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">extra_columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">feature_dfs</span><span class="p">]</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">feature_dfs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="n">keys</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;To merge a list of ExtractorResults, all &quot;</span>
+                             <span class="s2">&quot;instances must either contain onsets, or lack &quot;</span>
+                             <span class="s2">&quot;onsets and have the same number of rows. It is &quot;</span>
+                             <span class="s2">&quot;not possible to merge mismatched instances.&quot;</span><span class="p">)</span>
+
+        <span class="n">extra_columns</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;onset&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">metadata</span><span class="p">:</span>
+            <span class="n">extra_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">extra_columns</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">col</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;onset&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">flatten_columns</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">lvl</span><span class="p">)</span> <span class="k">for</span> <span class="n">lvl</span> <span class="ow">in</span> <span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">merge_stims</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">r</span><span class="p">,</span> <span class="n">ExtractorResult</span><span class="p">)</span> <span class="k">else</span> <span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;onset&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="merge_results"><a class="viewcode-back" href="../../../generated/pliers.extractors.merge_results.html#pliers.extractors.merge_results">[docs]</a><span class="k">def</span> <span class="nf">merge_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="o">**</span><span class="n">merge_feature_args</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Merges a list of ExtractorResults instances and returns a pandas DF.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        results (list, tuple): A list of ExtractorResult instances to merge.</span>
+<span class="sd">        merge_feature_args (kwargs): Additional argument settings to use</span>
+<span class="sd">            when merging across features.</span>
+
+<span class="sd">    Returns: a pandas DataFrame with features concatenated along the column</span>
+<span class="sd">        axis and stims concatenated along the row axis.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># Flatten list recursively</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">flatten</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+    <span class="n">stims</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="n">stims</span><span class="p">[</span><span class="nb">hash</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">stim</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+    <span class="c1"># First concatenate all features separately for each Stim</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">stims</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">stims</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">ExtractorResult</span><span class="o">.</span><span class="n">merge_features</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">merge_feature_args</span><span class="p">)</span>
+
+    <span class="c1"># Now concatenate all Stims</span>
+    <span class="n">stims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">stims</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">stims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stims</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> \
+        <span class="n">ExtractorResult</span><span class="o">.</span><span class="n">merge_stims</span><span class="p">(</span><span class="n">stims</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

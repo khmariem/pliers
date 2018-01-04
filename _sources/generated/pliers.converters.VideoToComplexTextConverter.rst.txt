@@ -1,0 +1,11 @@
+pliers.converters.VideoToComplexTextConverter
+=============================================
+
+.. currentmodule:: pliers.converters
+
+.. autoclass:: VideoToComplexTextConverter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

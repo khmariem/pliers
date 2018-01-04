@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.filters.WordStemmingFilter &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../index.html"/>
+        <link rel="up" title="Transformers" href="../transformers.html"/>
+        <link rel="next" title="Graphs" href="../graphs.html"/>
+        <link rel="prev" title="pliers.filters.TokenRemovalFilter" href="pliers.filters.TokenRemovalFilter.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../stimuli.html">Stims</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../transformers.html">Transformers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../transformers.html#extractors">Extractors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transformers.html#converters">Converters</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../transformers.html#filters">Filters</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../transformers.html#list-of-filter-classes">List of Filter classes</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="pliers.filters.FrameSamplingFilter.html">pliers.filters.FrameSamplingFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pliers.filters.ImageCroppingFilter.html">pliers.filters.ImageCroppingFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pliers.filters.PillowImageFilter.html">pliers.filters.PillowImageFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pliers.filters.PunctuationRemovalFilter.html">pliers.filters.PunctuationRemovalFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pliers.filters.TokenizingFilter.html">pliers.filters.TokenizingFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pliers.filters.TokenRemovalFilter.html">pliers.filters.TokenRemovalFilter</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">pliers.filters.WordStemmingFilter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../transformers.html#iterable-aware-transformations">Iterable-aware transformations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../transformers.html">Transformers</a> &raquo;</li>
+        
+      <li>pliers.filters.WordStemmingFilter</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/pliers.filters.WordStemmingFilter.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pliers-filters-wordstemmingfilter">
+<h1>pliers.filters.WordStemmingFilter<a class="headerlink" href="#pliers-filters-wordstemmingfilter" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pliers.filters.WordStemmingFilter">
+<em class="property">class </em><code class="descclassname">pliers.filters.</code><code class="descname">WordStemmingFilter</code><span class="sig-paren">(</span><em>stemmer='porter'</em>, <em>tokenize=True</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/filters/text.html#WordStemmingFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.filters.WordStemmingFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">pliers.filters.text.TextFilter</span></code></p>
+<p>Nltk-based word stemming Filter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stemmer</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>Stemmer</em>) – If a string, must be the name of one of the
+stemming modules available in nltk.stem. Valid values are
+‘porter’, ‘snowball’, ‘isri’, ‘lancaster’, ‘regexp’, ‘wordet’,
+or ‘rslp’. Alternatively, an initialized nltk StemmerI instance
+can be passed.</li>
+<li><strong>tokenize</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – if True, apply the stemmer to each token in the
+TextStim, otherwise treat the whole TextStim as one token to stem.</li>
+<li><strong>kwargs</strong> (<em>args</em><em>,</em>) – Optional positional and keyword args passed onto the
+nltk stemmer.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pliers.filters.WordStemmingFilter.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>stemmer='porter'</em>, <em>tokenize=True</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/filters/text.html#WordStemmingFilter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.filters.WordStemmingFilter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pliers.filters.WordStemmingFilter.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>stims</em>, <em>validation='strict'</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pliers.filters.WordStemmingFilter.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the transformation on the passed stim(s).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stims</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>Stim</em><em>, </em><em>list</em>) – <p>One or more stimuli to process. Must be
+one of:</p>
+<blockquote>
+<div><ul>
+<li>A string giving the path to a file that can be read in
+as a Stim (e.g., a .txt file, .jpg image, etc.)</li>
+<li>A Stim instance of any type.</li>
+<li>An iterable of stims, where each element is either a
+string or a Stim.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><strong>validation</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – <p>String specifying how validation errors should
+be handled. Must be one of:</p>
+<blockquote>
+<div><ul>
+<li>’strict’: Raise an exception on any validation error</li>
+<li>’warn’: Issue a warning for all validation errors</li>
+<li>’loose’: Silently ignore all validation errors</li>
+</ul>
+</div></blockquote>
+</li>
+<li><strong>args</strong> – Optional positional arguments to pass onto the internal
+_transform call.</li>
+<li><strong>kwargs</strong> – Optional positional arguments to pass onto the internal
+_transform call.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../graphs.html" class="btn btn-neutral float-right" title="Graphs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pliers.filters.TokenRemovalFilter.html" class="btn btn-neutral" title="pliers.filters.TokenRemovalFilter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

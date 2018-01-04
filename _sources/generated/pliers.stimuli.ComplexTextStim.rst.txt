@@ -1,0 +1,11 @@
+pliers.stimuli.ComplexTextStim
+==============================
+
+.. currentmodule:: pliers.stimuli
+
+.. autoclass:: ComplexTextStim
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

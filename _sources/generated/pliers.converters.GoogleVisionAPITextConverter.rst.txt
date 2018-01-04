@@ -1,0 +1,11 @@
+pliers.converters.GoogleVisionAPITextConverter
+==============================================
+
+.. currentmodule:: pliers.converters
+
+.. autoclass:: GoogleVisionAPITextConverter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

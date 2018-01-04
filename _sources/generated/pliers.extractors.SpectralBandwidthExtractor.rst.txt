@@ -1,0 +1,11 @@
+pliers.extractors.SpectralBandwidthExtractor
+============================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: SpectralBandwidthExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

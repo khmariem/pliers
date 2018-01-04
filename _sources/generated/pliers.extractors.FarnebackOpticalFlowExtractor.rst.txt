@@ -1,0 +1,11 @@
+pliers.extractors.FarnebackOpticalFlowExtractor
+===============================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: FarnebackOpticalFlowExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

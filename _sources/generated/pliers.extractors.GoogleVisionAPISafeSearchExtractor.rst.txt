@@ -1,0 +1,11 @@
+pliers.extractors.GoogleVisionAPISafeSearchExtractor
+====================================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: GoogleVisionAPISafeSearchExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

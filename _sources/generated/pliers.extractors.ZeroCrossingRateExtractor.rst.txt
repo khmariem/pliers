@@ -1,0 +1,11 @@
+pliers.extractors.ZeroCrossingRateExtractor
+===========================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: ZeroCrossingRateExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

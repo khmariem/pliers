@@ -1,0 +1,11 @@
+pliers.extractors.TempogramExtractor
+====================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: TempogramExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

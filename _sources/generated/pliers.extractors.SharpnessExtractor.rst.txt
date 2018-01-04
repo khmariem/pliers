@@ -1,0 +1,11 @@
+pliers.extractors.SharpnessExtractor
+====================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: SharpnessExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

@@ -1,0 +1,11 @@
+pliers.extractors.WordEmbeddingExtractor
+========================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: WordEmbeddingExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

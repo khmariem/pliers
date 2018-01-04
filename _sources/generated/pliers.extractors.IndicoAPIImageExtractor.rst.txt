@@ -1,0 +1,11 @@
+pliers.extractors.IndicoAPIImageExtractor
+=========================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: IndicoAPIImageExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

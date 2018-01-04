@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.converters.get_converter &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../index.html"/>
+        <link rel="up" title="Pliers API Reference" href="../reference.html"/>
+        <link rel="next" title="pliers.datasets.fetch_dictionary" href="pliers.datasets.fetch_dictionary.html"/>
+        <link rel="prev" title="Pliers API Reference" href="../reference.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config.html">Configuring pliers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Pliers API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../reference.html#module-pliers.converters">Converters (<code class="docutils literal"><span class="pre">pliers.converters</span></code>)</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">pliers.converters.get_converter</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#module-pliers.datasets">Dataset utilities (<code class="docutils literal"><span class="pre">pliers.datasets</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#module-pliers.diagnostics">Diagnostic utilities (<code class="docutils literal"><span class="pre">pliers.diagnostics</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#module-pliers.extractors">Extractors (<code class="docutils literal"><span class="pre">pliers.extractors</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#module-pliers.filters">Filters (<code class="docutils literal"><span class="pre">pliers.filters</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#module-pliers.graph">Graph construction (<code class="docutils literal"><span class="pre">pliers.graph</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#module-pliers.stimuli">Stimuli (<code class="docutils literal"><span class="pre">pliers.stimuli</span></code>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#module-pliers.transformers">Transformers (<code class="docutils literal"><span class="pre">pliers.transformers</span></code>)</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../reference.html">Pliers API Reference</a> &raquo;</li>
+        
+      <li>pliers.converters.get_converter</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/pliers.converters.get_converter.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pliers-converters-get-converter">
+<h1>pliers.converters.get_converter<a class="headerlink" href="#pliers-converters-get-converter" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="pliers.converters.get_converter">
+<code class="descclassname">pliers.converters.</code><code class="descname">get_converter</code><span class="sig-paren">(</span><em>in_type</em>, <em>out_type</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/converters/base.html#get_converter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.converters.get_converter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scans the list of available Converters and returns an instantiation
+of the first one whose input and output types match those passed in.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_type</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#type" title="(in Python v2.7)"><em>type</em></a>) – The type of input the converter must have.</li>
+<li><strong>out_type</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#type" title="(in Python v2.7)"><em>type</em></a>) – The type of output the converter must have.</li>
+<li><strong>kwargs</strong> (<em>args</em><em>,</em>) – Optional positional and keyword arguments to pass onto
+matching Converter’s initializer.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pliers.datasets.fetch_dictionary.html" class="btn btn-neutral float-right" title="pliers.datasets.fetch_dictionary" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../reference.html" class="btn btn-neutral" title="Pliers API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

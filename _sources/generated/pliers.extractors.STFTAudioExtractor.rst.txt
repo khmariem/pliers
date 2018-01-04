@@ -1,0 +1,11 @@
+pliers.extractors.STFTAudioExtractor
+====================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: STFTAudioExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

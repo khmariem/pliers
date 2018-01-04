@@ -1,0 +1,11 @@
+pliers.stimuli.VideoFrameCollectionStim
+=======================================
+
+.. currentmodule:: pliers.stimuli
+
+.. autoclass:: VideoFrameCollectionStim
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

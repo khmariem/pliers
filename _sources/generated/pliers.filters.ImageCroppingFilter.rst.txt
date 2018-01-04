@@ -1,0 +1,11 @@
+pliers.filters.ImageCroppingFilter
+==================================
+
+.. currentmodule:: pliers.filters
+
+.. autoclass:: ImageCroppingFilter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

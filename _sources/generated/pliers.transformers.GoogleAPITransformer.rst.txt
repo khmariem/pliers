@@ -1,0 +1,11 @@
+pliers.transformers.GoogleAPITransformer
+========================================
+
+.. currentmodule:: pliers.transformers
+
+.. autoclass:: GoogleAPITransformer
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

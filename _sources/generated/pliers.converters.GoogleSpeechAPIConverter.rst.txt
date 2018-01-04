@@ -1,0 +1,11 @@
+pliers.converters.GoogleSpeechAPIConverter
+==========================================
+
+.. currentmodule:: pliers.converters
+
+.. autoclass:: GoogleSpeechAPIConverter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

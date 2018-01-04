@@ -1,0 +1,11 @@
+pliers.converters.IBMSpeechAPIConverter
+=======================================
+
+.. currentmodule:: pliers.converters
+
+.. autoclass:: IBMSpeechAPIConverter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

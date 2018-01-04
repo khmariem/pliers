@@ -1,0 +1,11 @@
+pliers.converters.VideoFrameIterator
+====================================
+
+.. currentmodule:: pliers.converters
+
+.. autoclass:: VideoFrameIterator
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

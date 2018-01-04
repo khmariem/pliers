@@ -1,0 +1,6 @@
+pliers.diagnostics.mahalanobis_distances
+========================================
+
+.. currentmodule:: pliers.diagnostics
+
+.. autofunction:: mahalanobis_distances

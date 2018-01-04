@@ -1,0 +1,11 @@
+pliers.extractors.MFCCExtractor
+===============================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: MFCCExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

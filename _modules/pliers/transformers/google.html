@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.transformers.google &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.transformers.google</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.transformers.google</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pliers.transformers</span> <span class="k">import</span> <span class="n">Transformer</span><span class="p">,</span> <span class="n">BatchTransformerMixin</span>
+<span class="kn">from</span> <span class="nn">pliers.utils</span> <span class="k">import</span> <span class="p">(</span><span class="n">EnvironmentKeyMixin</span><span class="p">,</span> <span class="n">attempt_to_import</span><span class="p">,</span>
+                          <span class="n">verify_dependencies</span><span class="p">)</span>
+
+
+<span class="n">googleapiclient</span> <span class="o">=</span> <span class="n">attempt_to_import</span><span class="p">(</span><span class="s1">&#39;googleapiclient&#39;</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;discovery&#39;</span><span class="p">])</span>
+<span class="n">oauth_client</span> <span class="o">=</span> <span class="n">attempt_to_import</span><span class="p">(</span><span class="s1">&#39;oauth2client.client&#39;</span><span class="p">,</span> <span class="s1">&#39;oauth_client&#39;</span><span class="p">,</span>
+                                 <span class="p">[</span><span class="s1">&#39;GoogleCredentials&#39;</span><span class="p">])</span>
+
+
+<span class="n">DISCOVERY_URL</span> <span class="o">=</span> <span class="s1">&#39;https://</span><span class="si">{api}</span><span class="s1">.googleapis.com/$discovery/rest?version=</span><span class="si">{apiVersion}</span><span class="s1">&#39;</span>
+
+
+<div class="viewcode-block" id="GoogleAPITransformer"><a class="viewcode-back" href="../../../generated/pliers.transformers.GoogleAPITransformer.html#pliers.transformers.GoogleAPITransformer">[docs]</a><span class="k">class</span> <span class="nc">GoogleAPITransformer</span><span class="p">(</span><span class="n">Transformer</span><span class="p">,</span> <span class="n">EnvironmentKeyMixin</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Base GoogleAPITransformer class.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      discovery_file (str): path to discovery file containing Google</span>
+<span class="sd">        application credentials.</span>
+<span class="sd">      api_version (str): API version to use.</span>
+<span class="sd">      max_results (int): Max number of results per page.</span>
+<span class="sd">      num_retries (int): Number of times to retry query on failure.</span>
+<span class="sd">      handle_annotations (str): How returned annotations should be handled in</span>
+<span class="sd">        cases where there are multiple values for a single stim. Valid values</span>
+<span class="sd">        depend on Transformer, but are always one of &#39;first&#39;, &#39;list&#39;, &#39;prefix&#39;,</span>
+<span class="sd">        or &#39;concatenate&#39;.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_env_keys</span> <span class="o">=</span> <span class="s1">&#39;GOOGLE_APPLICATION_CREDENTIALS&#39;</span>
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;handle_annotations&#39;</span><span class="p">,)</span>
+
+<div class="viewcode-block" id="GoogleAPITransformer.__init__"><a class="viewcode-back" href="../../../generated/pliers.transformers.GoogleAPITransformer.html#pliers.transformers.GoogleAPITransformer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discovery_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">api_version</span><span class="o">=</span><span class="s1">&#39;v1&#39;</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                 <span class="n">num_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">handle_annotations</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;googleapiclient&#39;</span><span class="p">,</span> <span class="s1">&#39;oauth_client&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">discovery_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;GOOGLE_APPLICATION_CREDENTIALS&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No Google application credentials found. &quot;</span>
+                                 <span class="s2">&quot;A JSON service account key must be either &quot;</span>
+                                 <span class="s2">&quot;passed as the discovery_file argument, or &quot;</span>
+                                 <span class="s2">&quot;set in the GOOGLE_APPLICATION_CREDENTIALS &quot;</span>
+                                 <span class="s2">&quot;environment variable.&quot;</span><span class="p">)</span>
+            <span class="n">discovery_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;GOOGLE_APPLICATION_CREDENTIALS&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span> <span class="o">=</span> <span class="n">oauth_client</span><span class="o">.</span><span class="n">GoogleCredentials</span><span class="o">.</span><span class="n">from_stream</span><span class="p">(</span>
+            <span class="n">discovery_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_results</span> <span class="o">=</span> <span class="n">max_results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_retries</span> <span class="o">=</span> <span class="n">num_retries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">googleapiclient</span><span class="o">.</span><span class="n">discovery</span><span class="o">.</span><span class="n">build</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">api_name</span><span class="p">,</span> <span class="n">api_version</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="p">,</span>
+            <span class="n">discoveryServiceUrl</span><span class="o">=</span><span class="n">DISCOVERY_URL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle_annotations</span> <span class="o">=</span> <span class="n">handle_annotations</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GoogleAPITransformer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="GoogleVisionAPITransformer"><a class="viewcode-back" href="../../../generated/pliers.transformers.GoogleVisionAPITransformer.html#pliers.transformers.GoogleVisionAPITransformer">[docs]</a><span class="k">class</span> <span class="nc">GoogleVisionAPITransformer</span><span class="p">(</span><span class="n">BatchTransformerMixin</span><span class="p">,</span> <span class="n">GoogleAPITransformer</span><span class="p">):</span>
+
+    <span class="n">api_name</span> <span class="o">=</span> <span class="s1">&#39;vision&#39;</span>
+    <span class="n">_batch_size</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="k">def</span> <span class="nf">_query_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">request_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">images</span><span class="p">()</span> \
+            <span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;requests&#39;</span><span class="p">:</span> <span class="n">request</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">request_obj</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">num_retries</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_retries</span><span class="p">)[</span><span class="s1">&#39;responses&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_build_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stims</span><span class="p">):</span>
+        <span class="n">request</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">stims</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">image</span><span class="o">.</span><span class="n">get_filename</span><span class="p">()</span> <span class="k">as</span> <span class="n">filename</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">img_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+            <span class="n">content</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">img_data</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="n">content</span><span class="p">},</span>
+                    <span class="s1">&#39;features&#39;</span><span class="p">:</span> <span class="p">[{</span>
+                        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_type</span><span class="p">,</span>
+                        <span class="s1">&#39;maxResults&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_results</span><span class="p">,</span>
+                    <span class="p">}]</span>
+                <span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">request</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

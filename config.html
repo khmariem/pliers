@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Configuring pliers &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="index.html"/>
+        <link rel="next" title="Pliers API Reference" href="reference.html"/>
+        <link rel="prev" title="Graphs" href="graphs.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphs.html">Graphs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuring pliers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setting-options">Setting options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#at-initialization">At initialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#at-run-time">At run-time</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#option-details">Option details</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cache-transformers-bool">cache_transformers (bool)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#default-converters-dict">default_converters (dict)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#drop-bad-extractor-results-bool">drop_bad_extractor_results (bool)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#log-transformations-bool">log_transformations (bool)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parallelization-bool-n-jobs-int">parallelization (bool), n_jobs (int)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#progress-bar-bool">progress_bar (bool)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#use-generators-bool">use_generators (bool)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Configuring pliers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/config.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="configuring-pliers">
+<h1>Configuring pliers<a class="headerlink" href="#configuring-pliers" title="Permalink to this headline">¶</a></h1>
+<p>Pliers contains a number of package-wide options that can be configured via the pliers.config module. These include:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="3%" />
+<col width="8%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Setting</th>
+<th class="head">Type</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>cache_transformers</td>
+<td>bool</td>
+<td>True</td>
+<td>Whether or not to cache Transformer outputs in memory</td>
+</tr>
+<tr class="row-odd"><td>default_converters</td>
+<td>dict</td>
+<td>see module</td>
+<td>See explanation in the Converters section</td>
+</tr>
+<tr class="row-even"><td>drop_bad_extractor_results</td>
+<td>bool</td>
+<td>True</td>
+<td>When <code class="code py python docutils literal"><span class="name builtin pseudo"><span class="pre">True</span></span></code>, automatically removes any <code class="code py python docutils literal"><span class="name builtin pseudo"><span class="pre">None</span></span></code> values returned by any Extractor</td>
+</tr>
+<tr class="row-odd"><td>log_transformations</td>
+<td>bool</td>
+<td>True</td>
+<td>Whether or not to log transformation details in each Stim’s .history attribute</td>
+</tr>
+<tr class="row-even"><td>n_jobs</td>
+<td>int</td>
+<td>CPU-1.</td>
+<td>Number of simultaneous jobs to execute (if <code class="code py python docutils literal"><span class="name"><span class="pre">parallelize</span></span></code> is <code class="code py python docutils literal"><span class="name builtin pseudo"><span class="pre">True</span></span></code>)</td>
+</tr>
+<tr class="row-odd"><td>parallelize</td>
+<td>bool</td>
+<td>True</td>
+<td>Whether or not to use naive parallelization by default</td>
+</tr>
+<tr class="row-even"><td>progress_bar</td>
+<td>bool</td>
+<td>True</td>
+<td>Whether or not to display progress bars when looping over Stims</td>
+</tr>
+<tr class="row-odd"><td>use_generators</td>
+<td>bool</td>
+<td>False</td>
+<td>Whether Transformers should return generators rather than lists when iterating over Stims</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="setting-options">
+<h2>Setting options<a class="headerlink" href="#setting-options" title="Permalink to this headline">¶</a></h2>
+<p>Package-wide options can be changed either at initialization or at run-time.</p>
+<div class="section" id="at-initialization">
+<h3>At initialization<a class="headerlink" href="#at-initialization" title="Permalink to this headline">¶</a></h3>
+<p>By default, when pliers is first imported, it will look in three places for configuration files that override the package defaults. In order of precedence, these are:</p>
+<ol class="arabic simple">
+<li>A <code class="docutils literal"><span class="pre">pliers_config.json</span></code> file in the current (working) directory.</li>
+<li>A filename set in the <code class="docutils literal"><span class="pre">PLIERS_CONFIG</span></code> environment variable.</li>
+<li>A <code class="docutils literal"><span class="pre">pliers_config.json</span></code> file located in the user’s home directory.</li>
+</ol>
+<p>In all cases, the file must be a standard .json file containing only valid option names as keys. Default package values will continue to be used for any options not explicitly specified in the file. For example:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>{
+        &quot;parallelize&quot;: True,
+        &quot;n_jobs&quot;: 4
+}
+</pre></div>
+</div>
+<p>If the above is placed in a <code class="docutils literal"><span class="pre">pliers_config.json</span></code> file in one’s home directory, pliers will execute all iterable transformations in parallel (with 4 jobs).</p>
+</div>
+<div class="section" id="at-run-time">
+<h3>At run-time<a class="headerlink" href="#at-run-time" title="Permalink to this headline">¶</a></h3>
+<p>Package options can also be changed dynamically, via the <code class="docutils literal"><span class="pre">.get_option()</span></code> and <code class="docutils literal"><span class="pre">.set_option()</span></code> accessors:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pliers</span> <span class="kn">as</span> <span class="nn">pl</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pl</span><span class="o">.</span><span class="n">get_option</span><span class="p">(</span><span class="s1">&#39;use_generators&#39;</span><span class="p">)</span>
+<span class="go">&#39;False&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pl</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="n">use_generators</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">progress_bar</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="option-details">
+<h2>Option details<a class="headerlink" href="#option-details" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cache-transformers-bool">
+<span id="caching"></span><h3>cache_transformers (bool)<a class="headerlink" href="#cache-transformers-bool" title="Permalink to this headline">¶</a></h3>
+<p>When set to <code class="docutils literal"><span class="pre">True</span></code>, the output produced by all <code class="docutils literal"><span class="pre">.transform()</span></code> call will be cached in memory (filesystem caching is not currently available). This is the default, and can be very useful in cases where (a) many calls to commercial feature extraction services (e.g., the Google or IBM families of Extractors) are being made, or (b) there are intermediate <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> representations generated by <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> classes that are computationally expensive to produce. Setting <code class="docutils literal"><span class="pre">cache_transformers</span></code> to <code class="docutils literal"><span class="pre">False</span></code> will result in every <code class="docutils literal"><span class="pre">transform()</span></code> call being recomputed, with no intermediates stored in memory.</p>
+<p>Note that caching in pliers (really, memoization) is based on the combination of the <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> class, its initialization parameters, and the id of the input <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>. If any of these changes, results will be computed anew. So, for example, creating two separate instances of the <a class="reference internal" href="generated/pliers.extractors.ClarifaiAPIExtractor.html#pliers.extractors.ClarifaiAPIExtractor" title="pliers.extractors.ClarifaiAPIExtractor"><code class="xref py py-class docutils literal"><span class="pre">ClarifaiAPIExtractor</span></code></a>, each with different <code class="docutils literal"><span class="pre">model</span></code> arguments, will result in two separate calls being made to the Clarifai API even if the exact same <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> inputs are passed. (However, different instances of the same <a class="reference internal" href="generated/pliers.extractors.ClarifaiAPIExtractor.html#pliers.extractors.ClarifaiAPIExtractor" title="pliers.extractors.ClarifaiAPIExtractor"><code class="xref py py-class docutils literal"><span class="pre">ClarifaiAPIExtractor</span></code></a> initialized using the same arguments will still point to the same entry in the cache.)</p>
+</div>
+<div class="section" id="default-converters-dict">
+<h3>default_converters (dict)<a class="headerlink" href="#default-converters-dict" title="Permalink to this headline">¶</a></h3>
+<p>This option specifies what <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> classes to use for implicit conversion between <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> types (i.e., in cases where the code does not explicitly specify every conversion step). The format for this setting is a bit more involved; for details, see <a class="reference internal" href="transformers.html#conversion-defaults"><span class="std std-ref">Package-wide conversion defaults</span></a>.</p>
+</div>
+<div class="section" id="drop-bad-extractor-results-bool">
+<h3>drop_bad_extractor_results (bool)<a class="headerlink" href="#drop-bad-extractor-results-bool" title="Permalink to this headline">¶</a></h3>
+<p>In certain conditions, <code class="docutils literal"><span class="pre">.transform()</span></code> calls may return <code class="docutils literal"><span class="pre">None</span></code> values. Typically this happens either because of an unexpected internal failure (e.g., a timeout occurs in an API-based <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a>), or because <code class="docutils literal"><span class="pre">None</span></code> is the expected behavior for a Transformer given certain inputs. Either way, such values can wreak havoc on downstream transformations, because <code class="docutils literal"><span class="pre">None</span></code> is not a valid input to any <code class="docutils literal"><span class="pre">.transform()</span></code> call in pliers.</p>
+<p>To avoid having entire workflows failing unpredictably as soon as any single <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a>/<code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> combination returns a <code class="docutils literal"><span class="pre">None</span></code> value, pliers will, by default, drop bad values as it encounters them. While this is usually desired, in cases where failures (or other causes of an invalid value return) are important to identify, we can disable this sanitization process by setting the <code class="docutils literal"><span class="pre">drop_bad_extractor_results</span></code> option to <code class="docutils literal"><span class="pre">False</span></code>. Note that this will typically result in an <code class="docutils literal"><span class="pre">Exception</span></code> being raised the first time a bad value is encountered.</p>
+</div>
+<div class="section" id="log-transformations-bool">
+<h3>log_transformations (bool)<a class="headerlink" href="#log-transformations-bool" title="Permalink to this headline">¶</a></h3>
+<p>By default, pliers logs every transformation applied to a <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> object in the Stim’s <code class="docutils literal"><span class="pre">.history</span></code> property. While this is usually desirable, in contexts where hundreds of thousands or even millions of <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> objects are being processed, the aggregate memory footprint of all of these logs may be non-trivial. We can disable transformation logging at any time by setting the <code class="docutils literal"><span class="pre">log_transformations</span></code> setting to <code class="docutils literal"><span class="pre">False</span></code>.</p>
+</div>
+<div class="section" id="parallelization-bool-n-jobs-int">
+<h3>parallelization (bool), n_jobs (int)<a class="headerlink" href="#parallelization-bool-n-jobs-int" title="Permalink to this headline">¶</a></h3>
+<p>By default, pliers executes all transformations serially–even in cases where an iterable of Stims is passed in (so that transformation is, in principle, <a class="reference external" href="https://en.wikipedia.org/wiki/Embarrassingly_parallel">embarrassingly parallel</a>). However, pliers also supports rudimentary parallelization of transformations via the <a class="reference external" href="https://github.com/uqfoundation/pathos">pathos</a> package. If the <code class="docutils literal"><span class="pre">parallelization</span></code> option is set to <code class="docutils literal"><span class="pre">True</span></code>, any <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> passed an iterable of Stims as input will apply its transformations to the elements of the list in parallel.</p>
+<p>The <code class="docutils literal"><span class="pre">n_jobs</span></code> option specifies how many workers to launch. The default value of <code class="docutils literal"><span class="pre">None</span></code> will be interpreted as num(CPU cores) - 1. Note that <code class="docutils literal"><span class="pre">n_jobs</span></code> will be ignored unless parallelization is enabled.</p>
+</div>
+<div class="section" id="progress-bar-bool">
+<h3>progress_bar (bool)<a class="headerlink" href="#progress-bar-bool" title="Permalink to this headline">¶</a></h3>
+<p>By default, pliers shows a progress bar (using <a class="reference external" href="https://github.com/tqdm/tqdm">tqdm</a>) when transforming iterable inputs (e.g., lists of Stims). To disable this behavior, set <code class="docutils literal"><span class="pre">progress_bar</span></code> to <code class="docutils literal"><span class="pre">False</span></code>.</p>
+</div>
+<div class="section" id="use-generators-bool">
+<h3>use_generators (bool)<a class="headerlink" href="#use-generators-bool" title="Permalink to this headline">¶</a></h3>
+<p>Internally, pliers uses generators whenever iteration over Stims occurs, in order to (potentially) reduce its memory footprint. However, generators can be confusing to users new to Python. To minimize confusion, pliers therefore converts all generators to lists before returning results to the user (or passing them as inputs to the next <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> in a <a class="reference internal" href="generated/pliers.graph.Graph.html#pliers.graph.Graph" title="pliers.graph.Graph"><code class="xref py py-class docutils literal"><span class="pre">Graph</span></code></a>). More experienced users who are comfortable with generator expressions and want to take advantage of their potential memory-saving benefits can enable generators by setting <code class="docutils literal"><span class="pre">use_generators</span></code> to <code class="docutils literal"><span class="pre">True</span></code>. (Note that it is not a foregone conclusion that enabling generators will reduce memory consumption; if <a class="reference internal" href="#caching"><span class="std std-ref">caching</span></a> is enabled and/or the number of intermediate conversions is large, using generators is unlikely to help much.)</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="reference.html" class="btn btn-neutral float-right" title="Pliers API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="graphs.html" class="btn btn-neutral" title="Graphs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

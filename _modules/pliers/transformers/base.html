@@ -1,0 +1,498 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.transformers.base &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.transformers.base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.transformers.base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39; Core transformer logic. &#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">pliers</span> <span class="k">import</span> <span class="n">config</span>
+<span class="kn">from</span> <span class="nn">pliers.stimuli.base</span> <span class="k">import</span> <span class="n">Stim</span><span class="p">,</span> <span class="n">_log_transformation</span><span class="p">,</span> <span class="n">load_stims</span>
+<span class="kn">from</span> <span class="nn">pliers.stimuli.compound</span> <span class="k">import</span> <span class="n">CompoundStim</span>
+<span class="kn">from</span> <span class="nn">pliers.utils</span> <span class="k">import</span> <span class="p">(</span><span class="n">progress_bar_wrapper</span><span class="p">,</span> <span class="n">isiterable</span><span class="p">,</span>
+                          <span class="n">isgenerator</span><span class="p">,</span> <span class="n">listify</span><span class="p">,</span> <span class="n">batch_iterable</span><span class="p">,</span>
+                          <span class="n">attempt_to_import</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">pliers</span>
+<span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">with_metaclass</span><span class="p">,</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">abstractproperty</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">wraps</span>
+
+<span class="n">multiprocessing</span> <span class="o">=</span> <span class="n">attempt_to_import</span><span class="p">(</span><span class="s1">&#39;pathos.multiprocessing&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;multiprocessing&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;ProcessingPool&#39;</span><span class="p">])</span>
+
+<span class="n">_cache</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="Transformer"><a class="viewcode-back" href="../../../generated/pliers.transformers.Transformer.html#pliers.converters.Transformer">[docs]</a><span class="k">class</span> <span class="nc">Transformer</span><span class="p">(</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">)):</span>
+    <span class="sd">&#39;&#39;&#39; Base class for all pliers Transformers.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): Optional name of Transformer instance. If None (default),</span>
+<span class="sd">            the class name is used.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">_loggable</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;0.1&#39;</span>
+
+    <span class="c1"># Stim types that *can* be passed as input, but aren&#39;t mandatory. This</span>
+    <span class="c1"># allows for disjunctive specification; e.g., if _input_type is empty</span>
+    <span class="c1"># and _optional_input_type is (AudioStim, TextStim), then _at least_ one</span>
+    <span class="c1"># of the two must be passed. If both are specified in _input_type, then</span>
+    <span class="c1"># the input would have to be a CompoundStim with both audio and text slots.</span>
+    <span class="n">_optional_input_type</span> <span class="o">=</span> <span class="p">()</span>
+
+<div class="viewcode-block" id="Transformer.__init__"><a class="viewcode-back" href="../../../generated/pliers.transformers.Transformer.html#pliers.converters.Transformer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
+
+    <span class="k">def</span> <span class="nf">_memoize</span><span class="p">(</span><span class="n">transform</span><span class="p">):</span>
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">use_cache</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">cache_transformers</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stim</span><span class="p">,</span> <span class="n">Stim</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">use_cache</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">hash</span><span class="p">(</span><span class="n">stim</span><span class="p">)))</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_cache</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">use_cache</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">isgenerator</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="n">_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+<div class="viewcode-block" id="Transformer.transform"><a class="viewcode-back" href="../../../generated/pliers.transformers.Transformer.html#pliers.converters.Transformer.transform">[docs]</a>    <span class="nd">@_memoize</span>
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stims</span><span class="p">,</span> <span class="n">validation</span><span class="o">=</span><span class="s1">&#39;strict&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Executes the transformation on the passed stim(s).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stims (str, Stim, list): One or more stimuli to process. Must be</span>
+<span class="sd">                one of:</span>
+
+<span class="sd">                    - A string giving the path to a file that can be read in</span>
+<span class="sd">                      as a Stim (e.g., a .txt file, .jpg image, etc.)</span>
+<span class="sd">                    - A Stim instance of any type.</span>
+<span class="sd">                    - An iterable of stims, where each element is either a</span>
+<span class="sd">                      string or a Stim.</span>
+
+<span class="sd">            validation (str): String specifying how validation errors should</span>
+<span class="sd">                be handled. Must be one of:</span>
+
+<span class="sd">                    - &#39;strict&#39;: Raise an exception on any validation error</span>
+<span class="sd">                    - &#39;warn&#39;: Issue a warning for all validation errors</span>
+<span class="sd">                    - &#39;loose&#39;: Silently ignore all validation errors</span>
+
+<span class="sd">            args: Optional positional arguments to pass onto the internal</span>
+<span class="sd">                _transform call.</span>
+<span class="sd">            kwargs: Optional positional arguments to pass onto the internal</span>
+<span class="sd">                _transform call.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stims</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="n">stims</span> <span class="o">=</span> <span class="n">load_stims</span><span class="p">(</span><span class="n">stims</span><span class="p">)</span>
+
+        <span class="c1"># If stims is a CompoundStim and the Transformer is expecting a single</span>
+        <span class="c1"># input type, extract all matching stims</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stims</span><span class="p">,</span> <span class="n">CompoundStim</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_type</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">stims</span> <span class="o">=</span> <span class="n">stims</span><span class="o">.</span><span class="n">get_stim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_type</span><span class="p">,</span> <span class="n">return_all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">stims</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No stims of class </span><span class="si">%s</span><span class="s2"> found in the provided&quot;</span>
+                                 <span class="s2">&quot;CompoundStim instance.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_type</span><span class="p">)</span>
+
+        <span class="c1"># If stims is an iterable, naively loop over elements, removing</span>
+        <span class="c1"># invalid results if needed</span>
+        <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">stims</span><span class="p">):</span>
+            <span class="n">iters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iterate</span><span class="p">(</span><span class="n">stims</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">drop_bad_extractor_results</span><span class="p">:</span>
+                <span class="n">iters</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iters</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">progress_bar_wrapper</span><span class="p">(</span><span class="n">iters</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Stim&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Validate stim, and then either pass it directly to the Transformer</span>
+        <span class="c1"># or, if a conversion occurred, recurse.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">validated_stim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">(</span><span class="n">stims</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">validation</span> <span class="o">==</span> <span class="s1">&#39;strict&#39;</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">err</span>
+                <span class="k">elif</span> <span class="n">validation</span> <span class="o">==</span> <span class="s1">&#39;warn&#39;</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+                    <span class="k">return</span>
+                <span class="k">elif</span> <span class="n">validation</span> <span class="o">==</span> <span class="s1">&#39;loose&#39;</span><span class="p">:</span>
+                    <span class="k">return</span>
+            <span class="c1"># If a conversion occurred during validation, we recurse</span>
+            <span class="k">if</span> <span class="n">stims</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">validated_stim</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">validated_stim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">validated_stim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">_log_transformation</span><span class="p">(</span><span class="n">validated_stim</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">isgenerator</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">result</span></div>
+
+    <span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="c1"># Checks whether the current Transformer can handle the passed Stim.</span>
+        <span class="c1"># If not, attempts a dynamic conversion before failing.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stim_matches_input_types</span><span class="p">(</span><span class="n">stim</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">pliers.converters.base</span> <span class="k">import</span> <span class="n">get_converter</span>
+            <span class="n">in_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_type</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_type</span> \
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_input_type</span>
+            <span class="n">converter</span> <span class="o">=</span> <span class="n">get_converter</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">stim</span><span class="p">),</span> <span class="n">in_type</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">converter</span><span class="p">:</span>
+                <span class="n">_old_stim</span> <span class="o">=</span> <span class="n">stim</span>
+                <span class="n">stim</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">stim</span><span class="p">)</span>
+                <span class="n">stim</span> <span class="o">=</span> <span class="n">_log_transformation</span><span class="p">(</span><span class="n">_old_stim</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="n">converter</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Transformers of type </span><span class="si">%s</span><span class="s2"> can only be applied to stimuli&quot;</span>
+                       <span class="s2">&quot; of type(s) </span><span class="si">%s</span><span class="s2"> (not type </span><span class="si">%s</span><span class="s2">), and no applicable &quot;</span>
+                       <span class="s2">&quot;Converter was found.&quot;</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">in_type</span><span class="p">,</span>
+                             <span class="n">stim</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stim</span>
+
+    <span class="k">def</span> <span class="nf">_stim_matches_input_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="c1"># Checks if passed Stim meets all _input_type and _optional_input_type</span>
+        <span class="c1"># specifications.</span>
+
+        <span class="n">mandatory</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">listify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_type</span><span class="p">))</span>
+        <span class="n">optional</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">listify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optional_input_type</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stim</span><span class="p">,</span> <span class="n">CompoundStim</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">stim</span><span class="o">.</span><span class="n">has_types</span><span class="p">(</span><span class="n">mandatory</span><span class="p">)</span> <span class="ow">or</span> \
+                <span class="p">(</span><span class="ow">not</span> <span class="n">mandatory</span> <span class="ow">and</span> <span class="n">stim</span><span class="o">.</span><span class="n">has_types</span><span class="p">(</span><span class="n">optional</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mandatory</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Transformer of class </span><span class="si">%s</span><span class="s2"> requires multiple mandatory &quot;</span>
+                   <span class="s2">&quot;inputs, so the passed input Stim must be a CompoundStim&quot;</span>
+                   <span class="s2">&quot;--which it isn&#39;t.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stim</span><span class="p">,</span> <span class="n">mandatory</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">mandatory</span> <span class="ow">and</span>
+                                               <span class="nb">isinstance</span><span class="p">(</span><span class="n">stim</span><span class="p">,</span> <span class="n">optional</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_iterate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stims</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">parallelize</span> <span class="ow">and</span> <span class="n">multiprocessing</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">ProcessingPool</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">n_jobs</span><span class="p">)</span> \
+                <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_transform</span><span class="p">,</span> <span class="n">stims</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stims</span><span class="p">)</span> <span class="k">if</span> <span class="n">t</span><span class="p">)</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractproperty</span>
+    <span class="k">def</span> <span class="nf">_input_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tr_attrs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_attributes</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_attributes</span><span class="p">,</span> <span class="n">tr_attrs</span><span class="p">))))</span></div>
+
+
+<div class="viewcode-block" id="BatchTransformerMixin"><a class="viewcode-back" href="../../../generated/pliers.transformers.BatchTransformerMixin.html#pliers.converters.BatchTransformerMixin">[docs]</a><span class="k">class</span> <span class="nc">BatchTransformerMixin</span><span class="p">(</span><span class="n">Transformer</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; A mixin that overrides the default implicit iteration behavior. Use</span>
+<span class="sd">    whenever batch processing of multiple stimuli should be handled within the</span>
+<span class="sd">    _transform method rather than applying a naive loop--e.g., for API</span>
+<span class="sd">    Extractors that can handle list inputs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        batch_size (int): Number of Stims to process in each batch.</span>
+<span class="sd">        args, kwargs: Optional positional and keyword arguments to pass onto</span>
+<span class="sd">            the base Transformer initializer.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="BatchTransformerMixin.__init__"><a class="viewcode-back" href="../../../generated/pliers.transformers.BatchTransformerMixin.html#pliers.converters.BatchTransformerMixin.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">batch_size</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BatchTransformerMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_iterate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stims</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">batches</span> <span class="o">=</span> <span class="n">batch_iterable</span><span class="p">(</span><span class="n">stims</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">stim</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">_log_transformation</span><span class="p">(</span><span class="n">stim</span><span class="p">,</span> <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">stims</span> <span class="o">=</span> <span class="n">listify</span><span class="p">(</span><span class="n">stim</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stim_matches_input_types</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stims</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">BatchTransformerMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> \
+                <span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">stims</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">stim</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">result</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">BatchTransformerMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+                        <span class="o">.</span><span class="n">_iterate</span><span class="p">(</span><span class="n">stims</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_transformer"><a class="viewcode-back" href="../../../generated/pliers.transformers.get_transformer.html#pliers.converters.get_transformer">[docs]</a><span class="k">def</span> <span class="nf">get_transformer</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Scans list of currently available Transformer classes and returns an</span>
+<span class="sd">    instantiation of the first one whose name perfectly matches</span>
+<span class="sd">    (case-insensitive).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): The name of the transformer to retrieve. Case-insensitive;</span>
+<span class="sd">            e.g., &#39;stftextractor&#39; or &#39;CornerDetectionExtractor&#39;.</span>
+<span class="sd">        base (str, list): Optional name of transformer modules to search.</span>
+<span class="sd">            Valid values are &#39;converters&#39;, &#39;extractors&#39;, and &#39;filters&#39;.</span>
+<span class="sd">        args, kwargs: Optional positional or keyword arguments to pass onto</span>
+<span class="sd">            the Transformer.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="c1"># Default to searching all kinds of Transformers</span>
+    <span class="k">if</span> <span class="n">base</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;extractors&#39;</span><span class="p">,</span> <span class="s1">&#39;converters&#39;</span><span class="p">,</span> <span class="s1">&#39;filters&#39;</span><span class="p">]</span>
+
+    <span class="n">base</span> <span class="o">=</span> <span class="n">listify</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">base</span><span class="p">:</span>
+        <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;pliers.</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">b</span><span class="p">)</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pliers</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="n">classes</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="s1">&#39;__all__&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">cls_name</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cls_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">cls_name</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;No transformer named &#39;</span><span class="si">%s</span><span class="s2">&#39; found.&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

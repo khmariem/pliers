@@ -1,0 +1,295 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.converters.multistep &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.converters.multistep</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.converters.multistep</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39; Converter classes that wrap multiple conversion steps under one class. &#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">pliers.stimuli.base</span> <span class="k">import</span> <span class="n">Stim</span>
+<span class="kn">from</span> <span class="nn">pliers.stimuli.audio</span> <span class="k">import</span> <span class="n">AudioStim</span>
+<span class="kn">from</span> <span class="nn">pliers.stimuli.video</span> <span class="k">import</span> <span class="n">VideoStim</span>
+<span class="kn">from</span> <span class="nn">pliers.stimuli.text</span> <span class="k">import</span> <span class="n">TextStim</span><span class="p">,</span> <span class="n">ComplexTextStim</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">Converter</span><span class="p">,</span> <span class="n">get_converter</span>
+
+
+<span class="k">class</span> <span class="nc">MultiStepConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Base class for Converters doing more than one step.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        steps (list): Ordered list describing the sequence of desired</span>
+<span class="sd">            conversions. Each element in the list can be either a Converter or</span>
+<span class="sd">            a Stim class. If the former, the exact Converter provided is used</span>
+<span class="sd">            as the step. If a Stim subclass is passed (e.g., AudioStim), then</span>
+<span class="sd">            the first matching Converter class will be used.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_loggable</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span> <span class="k">if</span> <span class="n">steps</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">steps</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MultiStepConverter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">Stim</span><span class="p">):</span>
+                <span class="n">converter</span> <span class="o">=</span> <span class="n">get_converter</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">stim</span><span class="p">),</span> <span class="n">step</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">converter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Conversion failed at step </span><span class="si">%d</span><span class="s2">; unable to find a &quot;</span>
+                           <span class="s2">&quot;Converter capable of transforming a </span><span class="si">%s</span><span class="s2"> into a </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">)</span> \
+                        <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">stim</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">converter</span> <span class="o">=</span> <span class="n">step</span>
+            <span class="n">stim</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">stim</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stim</span>
+
+
+<span class="c1"># Current approach requires explicit naming of every possible path. This is</span>
+<span class="c1"># not ideal and could get big in a hurry. We should probably switch to</span>
+<span class="c1"># walking the inheritance hierarchy of each Stim instance and using the first</span>
+<span class="c1"># MultiStepConverter that matches (e.g., a VideoFrameCollectionStim that needs</span>
+<span class="c1"># to be converted to a TextStim should use the VideoToTextConverter).</span>
+
+
+<div class="viewcode-block" id="VideoToTextConverter"><a class="viewcode-back" href="../../../generated/pliers.converters.VideoToTextConverter.html#pliers.converters.VideoToTextConverter">[docs]</a><span class="k">class</span> <span class="nc">VideoToTextConverter</span><span class="p">(</span><span class="n">MultiStepConverter</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Converts a VideoStim directly to a TextStim. &#39;&#39;&#39;</span>
+
+    <span class="n">_input_type</span> <span class="o">=</span> <span class="n">VideoStim</span>
+    <span class="n">_output_type</span> <span class="o">=</span> <span class="n">TextStim</span>
+    <span class="n">_steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">AudioStim</span><span class="p">,</span> <span class="n">TextStim</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="VideoToComplexTextConverter"><a class="viewcode-back" href="../../../generated/pliers.converters.VideoToComplexTextConverter.html#pliers.converters.VideoToComplexTextConverter">[docs]</a><span class="k">class</span> <span class="nc">VideoToComplexTextConverter</span><span class="p">(</span><span class="n">MultiStepConverter</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Converts a VideoStim directly to a ComplexTextStim. &#39;&#39;&#39;</span>
+
+    <span class="n">_input_type</span> <span class="o">=</span> <span class="n">VideoStim</span>
+    <span class="n">_output_type</span> <span class="o">=</span> <span class="n">ComplexTextStim</span>
+    <span class="n">_steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">AudioStim</span><span class="p">,</span> <span class="n">TextStim</span><span class="p">]</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

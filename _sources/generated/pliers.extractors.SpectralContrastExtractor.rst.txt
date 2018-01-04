@@ -1,0 +1,11 @@
+pliers.extractors.SpectralContrastExtractor
+===========================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: SpectralContrastExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

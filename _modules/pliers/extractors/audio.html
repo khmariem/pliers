@@ -1,0 +1,618 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.extractors.audio &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.extractors.audio</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.extractors.audio</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39; Extractors that operate on AudioStim inputs. &#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">pliers.stimuli.audio</span> <span class="k">import</span> <span class="n">AudioStim</span>
+<span class="kn">from</span> <span class="nn">pliers.stimuli.text</span> <span class="k">import</span> <span class="n">ComplexTextStim</span>
+<span class="kn">from</span> <span class="nn">pliers.extractors.base</span> <span class="k">import</span> <span class="n">Extractor</span><span class="p">,</span> <span class="n">ExtractorResult</span>
+<span class="kn">from</span> <span class="nn">pliers.utils</span> <span class="k">import</span> <span class="n">attempt_to_import</span><span class="p">,</span> <span class="n">verify_dependencies</span><span class="p">,</span> <span class="n">listify</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">fft</span>
+
+<span class="n">librosa</span> <span class="o">=</span> <span class="n">attempt_to_import</span><span class="p">(</span><span class="s1">&#39;librosa&#39;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">AudioExtractor</span><span class="p">(</span><span class="n">Extractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Base Audio Extractor class; all subclasses can only be applied to</span>
+<span class="sd">    audio. &#39;&#39;&#39;</span>
+    <span class="n">_input_type</span> <span class="o">=</span> <span class="n">AudioStim</span>
+
+
+<div class="viewcode-block" id="STFTAudioExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.STFTAudioExtractor.html#pliers.extractors.STFTAudioExtractor">[docs]</a><span class="k">class</span> <span class="nc">STFTAudioExtractor</span><span class="p">(</span><span class="n">AudioExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Short-time Fourier Transform extractor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        frame_size (float): The width of the frame/window to apply an FFT to,</span>
+<span class="sd">            in seconds.</span>
+<span class="sd">        hop_size (float): The step size to increment the window by on each</span>
+<span class="sd">            iteration, in seconds (effectively, the sampling rate).</span>
+<span class="sd">        freq_bins (list or int): The set of bins or frequency bands to extract</span>
+<span class="sd">            power for. If an int is passed, this is the number of bins</span>
+<span class="sd">            returned, with each bin spanning an equal range of frequencies.</span>
+<span class="sd">            E.g., if bins=5 and the frequency spectrum runs from 0 to 20KHz,</span>
+<span class="sd">            each bin will span 4KHz. If a list is passed, each element must be</span>
+<span class="sd">            a tuple or list of lower and upper frequency bounds. E.g., passing</span>
+<span class="sd">            [(0, 300), (300, 3000)] would compute power in two bands, one</span>
+<span class="sd">            between 0 and 300Hz, and one between 300Hz and 3KHz.</span>
+<span class="sd">        spectrogram (bool): If True, plots a spectrogram of the results.</span>
+
+<span class="sd">    Notes: code adapted from</span>
+<span class="sd">    http://stackoverflow.com/questions/2459295/invertible-stft-and-istft-in-python</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;frame_size&#39;</span><span class="p">,</span> <span class="s1">&#39;hop_size&#39;</span><span class="p">,</span> <span class="s1">&#39;freq_bins&#39;</span><span class="p">)</span>
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+
+<div class="viewcode-block" id="STFTAudioExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.STFTAudioExtractor.html#pliers.extractors.STFTAudioExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">hop_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">freq_bins</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                 <span class="n">spectrogram</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_size</span> <span class="o">=</span> <span class="n">frame_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hop_size</span> <span class="o">=</span> <span class="n">hop_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spectrogram</span> <span class="o">=</span> <span class="n">spectrogram</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">freq_bins</span> <span class="o">=</span> <span class="n">freq_bins</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">STFTAudioExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_stft</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">framesamp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame_size</span> <span class="o">*</span> <span class="n">stim</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">)</span>
+        <span class="n">hopsamp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hop_size</span> <span class="o">*</span> <span class="n">stim</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">)</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hanning</span><span class="p">(</span><span class="n">framesamp</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">fft</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">:(</span><span class="n">i</span> <span class="o">+</span> <span class="n">framesamp</span><span class="p">)])</span>
+                      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">framesamp</span><span class="p">,</span> <span class="n">hopsamp</span><span class="p">)])</span>
+        <span class="n">nyquist_lim</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="p">:</span><span class="n">nyquist_lim</span><span class="p">])</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrogram</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="n">framesamp</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">stim</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">)</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="n">bins</span><span class="p">[:</span><span class="n">nyquist_lim</span><span class="p">]</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+                       <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdYlBu_r&#39;</span><span class="p">,</span>
+                       <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">stim</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="n">bins</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">bins</span><span class="o">.</span><span class="n">max</span><span class="p">()])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Frequency&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">X</span>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stft</span><span class="p">(</span><span class="n">stim</span><span class="p">)</span>
+        <span class="n">time_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">stim</span><span class="o">.</span><span class="n">duration</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_size</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">hop_size</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq_bins</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">bin_size</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq_bins</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq_bins</span><span class="p">):</span>
+                <span class="n">bins</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span> <span class="o">*</span> <span class="n">bin_size</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">bin_size</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">freq_bins</span> <span class="o">=</span> <span class="n">bins</span>
+
+        <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">fb</span> <span class="k">for</span> <span class="n">fb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq_bins</span><span class="p">]</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">stim</span><span class="o">.</span><span class="n">onset</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">stim</span><span class="o">.</span><span class="n">onset</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="n">tb</span> <span class="o">+</span> <span class="n">offset</span> <span class="k">for</span> <span class="n">tb</span> <span class="ow">in</span> <span class="n">time_bins</span><span class="p">]</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">fb</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freq_bins</span><span class="p">):</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="o">=</span> <span class="n">fb</span>
+            <span class="n">values</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">values</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">values</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">values</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">values</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">,</span>
+                               <span class="n">onsets</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hop_size</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MeanAmplitudeExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.MeanAmplitudeExtractor.html#pliers.extractors.MeanAmplitudeExtractor">[docs]</a><span class="k">class</span> <span class="nc">MeanAmplitudeExtractor</span><span class="p">(</span><span class="n">Extractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Mean amplitude extractor for blocks of audio with transcription. &#39;&#39;&#39;</span>
+
+    <span class="n">_input_type</span> <span class="o">=</span> <span class="p">(</span><span class="n">AudioStim</span><span class="p">,</span> <span class="n">ComplexTextStim</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+
+        <span class="n">amps</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">audio</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">audio</span><span class="o">.</span><span class="n">sampling_rate</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">complex_text</span><span class="o">.</span><span class="n">elements</span>
+        <span class="n">values</span><span class="p">,</span> <span class="n">onsets</span><span class="p">,</span> <span class="n">durations</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">elements</span><span class="p">):</span>
+            <span class="n">onset</span> <span class="o">=</span> <span class="n">sampling_rate</span> <span class="o">*</span> <span class="n">el</span><span class="o">.</span><span class="n">onset</span>
+            <span class="n">onsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">sampling_rate</span> <span class="o">*</span> <span class="n">el</span><span class="o">.</span><span class="n">duration</span>
+            <span class="n">durations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+
+            <span class="n">r_onset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">onset</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">r_offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">onset</span> <span class="o">+</span> <span class="n">duration</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">r_offset</span> <span class="o">&lt;=</span> <span class="n">amps</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Block ends after data.&#39;</span><span class="p">)</span>
+
+            <span class="n">mean_amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">amps</span><span class="p">[</span><span class="n">r_onset</span><span class="p">:</span><span class="n">r_offset</span><span class="p">])</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean_amplitude</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean_amplitude&#39;</span><span class="p">],</span>
+                               <span class="n">onsets</span><span class="o">=</span><span class="n">onsets</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="n">durations</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">LibrosaFeatureExtractor</span><span class="p">(</span><span class="n">AudioExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; A generic class for audio extractors using the librosa library. &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;hop_length&#39;</span><span class="p">,</span> <span class="s1">&#39;librosa_kwargs&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hop_length</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="o">**</span><span class="n">librosa_kwargs</span><span class="p">):</span>
+        <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;librosa&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">feature</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_feature</span> <span class="o">=</span> <span class="n">feature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hop_length</span> <span class="o">=</span> <span class="n">hop_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">librosa_kwargs</span> <span class="o">=</span> <span class="n">librosa_kwargs</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feature</span>
+
+    <span class="k">def</span> <span class="nf">_get_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">librosa</span><span class="o">.</span><span class="n">feature</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feature</span><span class="p">)(</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">,</span> <span class="n">hop_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hop_length</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">librosa_kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_values</span><span class="p">(</span><span class="n">stim</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">feature_names</span> <span class="o">=</span> <span class="n">listify</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">())</span>
+        <span class="n">n_frames</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">onsets</span> <span class="o">=</span> <span class="n">librosa</span><span class="o">.</span><span class="n">frames_to_time</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">),</span>
+                                        <span class="n">sr</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">,</span>
+                                        <span class="n">hop_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hop_length</span><span class="p">)</span>
+        <span class="n">onsets</span> <span class="o">=</span> <span class="n">onsets</span> <span class="o">+</span> <span class="n">stim</span><span class="o">.</span><span class="n">onset</span> <span class="k">if</span> <span class="n">stim</span><span class="o">.</span><span class="n">onset</span> <span class="k">else</span> <span class="n">onsets</span>
+        <span class="n">durations</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hop_length</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">)]</span> <span class="o">*</span> <span class="n">n_frames</span>
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
+                               <span class="n">features</span><span class="o">=</span><span class="n">feature_names</span><span class="p">,</span>
+                               <span class="n">onsets</span><span class="o">=</span><span class="n">onsets</span><span class="p">,</span>
+                               <span class="n">durations</span><span class="o">=</span><span class="n">durations</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SpectralCentroidExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.SpectralCentroidExtractor.html#pliers.extractors.SpectralCentroidExtractor">[docs]</a><span class="k">class</span> <span class="nc">SpectralCentroidExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts the spectral centroids from audio using the Librosa library.</span>
+
+<span class="sd">    For details on argument specification visit:</span>
+<span class="sd">    https://librosa.github.io/librosa/feature.html.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;spectral_centroid&#39;</span></div>
+
+
+<div class="viewcode-block" id="SpectralBandwidthExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.SpectralBandwidthExtractor.html#pliers.extractors.SpectralBandwidthExtractor">[docs]</a><span class="k">class</span> <span class="nc">SpectralBandwidthExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts the p&#39;th-order spectral bandwidth from audio using the</span>
+<span class="sd">    Librosa library.</span>
+
+<span class="sd">    For details on argument specification visit:</span>
+<span class="sd">    https://librosa.github.io/librosa/feature.html.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;spectral_bandwidth&#39;</span></div>
+
+
+<div class="viewcode-block" id="SpectralContrastExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.SpectralContrastExtractor.html#pliers.extractors.SpectralContrastExtractor">[docs]</a><span class="k">class</span> <span class="nc">SpectralContrastExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts the spectral contrast from audio using the Librosa library.</span>
+
+<span class="sd">    For details on argument specification visit:</span>
+<span class="sd">    https://librosa.github.io/librosa/feature.html.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;spectral_contrast&#39;</span>
+
+<div class="viewcode-block" id="SpectralContrastExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.SpectralContrastExtractor.html#pliers.extractors.SpectralContrastExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_bands</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_bands</span> <span class="o">=</span> <span class="n">n_bands</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SpectralContrastExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">n_bands</span><span class="o">=</span><span class="n">n_bands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;spectral_contrast_band_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_bands</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="SpectralRolloffExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.SpectralRolloffExtractor.html#pliers.extractors.SpectralRolloffExtractor">[docs]</a><span class="k">class</span> <span class="nc">SpectralRolloffExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts the roll-off frequency from audio using the Librosa library.</span>
+
+<span class="sd">    For details on argument specification visit:</span>
+<span class="sd">    https://librosa.github.io/librosa/feature.html.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;spectral_rolloff&#39;</span></div>
+
+
+<div class="viewcode-block" id="PolyFeaturesExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.PolyFeaturesExtractor.html#pliers.extractors.PolyFeaturesExtractor">[docs]</a><span class="k">class</span> <span class="nc">PolyFeaturesExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts the coefficients of fitting an nth-order polynomial to the columns of an audio&#39;s spectrogram (via Librosa).</span>
+
+<span class="sd">    For details on argument specification visit:</span>
+<span class="sd">    https://librosa.github.io/librosa/feature.html.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;poly_features&#39;</span>
+
+<div class="viewcode-block" id="PolyFeaturesExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.PolyFeaturesExtractor.html#pliers.extractors.PolyFeaturesExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PolyFeaturesExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;coefficient_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="RMSEExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.RMSEExtractor.html#pliers.extractors.RMSEExtractor">[docs]</a><span class="k">class</span> <span class="nc">RMSEExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts root mean square (RMS) energy from audio using the Librosa</span>
+<span class="sd">    library.</span>
+
+<span class="sd">    For details on argument specification visit:</span>
+<span class="sd">    https://librosa.github.io/librosa/feature.html.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;rmse&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_get_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">librosa</span><span class="o">.</span><span class="n">feature</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feature</span><span class="p">)(</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">hop_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hop_length</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">librosa_kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ZeroCrossingRateExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.ZeroCrossingRateExtractor.html#pliers.extractors.ZeroCrossingRateExtractor">[docs]</a><span class="k">class</span> <span class="nc">ZeroCrossingRateExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts the zero-crossing rate of audio using the Librosa library.</span>
+
+<span class="sd">    For details on argument specification visit:</span>
+<span class="sd">    https://librosa.github.io/librosa/feature.html.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;zero_crossing_rate&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_get_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">librosa</span><span class="o">.</span><span class="n">feature</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feature</span><span class="p">)(</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">hop_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hop_length</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">librosa_kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChromaSTFTExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.ChromaSTFTExtractor.html#pliers.extractors.ChromaSTFTExtractor">[docs]</a><span class="k">class</span> <span class="nc">ChromaSTFTExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts a chromagram from an audio&#39;s waveform using the Librosa</span>
+<span class="sd">    library.</span>
+
+<span class="sd">    For details on argument specification visit:</span>
+<span class="sd">    https://librosa.github.io/librosa/feature.html.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;chroma_stft&#39;</span>
+
+<div class="viewcode-block" id="ChromaSTFTExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.ChromaSTFTExtractor.html#pliers.extractors.ChromaSTFTExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_chroma</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_chroma</span> <span class="o">=</span> <span class="n">n_chroma</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ChromaSTFTExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n_chroma</span><span class="o">=</span><span class="n">n_chroma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;chroma_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_chroma</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="ChromaCQTExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.ChromaCQTExtractor.html#pliers.extractors.ChromaCQTExtractor">[docs]</a><span class="k">class</span> <span class="nc">ChromaCQTExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts a constant-q chromogram from audio using the Librosa library.</span>
+
+<span class="sd">    For details on argument specification visit:</span>
+<span class="sd">    https://librosa.github.io/librosa/feature.html.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;chroma_cqt&#39;</span>
+
+<div class="viewcode-block" id="ChromaCQTExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.ChromaCQTExtractor.html#pliers.extractors.ChromaCQTExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_chroma</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_chroma</span> <span class="o">=</span> <span class="n">n_chroma</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ChromaCQTExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n_chroma</span><span class="o">=</span><span class="n">n_chroma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;chroma_cqt_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_chroma</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="ChromaCENSExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.ChromaCENSExtractor.html#pliers.extractors.ChromaCENSExtractor">[docs]</a><span class="k">class</span> <span class="nc">ChromaCENSExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts a chroma variant &quot;Chroma Energy Normalized&quot; (CENS)</span>
+<span class="sd">    chromogram from audio (via Librosa).</span>
+
+<span class="sd">    For details on argument specification visit:</span>
+<span class="sd">    https://librosa.github.io/librosa/feature.html.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;chroma_cens&#39;</span>
+
+<div class="viewcode-block" id="ChromaCENSExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.ChromaCENSExtractor.html#pliers.extractors.ChromaCENSExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_chroma</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_chroma</span> <span class="o">=</span> <span class="n">n_chroma</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ChromaCENSExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n_chroma</span><span class="o">=</span><span class="n">n_chroma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;chroma_cens_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_chroma</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="MelspectrogramExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.MelspectrogramExtractor.html#pliers.extractors.MelspectrogramExtractor">[docs]</a><span class="k">class</span> <span class="nc">MelspectrogramExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts mel-scaled spectrogram from audio using the Librosa library.</span>
+
+<span class="sd">    For details on argument specification visit:</span>
+<span class="sd">    https://librosa.github.io/librosa/feature.html.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;melspectrogram&#39;</span>
+
+<div class="viewcode-block" id="MelspectrogramExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.MelspectrogramExtractor.html#pliers.extractors.MelspectrogramExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mels</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_mels</span> <span class="o">=</span> <span class="n">n_mels</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MelspectrogramExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n_mels</span><span class="o">=</span><span class="n">n_mels</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;mel_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_mels</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="MFCCExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.MFCCExtractor.html#pliers.extractors.MFCCExtractor">[docs]</a><span class="k">class</span> <span class="nc">MFCCExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts Mel Frequency Ceptral Coefficients from audio using the</span>
+<span class="sd">    Librosa library.</span>
+
+<span class="sd">    For details on argument specification visit:</span>
+<span class="sd">    https://librosa.github.io/librosa/feature.html.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;mfcc&#39;</span>
+
+<div class="viewcode-block" id="MFCCExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.MFCCExtractor.html#pliers.extractors.MFCCExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_mfcc</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_mfcc</span> <span class="o">=</span> <span class="n">n_mfcc</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MFCCExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n_mfcc</span><span class="o">=</span><span class="n">n_mfcc</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;mfcc_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_mfcc</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="TonnetzExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.TonnetzExtractor.html#pliers.extractors.TonnetzExtractor">[docs]</a><span class="k">class</span> <span class="nc">TonnetzExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts the tonal centroids (tonnetz) from audio using the Librosa</span>
+<span class="sd">    library.</span>
+
+<span class="sd">    For details on argument specification visit:</span>
+<span class="sd">    https://librosa.github.io/librosa/feature.html.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;tonnetz&#39;</span>
+
+    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;tonal_centroid_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">_get_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">librosa</span><span class="o">.</span><span class="n">feature</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_feature</span><span class="p">)(</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">librosa_kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TempogramExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.TempogramExtractor.html#pliers.extractors.TempogramExtractor">[docs]</a><span class="k">class</span> <span class="nc">TempogramExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts a tempogram from audio using the Librosa library.</span>
+
+<span class="sd">    For details on argument specification visit:</span>
+<span class="sd">    https://librosa.github.io/librosa/feature.html.&#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;tempogram&#39;</span>
+
+<div class="viewcode-block" id="TempogramExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.TempogramExtractor.html#pliers.extractors.TempogramExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win_length</span><span class="o">=</span><span class="mi">384</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">win_length</span> <span class="o">=</span> <span class="n">win_length</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TempogramExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">win_length</span><span class="o">=</span><span class="n">win_length</span><span class="p">,</span>
+                                                 <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;tempo_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">win_length</span><span class="p">)]</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

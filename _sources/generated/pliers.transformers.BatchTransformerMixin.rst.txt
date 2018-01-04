@@ -1,0 +1,11 @@
+pliers.transformers.BatchTransformerMixin
+=========================================
+
+.. currentmodule:: pliers.transformers
+
+.. autoclass:: BatchTransformerMixin
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

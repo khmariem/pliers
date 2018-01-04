@@ -1,0 +1,316 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.extractors.models &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.extractors.models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.extractors.models</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39; Extractor classes based on pre-trained models. &#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">pliers.extractors.image</span> <span class="k">import</span> <span class="n">ImageExtractor</span>
+<span class="kn">from</span> <span class="nn">pliers.extractors.base</span> <span class="k">import</span> <span class="n">ExtractorResult</span>
+
+
+<div class="viewcode-block" id="TensorFlowInceptionV3Extractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.TensorFlowInceptionV3Extractor.html#pliers.extractors.TensorFlowInceptionV3Extractor">[docs]</a><span class="k">class</span> <span class="nc">TensorFlowInceptionV3Extractor</span><span class="p">(</span><span class="n">ImageExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Labels objects in images using a pretrained Inception V3 architecture</span>
+<span class="sd">     implemented in TensorFlow.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model_dir (str): path to save model file to. If None (default), creates</span>
+<span class="sd">            and uses a temporary folder.</span>
+<span class="sd">        data_url (str): URL to download model from. If None (default), uses</span>
+<span class="sd">            the preset inception model (dated 2015-12-05) used in the</span>
+<span class="sd">            TensoryFlow tutorials.</span>
+<span class="sd">        num_predictions (int): Number of top predicted labels to retain for</span>
+<span class="sd">            each image.</span>
+<span class="sd">     &#39;&#39;&#39;</span>
+
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;model_dir&#39;</span><span class="p">,</span> <span class="s1">&#39;data_url&#39;</span><span class="p">,</span> <span class="s1">&#39;num_predictions&#39;</span><span class="p">)</span>
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+
+<div class="viewcode-block" id="TensorFlowInceptionV3Extractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.TensorFlowInceptionV3Extractor.html#pliers.extractors.TensorFlowInceptionV3Extractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">data_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_predictions</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">TensorFlowInceptionV3Extractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">model_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s1">&#39;TFInceptionV3&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span> <span class="o">=</span> <span class="n">model_dir</span>
+
+        <span class="k">if</span> <span class="n">data_url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data_url</span> <span class="o">=</span> <span class="s1">&#39;http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_url</span> <span class="o">=</span> <span class="n">data_url</span>
+
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_predictions</span> <span class="o">=</span> <span class="n">num_predictions</span>
+
+        <span class="c1"># Download the inception-v3 model if needed</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_file</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_download_pretrained_model</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_download_pretrained_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Adapted from def_maybe_download_and_extract() in TF&#39;s</span>
+        <span class="c1"># classify_image.py</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Downloading Inception-V3 model from TensorFlow website...&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_file</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_url</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_file</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_file</span><span class="p">)</span><span class="o">.</span><span class="n">st_size</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Succesfully downloaded&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="s1">&#39;bytes.&#39;</span><span class="p">)</span>
+            <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_file</span><span class="p">,</span> <span class="s1">&#39;r:gz&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">pliers.external</span> <span class="k">import</span> <span class="n">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+        <span class="n">tf_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
+        <span class="n">script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tf_dir</span><span class="p">,</span> <span class="s1">&#39;classify_image.py&#39;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">stim</span><span class="o">.</span><span class="n">get_filename</span><span class="p">()</span> <span class="k">as</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="s1">&#39; --image_file </span><span class="si">%s</span><span class="s1"> --model_dir </span><span class="si">%s</span><span class="s1"> --num_top_prediction </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> \
+                <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_predictions</span><span class="p">)</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;python &#39;</span> <span class="o">+</span> <span class="n">script</span> <span class="o">+</span> <span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+            <span class="n">hits</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">num_predictions</span><span class="p">:]</span>
+
+        <span class="n">values</span><span class="p">,</span> <span class="n">features</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">hits</span><span class="p">):</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;(.*?)\s\(score\s\=\s([0-9\.]+)\)&#39;</span><span class="p">,</span> <span class="n">h</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="n">extraction</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+            <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extraction</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">extraction</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">([</span><span class="n">values</span><span class="p">],</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

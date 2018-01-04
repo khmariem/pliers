@@ -1,0 +1,11 @@
+pliers.stimuli.ImageStim
+========================
+
+.. currentmodule:: pliers.stimuli
+
+.. autoclass:: ImageStim
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

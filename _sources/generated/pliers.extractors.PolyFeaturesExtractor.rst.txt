@@ -1,0 +1,11 @@
+pliers.extractors.PolyFeaturesExtractor
+=======================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: PolyFeaturesExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

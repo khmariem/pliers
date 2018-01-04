@@ -1,0 +1,6 @@
+pliers.diagnostics.variances
+============================
+
+.. currentmodule:: pliers.diagnostics
+
+.. autofunction:: variances

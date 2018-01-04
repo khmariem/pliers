@@ -1,0 +1,11 @@
+pliers.extractors.SpectralRolloffExtractor
+==========================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: SpectralRolloffExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

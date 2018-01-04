@@ -1,0 +1,6 @@
+pliers.diagnostics.variance_inflation_factors
+=============================================
+
+.. currentmodule:: pliers.diagnostics
+
+.. autofunction:: variance_inflation_factors

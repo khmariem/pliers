@@ -1,0 +1,11 @@
+pliers.filters.TokenizingFilter
+===============================
+
+.. currentmodule:: pliers.filters
+
+.. autoclass:: TokenizingFilter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

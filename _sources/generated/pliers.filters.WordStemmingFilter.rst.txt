@@ -1,0 +1,11 @@
+pliers.filters.WordStemmingFilter
+=================================
+
+.. currentmodule:: pliers.filters
+
+.. autoclass:: WordStemmingFilter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

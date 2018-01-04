@@ -1,0 +1,6 @@
+pliers.extractors.merge_results
+===============================
+
+.. currentmodule:: pliers.extractors
+
+.. autofunction:: merge_results

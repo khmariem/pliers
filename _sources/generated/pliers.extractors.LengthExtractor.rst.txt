@@ -1,0 +1,11 @@
+pliers.extractors.LengthExtractor
+=================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: LengthExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__
