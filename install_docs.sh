@@ -8,11 +8,15 @@ if [[ "$BRANCH" != "gh-pages" ]]; then
 fi
 
 git clean -fdx
-git checkout master docs
+
+git checkout master
 cd docs
 make clean
 make html
 TIMESTAMP=$(date)
+
+git checkout gh-pages
+
 cp -R _build/html/* ..
 cd ..
 rm -rf docs
