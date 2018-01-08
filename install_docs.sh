@@ -8,7 +8,7 @@ if [[ "$BRANCH" != "gh-pages" ]]; then
 fi
 
 git clean -fdx
-git clone master docs
+git checkout master docs
 cd docs
 make clean
 make html
