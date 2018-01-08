@@ -36,6 +36,7 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="pliers 0.2 documentation" href="index.html"/>
+        <link rel="next" title="pliers.filters.FrameSamplingFilter" href="generated/pliers.filters.FrameSamplingFilter.html"/>
         <link rel="prev" title="Stims" href="stimuli.html"/> 
 
   
@@ -110,7 +111,14 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#filters">Filters</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#list-of-filter-classes">List of Filter classes</a><ul class="simple">
+<li class="toctree-l3"><a class="reference internal" href="#list-of-filter-classes">List of Filter classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.FrameSamplingFilter.html">pliers.filters.FrameSamplingFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.ImageCroppingFilter.html">pliers.filters.ImageCroppingFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.PillowImageFilter.html">pliers.filters.PillowImageFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.PunctuationRemovalFilter.html">pliers.filters.PunctuationRemovalFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.TokenizingFilter.html">pliers.filters.TokenizingFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.TokenRemovalFilter.html">pliers.filters.TokenRemovalFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.WordStemmingFilter.html">pliers.filters.WordStemmingFilter</a></li>
 </ul>
 </li>
 </ul>
@@ -186,8 +194,8 @@
             
   <div class="section" id="transformers">
 <h1>Transformers<a class="headerlink" href="#transformers" title="Permalink to this headline">¶</a></h1>
-<p>As the name suggests, a <code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code> is a kind of object that transforms other objects. In pliers, every <code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code> always takes a single <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> as its input, though it can return different outputs. The <code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code> API in pliers is modeled loosely on the widely-used scikit-learn API; as such, what defines a <code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code>, from a user’s perspective, is that one can always call pass a <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> instance to <code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code>’s .transform() method and expect to get another object as a result.</p>
-<p>In practice, most users should never have any reason to directly instantiate the base <code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code> class. We will almost invariably work with one of three different <code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code> sub-classes: <code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code>, <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code>, and <code class="xref py py-class docutils literal"><span class="pre">Filter</span></code>. These classes are distinguished by the type of output that their respective <code class="code py python docutils literal"><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">transform</span></span><span class="punctuation"><span class="pre">()</span></span></code> methods produce:</p>
+<p>As the name suggests, a <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> is a kind of object that transforms other objects. In pliers, every <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> always takes a single <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> as its input, though it can return different outputs. The <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> API in pliers is modeled loosely on the widely-used scikit-learn API; as such, what defines a <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a>, from a user’s perspective, is that one can always call pass a <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> instance to <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a>’s .transform() method and expect to get another object as a result.</p>
+<p>In practice, most users should never have any reason to directly instantiate the base <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> class. We will almost invariably work with one of three different <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> sub-classes: <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a>, <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code>, and <code class="xref py py-class docutils literal"><span class="pre">Filter</span></code>. These classes are distinguished by the type of output that their respective <code class="code py python docutils literal"><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">transform</span></span><span class="punctuation"><span class="pre">()</span></span></code> methods produce:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="46%" />
@@ -215,11 +223,11 @@
 </tr>
 </tbody>
 </table>
-<p>Here, AStim and BStim are different <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> subclasses. So an <code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code> always returns an <code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code>, no matter what type of <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> it receives as input. A <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> and a <code class="xref py py-class docutils literal"><span class="pre">Filter</span></code> are distinguished by the fact that a <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> always returns a <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> of a different class than its input, while a <code class="xref py py-class docutils literal"><span class="pre">Filter</span></code> always returns a <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> of the same type as its input. This simple hierarchy turns out to be extremely powerful, as it enables us to operate in a natural, graph-like way over <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>s, by filtering and converting them as needed before applying one or more Extractors to obtain extracted feature values.</p>
-<p>Let’s examine each of these <code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code> types more carefully.</p>
+<p>Here, AStim and BStim are different <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> subclasses. So an <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> always returns an <a class="reference internal" href="generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult" title="pliers.extractors.ExtractorResult"><code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code></a>, no matter what type of <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> it receives as input. A <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> and a <code class="xref py py-class docutils literal"><span class="pre">Filter</span></code> are distinguished by the fact that a <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> always returns a <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> of a different class than its input, while a <code class="xref py py-class docutils literal"><span class="pre">Filter</span></code> always returns a <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> of the same type as its input. This simple hierarchy turns out to be extremely powerful, as it enables us to operate in a natural, graph-like way over <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>s, by filtering and converting them as needed before applying one or more Extractors to obtain extracted feature values.</p>
+<p>Let’s examine each of these <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> types more carefully.</p>
 <div class="section" id="extractors">
 <h2>Extractors<a class="headerlink" href="#extractors" title="Permalink to this headline">¶</a></h2>
-<p><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code>s are the most important kind of <code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code> in pliers, and in many cases, users will never have to touch any other kind of <code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code> directly. Every <code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code> implements a <code class="code py python docutils literal"><span class="name"><span class="pre">transform</span></span><span class="punctuation"><span class="pre">()</span></span></code> method that takes a <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> object as its first argument, and returns an object of class <code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code> (see below). For example:</p>
+<p><a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a>s are the most important kind of <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> in pliers, and in many cases, users will never have to touch any other kind of <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> directly. Every <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> implements a <code class="code py python docutils literal"><span class="name"><span class="pre">transform</span></span><span class="punctuation"><span class="pre">()</span></span></code> method that takes a <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> object as its first argument, and returns an object of class <a class="reference internal" href="generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult" title="pliers.extractors.ExtractorResult"><code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code></a> (see below). For example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Google Cloud Vision API face detection</span>
 <span class="kn">from</span> <span class="nn">pliers.extractors</span> <span class="kn">import</span> <span class="n">GoogleVisionAPIFaceExtractor</span>
 
@@ -229,7 +237,7 @@
 </div>
 <div class="section" id="list-of-extractor-classes">
 <h3>List of Extractor classes<a class="headerlink" href="#list-of-extractor-classes" title="Permalink to this headline">¶</a></h3>
-<p>At present, pliers implements several dozen <code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code> classes that span a wide variety of input modalities and types of extracted features. These include:</p>
+<p>At present, pliers implements several dozen <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> classes that span a wide variety of input modalities and types of extracted features. These include:</p>
 <p><strong>Audio feature extractors</strong></p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -237,53 +245,53 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">ChromaCENSExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.ChromaCENSExtractor.html#pliers.extractors.ChromaCENSExtractor" title="pliers.extractors.ChromaCENSExtractor"><code class="xref py py-obj docutils literal"><span class="pre">ChromaCENSExtractor</span></code></a>([n_chroma])</td>
+<td>Extracts a chroma variant “Chroma Energy Normalized” (CENS) chromogram from audio (via Librosa).</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">ChromaCQTExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.ChromaCQTExtractor.html#pliers.extractors.ChromaCQTExtractor" title="pliers.extractors.ChromaCQTExtractor"><code class="xref py py-obj docutils literal"><span class="pre">ChromaCQTExtractor</span></code></a>([n_chroma])</td>
+<td>Extracts a constant-q chromogram from audio using the Librosa library.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">ChromaSTFTExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.ChromaSTFTExtractor.html#pliers.extractors.ChromaSTFTExtractor" title="pliers.extractors.ChromaSTFTExtractor"><code class="xref py py-obj docutils literal"><span class="pre">ChromaSTFTExtractor</span></code></a>([n_chroma])</td>
+<td>Extracts a chromagram from an audio’s waveform using the Librosa library.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">MeanAmplitudeExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.MeanAmplitudeExtractor.html#pliers.extractors.MeanAmplitudeExtractor" title="pliers.extractors.MeanAmplitudeExtractor"><code class="xref py py-obj docutils literal"><span class="pre">MeanAmplitudeExtractor</span></code></a>()</td>
+<td>Mean amplitude extractor for blocks of audio with transcription.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">MelspectrogramExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.MelspectrogramExtractor.html#pliers.extractors.MelspectrogramExtractor" title="pliers.extractors.MelspectrogramExtractor"><code class="xref py py-obj docutils literal"><span class="pre">MelspectrogramExtractor</span></code></a>([n_mels])</td>
+<td>Extracts mel-scaled spectrogram from audio using the Librosa library.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">MFCCExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.MFCCExtractor.html#pliers.extractors.MFCCExtractor" title="pliers.extractors.MFCCExtractor"><code class="xref py py-obj docutils literal"><span class="pre">MFCCExtractor</span></code></a>([n_mfcc])</td>
+<td>Extracts Mel Frequency Ceptral Coefficients from audio using the Librosa library.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">PolyFeaturesExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.PolyFeaturesExtractor.html#pliers.extractors.PolyFeaturesExtractor" title="pliers.extractors.PolyFeaturesExtractor"><code class="xref py py-obj docutils literal"><span class="pre">PolyFeaturesExtractor</span></code></a>([order])</td>
+<td>Extracts the coefficients of fitting an nth-order polynomial to the columns of an audio’s spectrogram (via Librosa).</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">RMSEExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.RMSEExtractor.html#pliers.extractors.RMSEExtractor" title="pliers.extractors.RMSEExtractor"><code class="xref py py-obj docutils literal"><span class="pre">RMSEExtractor</span></code></a>([feature,&nbsp;hop_length])</td>
+<td>Extracts root mean square (RMS) energy from audio using the Librosa library.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">SpectralCentroidExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.SpectralCentroidExtractor.html#pliers.extractors.SpectralCentroidExtractor" title="pliers.extractors.SpectralCentroidExtractor"><code class="xref py py-obj docutils literal"><span class="pre">SpectralCentroidExtractor</span></code></a>([feature,&nbsp;hop_length])</td>
+<td>Extracts the spectral centroids from audio using the Librosa library.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">SpectralBandwidthExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.SpectralBandwidthExtractor.html#pliers.extractors.SpectralBandwidthExtractor" title="pliers.extractors.SpectralBandwidthExtractor"><code class="xref py py-obj docutils literal"><span class="pre">SpectralBandwidthExtractor</span></code></a>([feature,&nbsp;hop_length])</td>
+<td>Extracts the p’th-order spectral bandwidth from audio using the Librosa library.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">SpectralContrastExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.SpectralContrastExtractor.html#pliers.extractors.SpectralContrastExtractor" title="pliers.extractors.SpectralContrastExtractor"><code class="xref py py-obj docutils literal"><span class="pre">SpectralContrastExtractor</span></code></a>([n_bands])</td>
+<td>Extracts the spectral contrast from audio using the Librosa library.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">SpectralRolloffExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.SpectralRolloffExtractor.html#pliers.extractors.SpectralRolloffExtractor" title="pliers.extractors.SpectralRolloffExtractor"><code class="xref py py-obj docutils literal"><span class="pre">SpectralRolloffExtractor</span></code></a>([feature,&nbsp;hop_length])</td>
+<td>Extracts the roll-off frequency from audio using the Librosa library.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">STFTAudioExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.STFTAudioExtractor.html#pliers.extractors.STFTAudioExtractor" title="pliers.extractors.STFTAudioExtractor"><code class="xref py py-obj docutils literal"><span class="pre">STFTAudioExtractor</span></code></a>([frame_size,&nbsp;hop_size,&nbsp;…])</td>
+<td>Short-time Fourier Transform extractor.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">TempogramExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.TempogramExtractor.html#pliers.extractors.TempogramExtractor" title="pliers.extractors.TempogramExtractor"><code class="xref py py-obj docutils literal"><span class="pre">TempogramExtractor</span></code></a>([win_length])</td>
+<td>Extracts a tempogram from audio using the Librosa library.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">TonnetzExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.TonnetzExtractor.html#pliers.extractors.TonnetzExtractor" title="pliers.extractors.TonnetzExtractor"><code class="xref py py-obj docutils literal"><span class="pre">TonnetzExtractor</span></code></a>([feature,&nbsp;hop_length])</td>
+<td>Extracts the tonal centroids (tonnetz) from audio using the Librosa library.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">ZeroCrossingRateExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.ZeroCrossingRateExtractor.html#pliers.extractors.ZeroCrossingRateExtractor" title="pliers.extractors.ZeroCrossingRateExtractor"><code class="xref py py-obj docutils literal"><span class="pre">ZeroCrossingRateExtractor</span></code></a>([feature,&nbsp;hop_length])</td>
+<td>Extracts the zero-crossing rate of audio using the Librosa library.</td>
 </tr>
 </tbody>
 </table>
@@ -294,50 +302,50 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">BrightnessExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.BrightnessExtractor.html#pliers.extractors.BrightnessExtractor" title="pliers.extractors.BrightnessExtractor"><code class="xref py py-obj docutils literal"><span class="pre">BrightnessExtractor</span></code></a>()</td>
+<td>Gets the average luminosity of the pixels in the image</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">ClarifaiAPIExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.ClarifaiAPIExtractor.html#pliers.extractors.ClarifaiAPIExtractor" title="pliers.extractors.ClarifaiAPIExtractor"><code class="xref py py-obj docutils literal"><span class="pre">ClarifaiAPIExtractor</span></code></a>([api_key,&nbsp;model,&nbsp;…])</td>
+<td>Uses the Clarifai API to extract tags of images.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">FaceRecognitionFaceEncodingsExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.FaceRecognitionFaceEncodingsExtractor.html#pliers.extractors.FaceRecognitionFaceEncodingsExtractor" title="pliers.extractors.FaceRecognitionFaceEncodingsExtractor"><code class="xref py py-obj docutils literal"><span class="pre">FaceRecognitionFaceEncodingsExtractor</span></code></a>(…)</td>
+<td>Uses the face_recognition package to extract a 128-dimensional encoding for every face detected in an image.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">FaceRecognitionFaceLandmarksExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.FaceRecognitionFaceLandmarksExtractor.html#pliers.extractors.FaceRecognitionFaceLandmarksExtractor" title="pliers.extractors.FaceRecognitionFaceLandmarksExtractor"><code class="xref py py-obj docutils literal"><span class="pre">FaceRecognitionFaceLandmarksExtractor</span></code></a>(…)</td>
+<td>Uses the face_recognition package to extract the locations of named features of faces in the image.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">FaceRecognitionFaceLocationsExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.FaceRecognitionFaceLocationsExtractor.html#pliers.extractors.FaceRecognitionFaceLocationsExtractor" title="pliers.extractors.FaceRecognitionFaceLocationsExtractor"><code class="xref py py-obj docutils literal"><span class="pre">FaceRecognitionFaceLocationsExtractor</span></code></a>(…)</td>
+<td>Uses the face_recognition package to extract bounding boxes for all faces in an image.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">GoogleVisionAPIFaceExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.GoogleVisionAPIFaceExtractor.html#pliers.extractors.GoogleVisionAPIFaceExtractor" title="pliers.extractors.GoogleVisionAPIFaceExtractor"><code class="xref py py-obj docutils literal"><span class="pre">GoogleVisionAPIFaceExtractor</span></code></a>([batch_size])</td>
+<td>Identifies faces in images using the Google Cloud Vision API.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">GoogleVisionAPILabelExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.GoogleVisionAPILabelExtractor.html#pliers.extractors.GoogleVisionAPILabelExtractor" title="pliers.extractors.GoogleVisionAPILabelExtractor"><code class="xref py py-obj docutils literal"><span class="pre">GoogleVisionAPILabelExtractor</span></code></a>([batch_size])</td>
+<td>Labels objects in images using the Google Cloud Vision API.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">GoogleVisionAPIPropertyExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.GoogleVisionAPIPropertyExtractor.html#pliers.extractors.GoogleVisionAPIPropertyExtractor" title="pliers.extractors.GoogleVisionAPIPropertyExtractor"><code class="xref py py-obj docutils literal"><span class="pre">GoogleVisionAPIPropertyExtractor</span></code></a>([batch_size])</td>
+<td>Extracts image properties using the Google Cloud Vision API.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">GoogleVisionAPISafeSearchExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.GoogleVisionAPISafeSearchExtractor.html#pliers.extractors.GoogleVisionAPISafeSearchExtractor" title="pliers.extractors.GoogleVisionAPISafeSearchExtractor"><code class="xref py py-obj docutils literal"><span class="pre">GoogleVisionAPISafeSearchExtractor</span></code></a>([batch_size])</td>
+<td>Extracts safe search detection using the Google Cloud Vision API.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">GoogleVisionAPIWebEntitiesExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.GoogleVisionAPIWebEntitiesExtractor.html#pliers.extractors.GoogleVisionAPIWebEntitiesExtractor" title="pliers.extractors.GoogleVisionAPIWebEntitiesExtractor"><code class="xref py py-obj docutils literal"><span class="pre">GoogleVisionAPIWebEntitiesExtractor</span></code></a>([batch_size])</td>
+<td>Extracts web entities using the Google Cloud Vision API.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">IndicoAPIImageExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.IndicoAPIImageExtractor.html#pliers.extractors.IndicoAPIImageExtractor" title="pliers.extractors.IndicoAPIImageExtractor"><code class="xref py py-obj docutils literal"><span class="pre">IndicoAPIImageExtractor</span></code></a>(**kwargs)</td>
+<td>Uses to Indico API to extract features from Images, such as facial emotion recognition or content filtering.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">SaliencyExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.SaliencyExtractor.html#pliers.extractors.SaliencyExtractor" title="pliers.extractors.SaliencyExtractor"><code class="xref py py-obj docutils literal"><span class="pre">SaliencyExtractor</span></code></a>()</td>
+<td>Determines the saliency of the image using Itti &amp; Koch (1998) algorithm</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">SharpnessExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.SharpnessExtractor.html#pliers.extractors.SharpnessExtractor" title="pliers.extractors.SharpnessExtractor"><code class="xref py py-obj docutils literal"><span class="pre">SharpnessExtractor</span></code></a>()</td>
+<td>Gets the degree of blur/sharpness of the image</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">TensorFlowInceptionV3Extractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.TensorFlowInceptionV3Extractor.html#pliers.extractors.TensorFlowInceptionV3Extractor" title="pliers.extractors.TensorFlowInceptionV3Extractor"><code class="xref py py-obj docutils literal"><span class="pre">TensorFlowInceptionV3Extractor</span></code></a>([model_dir,&nbsp;…])</td>
+<td>Labels objects in images using a pretrained Inception V3 architecture  implemented in TensorFlow.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">VibranceExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.VibranceExtractor.html#pliers.extractors.VibranceExtractor" title="pliers.extractors.VibranceExtractor"><code class="xref py py-obj docutils literal"><span class="pre">VibranceExtractor</span></code></a>()</td>
+<td>Gets the variance of color channels of the image</td>
 </tr>
 </tbody>
 </table>
@@ -348,35 +356,35 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">ComplexTextExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.ComplexTextExtractor.html#pliers.extractors.ComplexTextExtractor" title="pliers.extractors.ComplexTextExtractor"><code class="xref py py-obj docutils literal"><span class="pre">ComplexTextExtractor</span></code></a>()</td>
+<td>Base ComplexTextStim Extractor class; all subclasses can only be applied to ComplexTextStim instance.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">DictionaryExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.DictionaryExtractor.html#pliers.extractors.DictionaryExtractor" title="pliers.extractors.DictionaryExtractor"><code class="xref py py-obj docutils literal"><span class="pre">DictionaryExtractor</span></code></a>(dictionary[,&nbsp;variables,&nbsp;…])</td>
+<td>A generic dictionary-based extractor that supports extraction of arbitrary features contained in a lookup table.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">IndicoAPITextExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.IndicoAPITextExtractor.html#pliers.extractors.IndicoAPITextExtractor" title="pliers.extractors.IndicoAPITextExtractor"><code class="xref py py-obj docutils literal"><span class="pre">IndicoAPITextExtractor</span></code></a>(**kwargs)</td>
+<td>Uses to Indico API to extract features from text, such as sentiment extraction.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">LengthExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.LengthExtractor.html#pliers.extractors.LengthExtractor" title="pliers.extractors.LengthExtractor"><code class="xref py py-obj docutils literal"><span class="pre">LengthExtractor</span></code></a>()</td>
+<td>Extracts the length of the text in characters.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">NumUniqueWordsExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.NumUniqueWordsExtractor.html#pliers.extractors.NumUniqueWordsExtractor" title="pliers.extractors.NumUniqueWordsExtractor"><code class="xref py py-obj docutils literal"><span class="pre">NumUniqueWordsExtractor</span></code></a>([tokenizer])</td>
+<td>Extracts the number of unique words used in the text.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">PartOfSpeechExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.PartOfSpeechExtractor.html#pliers.extractors.PartOfSpeechExtractor" title="pliers.extractors.PartOfSpeechExtractor"><code class="xref py py-obj docutils literal"><span class="pre">PartOfSpeechExtractor</span></code></a>([batch_size])</td>
+<td>Tags parts of speech in text with nltk.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">PredefinedDictionaryExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.PredefinedDictionaryExtractor.html#pliers.extractors.PredefinedDictionaryExtractor" title="pliers.extractors.PredefinedDictionaryExtractor"><code class="xref py py-obj docutils literal"><span class="pre">PredefinedDictionaryExtractor</span></code></a>(variables[,&nbsp;…])</td>
+<td>A generic Extractor that maps words onto values via one or more pre-defined dictionaries accessed via the web.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">TextVectorizerExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.TextVectorizerExtractor.html#pliers.extractors.TextVectorizerExtractor" title="pliers.extractors.TextVectorizerExtractor"><code class="xref py py-obj docutils literal"><span class="pre">TextVectorizerExtractor</span></code></a>([vectorizer])</td>
+<td>Uses a scikit-learn Vectorizer to extract bag-of-features from text.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">VADERSentimentExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.VADERSentimentExtractor.html#pliers.extractors.VADERSentimentExtractor" title="pliers.extractors.VADERSentimentExtractor"><code class="xref py py-obj docutils literal"><span class="pre">VADERSentimentExtractor</span></code></a>()</td>
+<td>Uses nltk’s VADER lexicon to extract (0.0-1.0) values for the positve, neutral, and negative sentiment of a TextStim.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">WordEmbeddingExtractor</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.WordEmbeddingExtractor.html#pliers.extractors.WordEmbeddingExtractor" title="pliers.extractors.WordEmbeddingExtractor"><code class="xref py py-obj docutils literal"><span class="pre">WordEmbeddingExtractor</span></code></a>(embedding_file[,&nbsp;…])</td>
+<td>An extractor that uses a word embedding file to look up embedding vectors for text.</td>
 </tr>
 </tbody>
 </table>
@@ -387,20 +395,20 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">FarnebackOpticalFlowExtractor</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.FarnebackOpticalFlowExtractor.html#pliers.extractors.FarnebackOpticalFlowExtractor" title="pliers.extractors.FarnebackOpticalFlowExtractor"><code class="xref py py-obj docutils literal"><span class="pre">FarnebackOpticalFlowExtractor</span></code></a>([pyr_scale,&nbsp;…])</td>
+<td>Extracts total amount of dense optical flow between every pair of video frames.</td>
 </tr>
 </tbody>
 </table>
-<p>Note that, in practice, the number of features one can extract using the above classes is extremely large, because many of these Extractors return open-ended feature sets that are determined by the contents of the input <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> and/or the specified initialization arguments. For example, most of the image-labeling Extractors that rely on deep learning-based services (e.g., <code class="xref py py-class docutils literal"><span class="pre">GoogleVisionAPILabelExtractor</span></code> and <code class="xref py py-class docutils literal"><span class="pre">ClarifaiAPIExtractor</span></code>) will return feature information for any of the top N objects detected in the image. And the <code class="xref py py-class docutils literal"><span class="pre">PredefinedDictionaryExtractor</span></code> provides a standardized interface to a large number of online word lookup dictionaries (e.g., word norms for written frequency, age-of-acquisition, emotionality ratings, etc.).</p>
+<p>Note that, in practice, the number of features one can extract using the above classes is extremely large, because many of these Extractors return open-ended feature sets that are determined by the contents of the input <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> and/or the specified initialization arguments. For example, most of the image-labeling Extractors that rely on deep learning-based services (e.g., <a class="reference internal" href="generated/pliers.extractors.GoogleVisionAPILabelExtractor.html#pliers.extractors.GoogleVisionAPILabelExtractor" title="pliers.extractors.GoogleVisionAPILabelExtractor"><code class="xref py py-class docutils literal"><span class="pre">GoogleVisionAPILabelExtractor</span></code></a> and <a class="reference internal" href="generated/pliers.extractors.ClarifaiAPIExtractor.html#pliers.extractors.ClarifaiAPIExtractor" title="pliers.extractors.ClarifaiAPIExtractor"><code class="xref py py-class docutils literal"><span class="pre">ClarifaiAPIExtractor</span></code></a>) will return feature information for any of the top N objects detected in the image. And the <a class="reference internal" href="generated/pliers.extractors.PredefinedDictionaryExtractor.html#pliers.extractors.PredefinedDictionaryExtractor" title="pliers.extractors.PredefinedDictionaryExtractor"><code class="xref py py-class docutils literal"><span class="pre">PredefinedDictionaryExtractor</span></code></a> provides a standardized interface to a large number of online word lookup dictionaries (e.g., word norms for written frequency, age-of-acquisition, emotionality ratings, etc.).</p>
 </div>
 <div class="section" id="the-extractorresult-class">
 <h3>The ExtractorResult class<a class="headerlink" href="#the-extractorresult-class" title="Permalink to this headline">¶</a></h3>
-<p>Calling transform() on an instantiated <code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code> returns an object of class <code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code>. This is a lightweight container that contains all of the extracted feature information returned by the <code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code>, and also stores references to the <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> and <code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code> objects used to generate the result. The raw extracted feature values are stored in the .data property, but typically, we’ll want to work with the data in a more convenient format. Fortunately, every <code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code> instance exposes a .to_df() methods that gives us a nice pandas DataFrame. You can refer back to our first Quickstart example to see this in action.</p>
+<p>Calling transform() on an instantiated <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> returns an object of class <a class="reference internal" href="generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult" title="pliers.extractors.ExtractorResult"><code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code></a>. This is a lightweight container that contains all of the extracted feature information returned by the <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a>, and also stores references to the <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> and <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> objects used to generate the result. The raw extracted feature values are stored in the .data property, but typically, we’ll want to work with the data in a more convenient format. Fortunately, every <a class="reference internal" href="generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult" title="pliers.extractors.ExtractorResult"><code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code></a> instance exposes a .to_df() methods that gives us a nice pandas DataFrame. You can refer back to our first Quickstart example to see this in action.</p>
 </div>
 <div class="section" id="merging-extractor-results">
 <h3>Merging Extractor results<a class="headerlink" href="#merging-extractor-results" title="Permalink to this headline">¶</a></h3>
-<p>In most cases, we’ll want to do more than just apply a single <code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code> to a single <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>. We might want to apply an <code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code> to a set of stims (e.g., to run the GoogleVisionAPIFaceExtractor on a whole bunch of images), or to apply several different Extractors to a single <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> (e.g., to run both face recognition and object recognition services on each image). As we’ll see later (in the section on <code class="xref py py-class docutils literal"><span class="pre">Graph</span></code>s), pliers makes it easy to apply many Extractors to many <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>s, and in such cases, it will automatically merge the extracted feature data into one big pandas DataFrame. But in cases where we’re working with multiple results manually, we can still merge the results ourselves, using the appropriately named merge_results function.</p>
+<p>In most cases, we’ll want to do more than just apply a single <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> to a single <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>. We might want to apply an <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> to a set of stims (e.g., to run the GoogleVisionAPIFaceExtractor on a whole bunch of images), or to apply several different Extractors to a single <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> (e.g., to run both face recognition and object recognition services on each image). As we’ll see later (in the section on <a class="reference internal" href="generated/pliers.graph.Graph.html#pliers.graph.Graph" title="pliers.graph.Graph"><code class="xref py py-class docutils literal"><span class="pre">Graph</span></code></a>s), pliers makes it easy to apply many Extractors to many <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>s, and in such cases, it will automatically merge the extracted feature data into one big pandas DataFrame. But in cases where we’re working with multiple results manually, we can still merge the results ourselves, using the appropriately named merge_results function.</p>
 <p>Suppose we have a list of images, and we want to run both face recognition and object labeling on each image. Then we can do the following:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pliers.extractors</span> <span class="kn">import</span> <span class="p">(</span><span class="n">GoogleVisionAPIFaceExtractor</span><span class="p">,</span> <span class="n">GoogleVisionAPILabelExtractor</span><span class="p">)</span>
 <span class="n">my_images</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;file1.jpg&#39;</span><span class="p">,</span> <span class="s1">&#39;file2.jpg&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
@@ -412,21 +420,21 @@
 <span class="n">lab_feats</span> <span class="o">=</span> <span class="n">lab_ext</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">my_images</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Now each of face_feats and lab_feats is a list of <code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code> objects. We could explicitly convert each element in each list to a pandas DataFrame (by calling .to_df()), but that would still be pretty unwieldy, as we would still need to figure out how to merge those DataFrames in a sensible way. Fortunately, merge_results will do all the work for us:</p>
+<p>Now each of face_feats and lab_feats is a list of <a class="reference internal" href="generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult" title="pliers.extractors.ExtractorResult"><code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code></a> objects. We could explicitly convert each element in each list to a pandas DataFrame (by calling .to_df()), but that would still be pretty unwieldy, as we would still need to figure out how to merge those DataFrames in a sensible way. Fortunately, merge_results will do all the work for us:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pliers.extractors</span> <span class="kn">import</span> <span class="n">merge_results</span>
 <span class="c1"># merge_results expects a single list, so we concatenate our two lists</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">merge_results</span><span class="p">(</span><span class="n">face_feats</span> <span class="o">+</span> <span class="n">lab_feats</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In the resulting DataFrame, every <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> is represented in a different row, and every feature is represented in a separate column. As noted earlier, the resulting DataFrame contains much more information than what’s returned when we call to_df() on a single <code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code> object. Extra columns injected into the merged result include the name, class, filename (if any) and transformation history of each <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>; the name of each feature returned by each <code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code>; and the name of each <code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code> (as a second level in the column MultiIndex). You can prevent some of this additional information from being added by setting the <code class="code py python docutils literal"><span class="name"><span class="pre">extractor_names</span></span></code> and <code class="code py python docutils literal"><span class="name"><span class="pre">stim_names</span></span></code> arguments in <code class="xref py py-func docutils literal"><span class="pre">merge_results()</span></code> to <code class="code py python docutils literal"><span class="name builtin pseudo"><span class="pre">False</span></span></code> (by default, both are <code class="code py python docutils literal"><span class="name builtin pseudo"><span class="pre">True</span></span></code>).</p>
+<p>In the resulting DataFrame, every <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> is represented in a different row, and every feature is represented in a separate column. As noted earlier, the resulting DataFrame contains much more information than what’s returned when we call to_df() on a single <a class="reference internal" href="generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult" title="pliers.extractors.ExtractorResult"><code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code></a> object. Extra columns injected into the merged result include the name, class, filename (if any) and transformation history of each <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>; the name of each feature returned by each <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a>; and the name of each <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> (as a second level in the column MultiIndex). You can prevent some of this additional information from being added by setting the <code class="code py python docutils literal"><span class="name"><span class="pre">extractor_names</span></span></code> and <code class="code py python docutils literal"><span class="name"><span class="pre">stim_names</span></span></code> arguments in <a class="reference internal" href="generated/pliers.extractors.merge_results.html#pliers.extractors.merge_results" title="pliers.extractors.merge_results"><code class="xref py py-func docutils literal"><span class="pre">merge_results()</span></code></a> to <code class="code py python docutils literal"><span class="name builtin pseudo"><span class="pre">False</span></span></code> (by default, both are <code class="code py python docutils literal"><span class="name builtin pseudo"><span class="pre">True</span></span></code>).</p>
 </div>
 </div>
 <div class="section" id="converters">
 <h2>Converters<a class="headerlink" href="#converters" title="Permalink to this headline">¶</a></h2>
-<p>Converters, as their name suggests, convert <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> classes from one type to another. For example, the <code class="xref py py-class docutils literal"><span class="pre">IBMSpeechAPIConverter</span></code>, which is a subclass of <code class="xref py py-class docutils literal"><span class="pre">AudioToTextConverter</span></code>, takes an <code class="xref py py-class docutils literal"><span class="pre">AudioStim</span></code> as input, queries IBM’s Watson speech-to-text API, and returns a transcription of the audio as a <code class="xref py py-class docutils literal"><span class="pre">ComplexTextStim</span></code> object. Most <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> classes have sensible names that clearly indicate what they do, but to prevent any ambiguity (and support type-checking), every concrete <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> class must define <code class="code py python docutils literal"><span class="name"><span class="pre">_input_type</span></span></code> and <code class="code py python docutils literal"><span class="name"><span class="pre">_output_type</span></span></code> properties that indicate what <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> classes they take and return as input and output, respectively.</p>
+<p>Converters, as their name suggests, convert <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> classes from one type to another. For example, the <a class="reference internal" href="generated/pliers.converters.IBMSpeechAPIConverter.html#pliers.converters.IBMSpeechAPIConverter" title="pliers.converters.IBMSpeechAPIConverter"><code class="xref py py-class docutils literal"><span class="pre">IBMSpeechAPIConverter</span></code></a>, which is a subclass of <code class="xref py py-class docutils literal"><span class="pre">AudioToTextConverter</span></code>, takes an <a class="reference internal" href="generated/pliers.stimuli.AudioStim.html#pliers.stimuli.AudioStim" title="pliers.stimuli.AudioStim"><code class="xref py py-class docutils literal"><span class="pre">AudioStim</span></code></a> as input, queries IBM’s Watson speech-to-text API, and returns a transcription of the audio as a <a class="reference internal" href="generated/pliers.stimuli.ComplexTextStim.html#pliers.stimuli.ComplexTextStim" title="pliers.stimuli.ComplexTextStim"><code class="xref py py-class docutils literal"><span class="pre">ComplexTextStim</span></code></a> object. Most <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> classes have sensible names that clearly indicate what they do, but to prevent any ambiguity (and support type-checking), every concrete <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> class must define <code class="code py python docutils literal"><span class="name"><span class="pre">_input_type</span></span></code> and <code class="code py python docutils literal"><span class="name"><span class="pre">_output_type</span></span></code> properties that indicate what <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> classes they take and return as input and output, respectively.</p>
 <div class="section" id="implicit-stim-conversion">
 <h3>Implicit Stim conversion<a class="headerlink" href="#implicit-stim-conversion" title="Permalink to this headline">¶</a></h3>
-<p>Although Converters play a critical role in pliers, they usually don’t need to be invoked explicitly by users, as pliers can usually figure out what conversions must be performed and carry them out implicitly. For example, suppose we want to run the <code class="xref py py-class docutils literal"><span class="pre">STFTAudioExtractor</span></code>—which computes the short-time Fourier transform on an audio clip and returns its power spectrum—on the audio track of a movie clip. We don’t need to explicitly convert the <code class="xref py py-class docutils literal"><span class="pre">VideoStim</span></code> to an <code class="xref py py-class docutils literal"><span class="pre">AudioStim</span></code>, because pliers is clever enough to determine that it can get the appropriate input for the <code class="xref py py-class docutils literal"><span class="pre">STFTAudioExtractor</span></code> by executing the <code class="xref py py-class docutils literal"><span class="pre">VideoToAudioConverter</span></code>. In practice, then, the following two snippets produce identical results:</p>
+<p>Although Converters play a critical role in pliers, they usually don’t need to be invoked explicitly by users, as pliers can usually figure out what conversions must be performed and carry them out implicitly. For example, suppose we want to run the <a class="reference internal" href="generated/pliers.extractors.STFTAudioExtractor.html#pliers.extractors.STFTAudioExtractor" title="pliers.extractors.STFTAudioExtractor"><code class="xref py py-class docutils literal"><span class="pre">STFTAudioExtractor</span></code></a>—which computes the short-time Fourier transform on an audio clip and returns its power spectrum—on the audio track of a movie clip. We don’t need to explicitly convert the <a class="reference internal" href="generated/pliers.stimuli.VideoStim.html#pliers.stimuli.VideoStim" title="pliers.stimuli.VideoStim"><code class="xref py py-class docutils literal"><span class="pre">VideoStim</span></code></a> to an <a class="reference internal" href="generated/pliers.stimuli.AudioStim.html#pliers.stimuli.AudioStim" title="pliers.stimuli.AudioStim"><code class="xref py py-class docutils literal"><span class="pre">AudioStim</span></code></a>, because pliers is clever enough to determine that it can get the appropriate input for the <a class="reference internal" href="generated/pliers.extractors.STFTAudioExtractor.html#pliers.extractors.STFTAudioExtractor" title="pliers.extractors.STFTAudioExtractor"><code class="xref py py-class docutils literal"><span class="pre">STFTAudioExtractor</span></code></a> by executing the <a class="reference internal" href="generated/pliers.converters.VideoToAudioConverter.html#pliers.converters.VideoToAudioConverter" title="pliers.converters.VideoToAudioConverter"><code class="xref py py-class docutils literal"><span class="pre">VideoToAudioConverter</span></code></a>. In practice, then, the following two snippets produce identical results:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pliers.extractors</span> <span class="kn">import</span> <span class="n">STFTAudioExtractor</span>
 <span class="kn">from</span> <span class="nn">pliers.stimuli</span> <span class="kn">import</span> <span class="n">VideoStim</span>
 <span class="n">video</span> <span class="o">=</span> <span class="n">VideoStim</span><span class="p">(</span><span class="s1">&#39;my_movie.mp4&#39;</span><span class="p">)</span>
@@ -443,8 +451,8 @@
 <span class="n">result</span> <span class="o">=</span> <span class="n">ext</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">video</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Because pliers contains a number of “multistep” <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> classes, which chain together multiple standard Converters, implicit <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> conversion will typically work not only for a single conversion, but also for a whole series of them. For example, if you feed a video file to a <code class="xref py py-class docutils literal"><span class="pre">LengthExtractor</span></code> (which just counts the number of characters in each TextStim’s text), pliers will use the built-in VideoToTextConverter class to transform your <code class="xref py py-class docutils literal"><span class="pre">VideoStim</span></code> into a <code class="xref py py-class docutils literal"><span class="pre">TextStim</span></code>, and everything should work smoothly in most cases.</p>
-<p>I say “most” cases, because there are two important gotchas to be aware of when relying on implicit conversion. First, sometimes there’s an inherent ambiguity about what trajectory a given stimulus should take through converter space; in such cases, the default conversions pliers performs may not line up with your expectations. For example, a <code class="xref py py-class docutils literal"><span class="pre">VideoStim</span></code> can be converted to a <code class="xref py py-class docutils literal"><span class="pre">TextStim</span></code> either by (a) extracting the audio track from the video and then transcribing into text via a speech recognition service, or (b) extracting the video frames from the video and then attempting to detect any text labels within each image. Because pliers has no way of knowing which of these you’re trying to accomplish, it will default to the first. The upshot is that if you think there’s any chance of ambiguity in the conversion process, it’s probably a good idea to explicitly chain the <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> steps (you can do this very easily using the <code class="xref py py-class docutils literal"><span class="pre">Graph</span></code> interface discussed below). The explicit approach also provides additional precision in that you may want to initialize a particular <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> with non-default arguments, and/or specify exactly which of several candidate <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> classes to use (e.g., pliers defaults to performing speech-to-text conversion via the IBM Watson API, but also provides alternative support for the Wit.AI, and Google Cloud Speech APIs services).</p>
+<p>Because pliers contains a number of “multistep” <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> classes, which chain together multiple standard Converters, implicit <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> conversion will typically work not only for a single conversion, but also for a whole series of them. For example, if you feed a video file to a <a class="reference internal" href="generated/pliers.extractors.LengthExtractor.html#pliers.extractors.LengthExtractor" title="pliers.extractors.LengthExtractor"><code class="xref py py-class docutils literal"><span class="pre">LengthExtractor</span></code></a> (which just counts the number of characters in each TextStim’s text), pliers will use the built-in VideoToTextConverter class to transform your <a class="reference internal" href="generated/pliers.stimuli.VideoStim.html#pliers.stimuli.VideoStim" title="pliers.stimuli.VideoStim"><code class="xref py py-class docutils literal"><span class="pre">VideoStim</span></code></a> into a <a class="reference internal" href="generated/pliers.stimuli.TextStim.html#pliers.stimuli.TextStim" title="pliers.stimuli.TextStim"><code class="xref py py-class docutils literal"><span class="pre">TextStim</span></code></a>, and everything should work smoothly in most cases.</p>
+<p>I say “most” cases, because there are two important gotchas to be aware of when relying on implicit conversion. First, sometimes there’s an inherent ambiguity about what trajectory a given stimulus should take through converter space; in such cases, the default conversions pliers performs may not line up with your expectations. For example, a <a class="reference internal" href="generated/pliers.stimuli.VideoStim.html#pliers.stimuli.VideoStim" title="pliers.stimuli.VideoStim"><code class="xref py py-class docutils literal"><span class="pre">VideoStim</span></code></a> can be converted to a <a class="reference internal" href="generated/pliers.stimuli.TextStim.html#pliers.stimuli.TextStim" title="pliers.stimuli.TextStim"><code class="xref py py-class docutils literal"><span class="pre">TextStim</span></code></a> either by (a) extracting the audio track from the video and then transcribing into text via a speech recognition service, or (b) extracting the video frames from the video and then attempting to detect any text labels within each image. Because pliers has no way of knowing which of these you’re trying to accomplish, it will default to the first. The upshot is that if you think there’s any chance of ambiguity in the conversion process, it’s probably a good idea to explicitly chain the <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> steps (you can do this very easily using the <a class="reference internal" href="generated/pliers.graph.Graph.html#pliers.graph.Graph" title="pliers.graph.Graph"><code class="xref py py-class docutils literal"><span class="pre">Graph</span></code></a> interface discussed below). The explicit approach also provides additional precision in that you may want to initialize a particular <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> with non-default arguments, and/or specify exactly which of several candidate <code class="xref py py-class docutils literal"><span class="pre">Converter</span></code> classes to use (e.g., pliers defaults to performing speech-to-text conversion via the IBM Watson API, but also provides alternative support for the Wit.AI, and Google Cloud Speech APIs services).</p>
 <div class="section" id="package-wide-conversion-defaults">
 <span id="conversion-defaults"></span><h4>Package-wide conversion defaults<a class="headerlink" href="#package-wide-conversion-defaults" title="Permalink to this headline">¶</a></h4>
 <p>Alternatively, you can set the default Converter(s) to use for any implicit <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> conversion at a package-wide level, via the config.default_converters attribute. By default, this is something like:</p>
@@ -454,8 +462,8 @@
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Here, each entry in the default_converters dictionary lists the Converter(s) to use, in order of preference. For example, the above indicates that any conversion between <code class="xref py py-class docutils literal"><span class="pre">ImageStim</span></code> and <code class="xref py py-class docutils literal"><span class="pre">TextStim</span></code> should first try to use the <code class="xref py py-class docutils literal"><span class="pre">GoogleVisionAPITextConverter</span></code>, and then, if that fails (e.g., because the user has no Google Cloud Vision API key set up), fall back on the <code class="xref py py-class docutils literal"><span class="pre">TesseractConverter</span></code>. If all selections specified in the config fail, pliers will still try to use any matching Converters it finds, but you’ll lose the ability to control the order of selection.</p>
-<p>Second, because many Converters call API-based services, if you’re going to rely on implicit conversion, you should make sure that any API keys you might need are properly set up as environment variables in your local environment, seeing as you’re not going to be able to pass those keys to the Converter as initialization arguments. For example, by default, pliers uses the IBM Watson API for speech-to-text conversion (i.e., when converting an <code class="xref py py-class docutils literal"><span class="pre">AudioStim</span></code> to a <code class="xref py py-class docutils literal"><span class="pre">ComplexTextStim</span></code>). But since you won’t necessarily know this ahead of time, you won’t be able to initialize the Converter with the correct credentials–i.e., by calling <code class="code py python docutils literal"><span class="name"><span class="pre">IBMSpeechAPIConverter</span></span><span class="punctuation"><span class="pre">(</span></span><span class="name"><span class="pre">username</span></span><span class="operator"><span class="pre">=</span></span><span class="literal string single"><span class="pre">’my_username’</span></span><span class="punctuation"><span class="pre">,</span></span> <span class="name"><span class="pre">password</span></span><span class="operator"><span class="pre">=</span></span><span class="literal string single"><span class="pre">’my_password’</span></span><span class="punctuation"><span class="pre">)</span></span></code>. Instead, the Converter will get initialized without any arguments (<code class="code py python docutils literal"><span class="name"><span class="pre">IBMSpeechAPIConverter</span></span><span class="punctuation"><span class="pre">()</span></span></code>), which means the initialization logic will immediately proceed to look for IBM_USERNAME and IBM_PASSWORD variables in the environment, and will raise an exception if at least one of these variables is missing. So make sure as many API keys as possible are appropriately set in the environment. You can read more about this in the API keys section.</p>
+<p>Here, each entry in the default_converters dictionary lists the Converter(s) to use, in order of preference. For example, the above indicates that any conversion between <a class="reference internal" href="generated/pliers.stimuli.ImageStim.html#pliers.stimuli.ImageStim" title="pliers.stimuli.ImageStim"><code class="xref py py-class docutils literal"><span class="pre">ImageStim</span></code></a> and <a class="reference internal" href="generated/pliers.stimuli.TextStim.html#pliers.stimuli.TextStim" title="pliers.stimuli.TextStim"><code class="xref py py-class docutils literal"><span class="pre">TextStim</span></code></a> should first try to use the <a class="reference internal" href="generated/pliers.converters.GoogleVisionAPITextConverter.html#pliers.converters.GoogleVisionAPITextConverter" title="pliers.converters.GoogleVisionAPITextConverter"><code class="xref py py-class docutils literal"><span class="pre">GoogleVisionAPITextConverter</span></code></a>, and then, if that fails (e.g., because the user has no Google Cloud Vision API key set up), fall back on the <a class="reference internal" href="generated/pliers.converters.TesseractConverter.html#pliers.converters.TesseractConverter" title="pliers.converters.TesseractConverter"><code class="xref py py-class docutils literal"><span class="pre">TesseractConverter</span></code></a>. If all selections specified in the config fail, pliers will still try to use any matching Converters it finds, but you’ll lose the ability to control the order of selection.</p>
+<p>Second, because many Converters call API-based services, if you’re going to rely on implicit conversion, you should make sure that any API keys you might need are properly set up as environment variables in your local environment, seeing as you’re not going to be able to pass those keys to the Converter as initialization arguments. For example, by default, pliers uses the IBM Watson API for speech-to-text conversion (i.e., when converting an <a class="reference internal" href="generated/pliers.stimuli.AudioStim.html#pliers.stimuli.AudioStim" title="pliers.stimuli.AudioStim"><code class="xref py py-class docutils literal"><span class="pre">AudioStim</span></code></a> to a <a class="reference internal" href="generated/pliers.stimuli.ComplexTextStim.html#pliers.stimuli.ComplexTextStim" title="pliers.stimuli.ComplexTextStim"><code class="xref py py-class docutils literal"><span class="pre">ComplexTextStim</span></code></a>). But since you won’t necessarily know this ahead of time, you won’t be able to initialize the Converter with the correct credentials–i.e., by calling <code class="code py python docutils literal"><span class="name"><span class="pre">IBMSpeechAPIConverter</span></span><span class="punctuation"><span class="pre">(</span></span><span class="name"><span class="pre">username</span></span><span class="operator"><span class="pre">=</span></span><span class="literal string single"><span class="pre">’my_username’</span></span><span class="punctuation"><span class="pre">,</span></span> <span class="name"><span class="pre">password</span></span><span class="operator"><span class="pre">=</span></span><span class="literal string single"><span class="pre">’my_password’</span></span><span class="punctuation"><span class="pre">)</span></span></code>. Instead, the Converter will get initialized without any arguments (<code class="code py python docutils literal"><span class="name"><span class="pre">IBMSpeechAPIConverter</span></span><span class="punctuation"><span class="pre">()</span></span></code>), which means the initialization logic will immediately proceed to look for IBM_USERNAME and IBM_PASSWORD variables in the environment, and will raise an exception if at least one of these variables is missing. So make sure as many API keys as possible are appropriately set in the environment. You can read more about this in the API keys section.</p>
 </div>
 </div>
 <div class="section" id="list-of-converter-classes">
@@ -467,38 +475,38 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">ComplexTextIterator</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.converters.ComplexTextIterator.html#pliers.converters.ComplexTextIterator" title="pliers.converters.ComplexTextIterator"><code class="xref py py-obj docutils literal"><span class="pre">ComplexTextIterator</span></code></a>()</td>
+<td>Iterates elements in a ComplexTextStim as TextStims.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">IBMSpeechAPIConverter</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.converters.IBMSpeechAPIConverter.html#pliers.converters.IBMSpeechAPIConverter" title="pliers.converters.IBMSpeechAPIConverter"><code class="xref py py-obj docutils literal"><span class="pre">IBMSpeechAPIConverter</span></code></a>([username,&nbsp;password,&nbsp;…])</td>
+<td>Uses the IBM Watson Text to Speech API to run speech-to-text transcription on an audio file.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">GoogleSpeechAPIConverter</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.converters.GoogleSpeechAPIConverter.html#pliers.converters.GoogleSpeechAPIConverter" title="pliers.converters.GoogleSpeechAPIConverter"><code class="xref py py-obj docutils literal"><span class="pre">GoogleSpeechAPIConverter</span></code></a>([language_code,&nbsp;…])</td>
+<td>Uses the Google Speech API to do speech-to-text transcription.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">GoogleVisionAPITextConverter</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.converters.GoogleVisionAPITextConverter.html#pliers.converters.GoogleVisionAPITextConverter" title="pliers.converters.GoogleVisionAPITextConverter"><code class="xref py py-obj docutils literal"><span class="pre">GoogleVisionAPITextConverter</span></code></a>([…])</td>
+<td>Detects text within images using the Google Cloud Vision API.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">TesseractConverter</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.converters.TesseractConverter.html#pliers.converters.TesseractConverter" title="pliers.converters.TesseractConverter"><code class="xref py py-obj docutils literal"><span class="pre">TesseractConverter</span></code></a>()</td>
+<td>Uses the Tesseract library to extract text from images.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">VideoFrameCollectionIterator</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.converters.VideoFrameCollectionIterator.html#pliers.converters.VideoFrameCollectionIterator" title="pliers.converters.VideoFrameCollectionIterator"><code class="xref py py-obj docutils literal"><span class="pre">VideoFrameCollectionIterator</span></code></a>()</td>
+<td>Iterates frames in a DerivedVideoStim as ImageStims.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">VideoFrameIterator</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.converters.VideoFrameIterator.html#pliers.converters.VideoFrameIterator" title="pliers.converters.VideoFrameIterator"><code class="xref py py-obj docutils literal"><span class="pre">VideoFrameIterator</span></code></a>()</td>
+<td>Iterates frames in a VideoStim as ImageStims.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">VideoToAudioConverter</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.converters.VideoToAudioConverter.html#pliers.converters.VideoToAudioConverter" title="pliers.converters.VideoToAudioConverter"><code class="xref py py-obj docutils literal"><span class="pre">VideoToAudioConverter</span></code></a>()</td>
+<td>Convert a VideoStim to an AudioStim by extracting the audio track using moviepy.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">VideoToComplexTextConverter</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.converters.VideoToComplexTextConverter.html#pliers.converters.VideoToComplexTextConverter" title="pliers.converters.VideoToComplexTextConverter"><code class="xref py py-obj docutils literal"><span class="pre">VideoToComplexTextConverter</span></code></a>([steps])</td>
+<td>Converts a VideoStim directly to a ComplexTextStim.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">VideoToTextConverter</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.converters.VideoToTextConverter.html#pliers.converters.VideoToTextConverter" title="pliers.converters.VideoToTextConverter"><code class="xref py py-obj docutils literal"><span class="pre">VideoToTextConverter</span></code></a>([steps])</td>
+<td>Converts a VideoStim directly to a TextStim.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">WitTranscriptionConverter</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.converters.WitTranscriptionConverter.html#pliers.converters.WitTranscriptionConverter" title="pliers.converters.WitTranscriptionConverter"><code class="xref py py-obj docutils literal"><span class="pre">WitTranscriptionConverter</span></code></a>([api_key])</td>
+<td>Speech-to-text transcription via the Wit.ai API.</td>
 </tr>
 </tbody>
 </table>
@@ -506,7 +514,7 @@
 </div>
 <div class="section" id="filters">
 <h2>Filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h2>
-<p>A <code class="code py python docutils literal"><span class="name"><span class="pre">Filter</span></span></code> is a kind of <code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code> that returns an object of the same <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> class as its input. Filters can be used for tasks like image or audio filtering, text tokenization or sanitization, and many other things. The defining feature of a <code class="xref py py-class docutils literal"><span class="pre">Filter</span></code> class is simply that it must return a <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> of the same type as the input passed to the <code class="code py python docutils literal"><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">transform</span></span><span class="punctuation"><span class="pre">()</span></span></code> method (e.g., passing in an <code class="xref py py-class docutils literal"><span class="pre">ImageStim</span></code> and getting back another, modified, <code class="xref py py-class docutils literal"><span class="pre">ImageStim</span></code>).</p>
+<p>A <code class="code py python docutils literal"><span class="name"><span class="pre">Filter</span></span></code> is a kind of <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> that returns an object of the same <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> class as its input. Filters can be used for tasks like image or audio filtering, text tokenization or sanitization, and many other things. The defining feature of a <code class="xref py py-class docutils literal"><span class="pre">Filter</span></code> class is simply that it must return a <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> of the same type as the input passed to the <code class="code py python docutils literal"><span class="operator"><span class="pre">.</span></span><span class="name"><span class="pre">transform</span></span><span class="punctuation"><span class="pre">()</span></span></code> method (e.g., passing in an <a class="reference internal" href="generated/pliers.stimuli.ImageStim.html#pliers.stimuli.ImageStim" title="pliers.stimuli.ImageStim"><code class="xref py py-class docutils literal"><span class="pre">ImageStim</span></code></a> and getting back another, modified, <a class="reference internal" href="generated/pliers.stimuli.ImageStim.html#pliers.stimuli.ImageStim" title="pliers.stimuli.ImageStim"><code class="xref py py-class docutils literal"><span class="pre">ImageStim</span></code></a>).</p>
 <div class="section" id="list-of-filter-classes">
 <h3>List of Filter classes<a class="headerlink" href="#list-of-filter-classes" title="Permalink to this headline">¶</a></h3>
 <p>Pliers currently implements the following <code class="xref py py-class docutils literal"><span class="pre">Filter</span></code> classes:</p>
@@ -516,26 +524,26 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">FrameSamplingFilter</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.filters.FrameSamplingFilter.html#pliers.filters.FrameSamplingFilter" title="pliers.filters.FrameSamplingFilter"><code class="xref py py-obj docutils literal"><span class="pre">FrameSamplingFilter</span></code></a>([every,&nbsp;hertz,&nbsp;top_n])</td>
+<td>Samples frames from video stimuli, to improve efficiency.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">ImageCroppingFilter</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.filters.ImageCroppingFilter.html#pliers.filters.ImageCroppingFilter" title="pliers.filters.ImageCroppingFilter"><code class="xref py py-obj docutils literal"><span class="pre">ImageCroppingFilter</span></code></a>([box])</td>
+<td>Crops an image.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">PillowImageFilter</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.filters.PillowImageFilter.html#pliers.filters.PillowImageFilter" title="pliers.filters.PillowImageFilter"><code class="xref py py-obj docutils literal"><span class="pre">PillowImageFilter</span></code></a>([image_filter])</td>
+<td>Uses the ImageFilter module from PIL to run a pre-defined image enhancement filter on an ImageStim.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">PunctuationRemovalFilter</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.filters.PunctuationRemovalFilter.html#pliers.filters.PunctuationRemovalFilter" title="pliers.filters.PunctuationRemovalFilter"><code class="xref py py-obj docutils literal"><span class="pre">PunctuationRemovalFilter</span></code></a>([tokens])</td>
+<td>Removes punctuation from a TextStim.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">TokenizingFilter</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.filters.TokenizingFilter.html#pliers.filters.TokenizingFilter" title="pliers.filters.TokenizingFilter"><code class="xref py py-obj docutils literal"><span class="pre">TokenizingFilter</span></code></a>([tokenizer])</td>
+<td>Tokenizes a TextStim into several word TextStims.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">TokenRemovalFilter</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.filters.TokenRemovalFilter.html#pliers.filters.TokenRemovalFilter" title="pliers.filters.TokenRemovalFilter"><code class="xref py py-obj docutils literal"><span class="pre">TokenRemovalFilter</span></code></a>([tokens,&nbsp;language])</td>
+<td>Removes tokens (e.g., stopwords, common words, punctuation) from a TextStim.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">WordStemmingFilter</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.filters.WordStemmingFilter.html#pliers.filters.WordStemmingFilter" title="pliers.filters.WordStemmingFilter"><code class="xref py py-obj docutils literal"><span class="pre">WordStemmingFilter</span></code></a>([stemmer,&nbsp;tokenize])</td>
+<td>Nltk-based word stemming Filter.</td>
 </tr>
 </tbody>
 </table>
@@ -543,7 +551,7 @@
 </div>
 <div class="section" id="iterable-aware-transformations">
 <h2>Iterable-aware transformations<a class="headerlink" href="#iterable-aware-transformations" title="Permalink to this headline">¶</a></h2>
-<p>A useful feature of the <code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code> API is that it’s inherently iterable-aware: every pliers <code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code> (including all Extractors, Converters, and Filters) can be passed an iterable (specifically, a list, tuple, or generator) of <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> objects rather than just a single <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>. The transformation will then be applied independently to each <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>.</p>
+<p>A useful feature of the <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> API is that it’s inherently iterable-aware: every pliers <a class="reference internal" href="generated/pliers.transformers.Transformer.html#pliers.transformers.Transformer" title="pliers.transformers.Transformer"><code class="xref py py-class docutils literal"><span class="pre">Transformer</span></code></a> (including all Extractors, Converters, and Filters) can be passed an iterable (specifically, a list, tuple, or generator) of <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> objects rather than just a single <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>. The transformation will then be applied independently to each <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>.</p>
 </div>
 </div>
 
@@ -556,6 +564,8 @@
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generated/pliers.filters.FrameSamplingFilter.html" class="btn btn-neutral float-right" title="pliers.filters.FrameSamplingFilter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="stimuli.html" class="btn btn-neutral" title="Stims" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

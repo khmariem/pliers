@@ -290,15 +290,15 @@
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">raw</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
 
 
-<span class="k">class</span> <span class="nc">FaceRecognitionFaceEncodingsExtractor</span><span class="p">(</span><span class="n">FaceRecognitionFeatureExtractor</span><span class="p">):</span>
+<div class="viewcode-block" id="FaceRecognitionFaceEncodingsExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.FaceRecognitionFaceEncodingsExtractor.html#pliers.extractors.FaceRecognitionFaceEncodingsExtractor">[docs]</a><span class="k">class</span> <span class="nc">FaceRecognitionFaceEncodingsExtractor</span><span class="p">(</span><span class="n">FaceRecognitionFeatureExtractor</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Uses the face_recognition package to extract a 128-dimensional encoding</span>
 <span class="sd">    for every face detected in an image. For details, see documentation for</span>
 <span class="sd">    face_recognition.api.face_encodings. &#39;&#39;&#39;</span>
 
-    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;face_encodings&#39;</span>
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;face_encodings&#39;</span></div>
 
 
-<span class="k">class</span> <span class="nc">FaceRecognitionFaceLandmarksExtractor</span><span class="p">(</span><span class="n">FaceRecognitionFeatureExtractor</span><span class="p">):</span>
+<div class="viewcode-block" id="FaceRecognitionFaceLandmarksExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.FaceRecognitionFaceLandmarksExtractor.html#pliers.extractors.FaceRecognitionFaceLandmarksExtractor">[docs]</a><span class="k">class</span> <span class="nc">FaceRecognitionFaceLandmarksExtractor</span><span class="p">(</span><span class="n">FaceRecognitionFeatureExtractor</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Uses the face_recognition package to extract the locations of named</span>
 <span class="sd">    features of faces in the image. For details, see documentation for</span>
 <span class="sd">    face_recognition.api.face_landmarks.&#39;&#39;&#39;</span>
@@ -315,15 +315,15 @@
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
                 <span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">%</span> <span class="n">k</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span></div>
 
 
-<span class="k">class</span> <span class="nc">FaceRecognitionFaceLocationsExtractor</span><span class="p">(</span><span class="n">FaceRecognitionFeatureExtractor</span><span class="p">):</span>
+<div class="viewcode-block" id="FaceRecognitionFaceLocationsExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.FaceRecognitionFaceLocationsExtractor.html#pliers.extractors.FaceRecognitionFaceLocationsExtractor">[docs]</a><span class="k">class</span> <span class="nc">FaceRecognitionFaceLocationsExtractor</span><span class="p">(</span><span class="n">FaceRecognitionFeatureExtractor</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Uses the face_recognition package to extract bounding boxes for all</span>
 <span class="sd">    faces in an image. For details, see documentation for</span>
 <span class="sd">    face_recognition.api.face_locations. &#39;&#39;&#39;</span>
 
-    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;face_locations&#39;</span>
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;face_locations&#39;</span></div>
 </pre></div>
 
            </div>

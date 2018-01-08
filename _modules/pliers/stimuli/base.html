@@ -327,7 +327,7 @@
 
 <span class="k">def</span> <span class="nf">_log_transformation</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">trans</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
-    <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">log_transformations</span> <span class="ow">or</span> \
+    <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">get_option</span><span class="p">(</span><span class="s1">&#39;log_transformations&#39;</span><span class="p">)</span> <span class="ow">or</span> \
             <span class="p">(</span><span class="n">trans</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">trans</span><span class="o">.</span><span class="n">_loggable</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">result</span>
 

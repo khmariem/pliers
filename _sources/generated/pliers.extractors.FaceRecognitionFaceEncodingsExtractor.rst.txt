@@ -1,0 +1,11 @@
+pliers.extractors.FaceRecognitionFaceEncodingsExtractor
+=======================================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: FaceRecognitionFaceEncodingsExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__
