@@ -8,7 +8,7 @@ if [[ "$BRANCH" != "gh-pages" ]]; then
 fi
 
 git clean -fdx
-git clone --no-checkout --depth 1 https://github.com/tyarkoni/pliers.git docs
+git clone master docs
 cd docs
 make clean
 make html
