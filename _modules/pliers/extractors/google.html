@@ -92,10 +92,12 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../results.html">Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
 </ul>
@@ -281,7 +283,7 @@
     <span class="n">response_object</span> <span class="o">=</span> <span class="s1">&#39;safeSearchAnnotation&#39;</span>
 
     <span class="k">def</span> <span class="nf">_parse_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">annotation</span><span class="o">.</span><span class="n">values</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="nb">list</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="GoogleVisionAPIWebEntitiesExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.GoogleVisionAPIWebEntitiesExtractor.html#pliers.extractors.GoogleVisionAPIWebEntitiesExtractor">[docs]</a><span class="k">class</span> <span class="nc">GoogleVisionAPIWebEntitiesExtractor</span><span class="p">(</span><span class="n">GoogleVisionAPIExtractor</span><span class="p">):</span>

@@ -1,0 +1,451 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Results &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="index.html"/>
+        <link rel="next" title="Configuring pliers" href="config.html"/>
+        <link rel="prev" title="Graphs" href="graphs.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphs.html">Graphs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Results</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-extractorresult-class">The ExtractorResult class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#exporting-results-to-pandas-dataframes">Exporting results to pandas DataFrames</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#timing-columns">Timing columns</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#understanding-object-ids">Understanding object_ids</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#displaying-metadata">Displaying metadata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#display-mode">Display mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#displaying-extractor-names">Displaying Extractor names</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#merging-extractor-results">Merging Extractor results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graph-results">Graph results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Results</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/results.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="results">
+<h1>Results<a class="headerlink" href="#results" title="Permalink to this headline">¶</a></h1>
+<p>Pliers is meant to provide a unified interface to a wide range of feature extraction tools and services, so it’s imperative that the results we get back from different extractors can also be represented and accessed in a standardized way. In this section, we provide a detailed description of the pliers <a class="reference internal" href="generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult" title="pliers.extractors.ExtractorResult"><code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code></a> class and the various options available for exporting results to pandas DataFrames. In many typical workflows, the export process will be done implicitly, so that all a user has to worry about is making sure to specify appropriate formatting arguments. In particular, if you only ever work with the <a class="reference internal" href="graphs.html#graphs"><span class="std std-ref">Graph API</span></a>, you may want to skip down to the <a class="reference internal" href="#graph-results"><span class="std std-ref">Graph results</span></a> section.</p>
+<div class="section" id="the-extractorresult-class">
+<h2>The ExtractorResult class<a class="headerlink" href="#the-extractorresult-class" title="Permalink to this headline">¶</a></h2>
+<p>Calling <code class="docutils literal"><span class="pre">transform()</span></code> on an instantiated <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> returns an object of class <a class="reference internal" href="generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult" title="pliers.extractors.ExtractorResult"><code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code></a>. This is a lightweight container that contains all of the extracted feature information returned by the <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a>, references to the <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> and <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> objects used to generate the result, and both “raw” and processed forms of the results returned by the <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> (though note that many Extractors don’t set a <code class="docutils literal"><span class="pre">.raw</span></code> attribute). For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pliers.extractors</span> <span class="kn">import</span> <span class="n">FaceRecognitionFaceLocationsExtractor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ext</span> <span class="o">=</span> <span class="n">FaceRecognitionFaceLocationsExtractor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">ext</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">stim</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;obama.jpg&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">extractor</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;FaceRecognitionFaceLocationsExtractor&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">raw</span>
+<span class="go">[(142, 349, 409, 82)]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">data</span>
+<span class="go">array([[142, 349, 409,  82]])</span>
+</pre></div>
+</div>
+<div class="section" id="exporting-results-to-pandas-dataframes">
+<span id="results-to-df"></span><h3>Exporting results to pandas DataFrames<a class="headerlink" href="#exporting-results-to-pandas-dataframes" title="Permalink to this headline">¶</a></h3>
+<p>Typically, we’ll want to work with the data in a more convenient form. Fortunately, every <a class="reference internal" href="generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult" title="pliers.extractors.ExtractorResult"><code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code></a> instance provides a .to_df() method that returns a pandas DataFrame:</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+<span class="go">onset   duration   object_id   face_locations</span>
+<span class="go">NaN     NaN        0           (142, 349, 409, 82)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Here, the <code class="docutils literal"><span class="pre">'face_locations'</span></code> column is properly labeled with the name of the feature returned by the <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a>. Not surprisingly, you’ll still need to know something about the feature extraction tool you’re using in order to understand what you’re getting back. In this case, consulting the documentation for the face_recognition package’s <a class="reference external" href="http://pythonhosted.org/face_recognition/face_recognition.html#face_recognition.api.face_locations">face_locations</a> function reveals that the values <code class="docutils literal"><span class="pre">(142,</span> <span class="pre">349,</span> <span class="pre">409,</span> <span class="pre">82)</span></code> give us the bounding box coordinates of the detected face in CSS order (i.e., top, right, bottom, left).</p>
+<div class="section" id="timing-columns">
+<h4>Timing columns<a class="headerlink" href="#timing-columns" title="Permalink to this headline">¶</a></h4>
+<p>You’re probably wondering what the other columns are. The <code class="docutils literal"><span class="pre">'onset'</span></code> and <code class="docutils literal"><span class="pre">'duration'</span></code> columns providing timing information for the event in question, if applicable. In this case, because our source <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> was a static image, there’s no meaningful timing information to be had. But <code class="docutils literal"><span class="pre">to_df()</span></code> still returns these columns by default. This becomes important in cases where we want to preserve some temporal context as we pass <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> objects through a feature extraction pipeline:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ext</span> <span class="o">=</span> <span class="n">FaceRecognitionFaceLocationsExtractor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">Stim</span><span class="p">(</span><span class="s1">&#39;obama.jpg&#39;</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">ext</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+<span class="go">onset   duration    object_id   face_locations</span>
+<span class="go">14      1           0           (142, 349, 409, 82)</span>
+</pre></div>
+</div>
+<p>Of course, if we really don’t want the timing columns, we can easily suppress them:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">timing</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">object_id   face_locations</span>
+<span class="go">0           (142, 349, 409, 82)</span>
+</pre></div>
+</div>
+<p>We could also pass <code class="docutils literal"><span class="pre">timing='auto'</span></code>, which would drop the <code class="docutils literal"><span class="pre">'onset'</span></code> and <code class="docutils literal"><span class="pre">'duration'</span></code> columns if and only if all values are <code class="docutils literal"><span class="pre">NaN</span></code>.</p>
+</div>
+<div class="section" id="understanding-object-ids">
+<h4>Understanding object_ids<a class="headerlink" href="#understanding-object-ids" title="Permalink to this headline">¶</a></h4>
+<p>What about the <code class="docutils literal"><span class="pre">'object_id'</span></code> column? This one’s not so intuitive, but can in some cases be very important. Consider a situation where there are multiple valid results objects in a single <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>. For example, suppose we feed an image to our <a class="reference internal" href="generated/pliers.extractors.FaceRecognitionFaceLocationsExtractor.html#pliers.extractors.FaceRecognitionFaceLocationsExtractor" title="pliers.extractors.FaceRecognitionFaceLocationsExtractor"><code class="xref py py-class docutils literal"><span class="pre">FaceRecognitionFaceLocationsExtractor</span></code></a> that contains multiple faces. How are we supposed to keep track of these different faces in the results? They come from the same <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> and share the same timing parameters (e.g., in the last example, where we explicitly specified the onset and duration, all detected faces will have <code class="docutils literal"><span class="pre">onset=14</span></code> and <code class="docutils literal"><span class="pre">duration=1</span></code>). But we obviously need to have <em>some</em> way of distinguishing distinct records.</p>
+<p>The solution is to serially assign each distinct result object a different <code class="docutils literal"><span class="pre">object_id</span></code>. Let’s modify the last example to feed in an image that contains 4 separate faces:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ext</span> <span class="o">=</span> <span class="n">FaceRecognitionFaceLocationsExtractor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">Stim</span><span class="p">(</span><span class="s1">&#39;obama.jpg&#39;</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">ext</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="go">onset   duration    object_id   face_locations</span>
+<span class="go">14      1           0           (236, 862, 325, 772)</span>
+<span class="go">14      1           1           (104, 581, 211, 474)</span>
+<span class="go">14      1           2           (365, 782, 454, 693)</span>
+<span class="go">14      1           3           (265, 444, 355, 354)</span>
+</pre></div>
+</div>
+<p>As with the <code class="docutils literal"><span class="pre">timing</span></code> columns, if we don’t want to see the <code class="docutils literal"><span class="pre">object_id</span></code> column, we can suppress it by calling <code class="docutils literal"><span class="pre">.to_df(object_id=False)</span></code> or <code class="docutils literal"><span class="pre">.to_df(object_id='auto')</span></code>. In the latter case, the <code class="docutils literal"><span class="pre">object_id</span></code> column will be included if and only if the values are non-constant (i.e., there is some value other than 0 somewhere in the DataFrame).</p>
+</div>
+<div class="section" id="displaying-metadata">
+<h4>Displaying metadata<a class="headerlink" href="#displaying-metadata" title="Permalink to this headline">¶</a></h4>
+<p>Although not displayed by default, it’s also possible to include additional metadata about the <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> and <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> in the DataFrame returned by <code class="docutils literal"><span class="pre">to_df</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">ext</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">&#39;obama.jpg&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">timing</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">object_id</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">face_locations      stim_name   class       filename    history     source_file</span>
+<span class="go">(142, 349, 409, 82) obama.jpg   ImageStim   obama.jpg               obama.jpg</span>
+</pre></div>
+</div>
+<p>Here we get columns for the <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> name (typically just the filename, unless we explicitly specified a different name), the current filename, the <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> history, and the source filename. In the above example, <code class="docutils literal"><span class="pre">stim_name</span></code>, <code class="docutils literal"><span class="pre">filename</span></code> and <code class="docutils literal"><span class="pre">source_file</span></code> are identical, but this won’t always be the case. For example, if the images we’re running through the <a class="reference internal" href="generated/pliers.extractors.FaceRecognitionFaceLocationsExtractor.html#pliers.extractors.FaceRecognitionFaceLocationsExtractor" title="pliers.extractors.FaceRecognitionFaceLocationsExtractor"><code class="xref py py-class docutils literal"><span class="pre">FaceRecognitionFaceLocationsExtractor</span></code></a> had been extracted from frames of video, the <code class="docutils literal"><span class="pre">source_file</span></code> would point to the original video, while the <code class="docutils literal"><span class="pre">filename</span></code> would point to (temporary) image files corresponding to the extracted frames.</p>
+<p>The <code class="docutils literal"><span class="pre">history</span></code> column contains a text summary of the <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code> transformation history; for more details, see the <a class="reference internal" href="stimuli.html#transformation-history"><span class="std std-ref">Transformation history</span></a> section.</p>
+</div>
+<div class="section" id="display-mode">
+<h4>Display mode<a class="headerlink" href="#display-mode" title="Permalink to this headline">¶</a></h4>
+<p>By default, DataFrames are in ‘wide’ format. That is, each row represents a single event, and all features are contained in columns. To get a better sense of what this means, it’s helpful to look at an extractor that returns more than one feature:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pliers.extractors</span> <span class="kn">import</span> <span class="n">GoogleVisionAPILabelExtractor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ext</span> <span class="o">=</span> <span class="n">GoogleVisionAPILabelExtractor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">ext</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">&#39;apple.jpg&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+<span class="go">onset   duration    object_id   fruit   apple   produce food    natural foods   mcintosh    diet food</span>
+<span class="go">NaN     NaN         0           0.968   0.966   0.959   0.824   0.801           0.629   0.607</span>
+</pre></div>
+</div>
+<p>Here we fed in an image of an apple, and the <a class="reference internal" href="generated/pliers.extractors.GoogleVisionAPILabelExtractor.html#pliers.extractors.GoogleVisionAPILabelExtractor" title="pliers.extractors.GoogleVisionAPILabelExtractor"><code class="xref py py-class docutils literal"><span class="pre">GoogleVisionAPILabelExtractor</span></code></a> automatically returned 7 different high-probability labels (‘fruit’, ‘apple’, etc.)–each one represented as a separate feature in our results.</p>
+<p>While there’s nothing at all wrong with this format (indeed, it’s the default!), sometimes we prefer to get back our data in ‘long’ format, where each row represents the intersection of a single event and a single feature:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s1">&#39;long&#39;</span><span class="p">,</span> <span class="n">timing</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">object_id</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">feature         value</span>
+<span class="go">fruit           0.968</span>
+<span class="go">apple           0.966</span>
+<span class="go">produce         0.959</span>
+<span class="go">food            0.824</span>
+<span class="go">natural foods   0.801</span>
+<span class="go">mcintosh        0.629</span>
+<span class="go">diet food       0.607</span>
+</pre></div>
+</div>
+<p>Now, the feature names are specified in the <code class="docutils literal"><span class="pre">'feature'</span></code> column, and the extracted values are provided in the <code class="docutils literal"><span class="pre">'value'</span></code> column.</p>
+</div>
+<div class="section" id="displaying-extractor-names">
+<h4>Displaying Extractor names<a class="headerlink" href="#displaying-extractor-names" title="Permalink to this headline">¶</a></h4>
+<p>If we only ever worked with results generated by a single <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> for a single <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>, we’d rarely have any problems figuring out where our results are coming from. But as we’ll see momentarily, a more common use case is that we want to combine results from multiple Extractors and/or Stims into a single, possibly very large, DataFrame. In this case, figuring out the source of particular features can quickly get confusing–especially because different Extractors can potentially have similar or even identical feature names.</p>
+<p>We can ensure that the name of the current <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> is explicitly added to our results via the <code class="docutils literal"><span class="pre">extractor_name</span></code> argument. The precise behavior of <code class="docutils literal"><span class="pre">extractor_name=True</span></code> will depend on the <code class="docutils literal"><span class="pre">format</span></code> argument. When <code class="docutils literal"><span class="pre">format='wide'</span></code>, the name will be added as the first level in a pandas MultiIndex; when <code class="docutils literal"><span class="pre">format='long'</span></code>, a new column will be added. Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="s1">&#39;long&#39;</span><span class="p">,</span> <span class="n">timing</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">object_id</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">extractor_name</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">feature         value   extractor</span>
+<span class="go">fruit           0.968   GoogleVisionAPILabelExtractor</span>
+<span class="go">apple           0.966   GoogleVisionAPILabelExtractor</span>
+<span class="go">produce         0.959   GoogleVisionAPILabelExtractor</span>
+<span class="go">food            0.824   GoogleVisionAPILabelExtractor</span>
+<span class="go">natural foods   0.801   GoogleVisionAPILabelExtractor</span>
+<span class="go">mcintosh        0.629   GoogleVisionAPILabelExtractor</span>
+<span class="go">diet food       0.607   GoogleVisionAPILabelExtractor</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">timing</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">object_id</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">extractor_name</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">GoogleVisionAPILabelExtractor</span>
+<span class="go">fruit   apple   produce food    natural foods   mcintosh    diet food</span>
+<span class="go">0.968   0.966   0.959   0.824   0.801           0.629       0.607</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="merging-extractor-results">
+<h2>Merging Extractor results<a class="headerlink" href="#merging-extractor-results" title="Permalink to this headline">¶</a></h2>
+<p>In most cases, we’ll want to do more than just apply a single <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> to a single <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>. We might want to apply one <a class="reference internal" href="generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor" title="pliers.extractors.Extractor"><code class="xref py py-class docutils literal"><span class="pre">Extractor</span></code></a> to a set of stims, several different Extractors to a single <code class="xref py py-class docutils literal"><span class="pre">Stim</span></code>, or many Extractors to many Stims. As described (in the section on <a class="reference internal" href="graphs.html#graphs"><span class="std std-ref">Graphs</span></a>, pliers makes it easy to build such workflows–and to automatically merge the extracted feature data into one big pandas DataFrame. But in cases where we’re working with multiple results manually, or wish to exercise a little more control over the output format, we can still merge the results ourselves, using the appropriately named <code class="docutils literal"><span class="pre">merge_results</span></code> function.</p>
+<p>Suppose we have a list of images, and we want to run both face recognition and object labeling on each image. Then we can do the following:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pliers.extractors</span> <span class="kn">import</span> <span class="p">(</span><span class="n">GoogleVisionAPIFaceExtractor</span><span class="p">,</span> <span class="n">GoogleVisionAPILabelExtractor</span><span class="p">)</span>
+<span class="n">my_images</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;file1.jpg&#39;</span><span class="p">,</span> <span class="s1">&#39;file2.jpg&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+<span class="n">face_ext</span> <span class="o">=</span> <span class="n">GoogleVisionAPIFaceExtractor</span><span class="p">()</span>
+<span class="n">face_feats</span> <span class="o">=</span> <span class="n">face_ext</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">my_images</span><span class="p">)</span>
+
+<span class="n">lab_ext</span> <span class="o">=</span> <span class="n">GoogleVisionAPILabelExtractor</span><span class="p">()</span>
+<span class="n">lab_feats</span> <span class="o">=</span> <span class="n">lab_ext</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">my_images</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now each of <code class="docutils literal"><span class="pre">face_feats</span></code> and <code class="docutils literal"><span class="pre">lab_feats</span></code> is a list of <a class="reference internal" href="generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult" title="pliers.extractors.ExtractorResult"><code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code></a> objects. We could explicitly convert each element in each list to a pandas DataFrame (by calling <code class="docutils literal"><span class="pre">.to_df()</span></code>), but then we’d still need to figure out how to merge all those DataFrames in a sensible way. Fortunately, <code class="xref py py-func docutils literal"><span class="pre">merge_results()</span></code> can do the heavy lifting for us:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pliers.extractors</span> <span class="kn">import</span> <span class="n">merge_results</span>
+<span class="c1"># merge_results expects a single list, so we concatenate our two lists</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">merge_results</span><span class="p">(</span><span class="n">face_feats</span> <span class="o">+</span> <span class="n">lab_feats</span><span class="p">,</span> <span class="n">timing</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">object_id</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s1">&#39;long&#39;</span><span class="p">,</span>
+                   <span class="n">extractor_names</span><span class="o">=</span><span class="s1">&#39;column&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Nearly all of the arguments to <code class="docutils literal"><span class="pre">merge_results</span></code> match the ones <a class="reference internal" href="#results-to-df"><span class="std std-ref">we saw above</span></a> when calling <code class="docutils literal"><span class="pre">to_df</span></code> on individual <a class="reference internal" href="generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult" title="pliers.extractors.ExtractorResult"><code class="xref py py-class docutils literal"><span class="pre">ExtractorResult</span></code></a> instances. We can control the output shape (‘wide’ vs. ‘long’) with the <code class="docutils literal"><span class="pre">format</span></code> argument, and indicate whether which optional columns to include via the <code class="docutils literal"><span class="pre">metadata</span></code>, <code class="docutils literal"><span class="pre">timing</span></code>, and <code class="docutils literal"><span class="pre">object_id</span></code> flags.</p>
+<p>The only notable exception in terms of argument behavior is that the <code class="docutils literal"><span class="pre">extractor_names</span></code> argument has different semantics from <code class="docutils literal"><span class="pre">extractor_name</span></code> in <code class="docutils literal"><span class="pre">to_df()</span></code>. Specifically, rather than just specifying whether or not to include the names of Extractors, we can now also control exactly how they’re displayed (e.g., whether they’re prepended to the feature names, added as a level in a pandas MultiIndex, etc.). Full details can be found in the <code class="xref py py-func docutils literal"><span class="pre">merge_results()</span></code> function reference.</p>
+<p>In all other respects, the outputs of <code class="docutils literal"><span class="pre">merge_results</span></code> should look just like those generated by <code class="docutils literal"><span class="pre">to_df</span></code> calls–except of course that the results for different Extractors and Stims are now concatenated together along either the row or the column axes (depending on the <code class="docutils literal"><span class="pre">format</span></code> argument). As a general rule of thumb, we recommend using the default format (‘wide’) in cases where one is working with a small number of different Extractors and/or features, and switching to <code class="docutils literal"><span class="pre">format='long'</span></code> when the number of Extractors and/or features gets large. (The main reason for this recommendation is that the merged DataFrames are typically sparse, so in ‘wide’ format, one can end up with a very large number of <code class="docutils literal"><span class="pre">NaN</span></code> values when working with many Extractors at once. In ‘long’ format, there are virtually no missing values.)</p>
+</div>
+<div class="section" id="graph-results">
+<h2>Graph results<a class="headerlink" href="#graph-results" title="Permalink to this headline">¶</a></h2>
+<p>In practice, many users will primarily rely on the <a class="reference internal" href="graphs.html#graphs"><span class="std std-ref">Graph API</span></a> for feature extraction. Since standard <a class="reference internal" href="generated/pliers.graph.Graph.html#pliers.graph.Graph" title="pliers.graph.Graph"><code class="xref py py-class docutils literal"><span class="pre">Graph</span></code></a> execution merges results by default, using a <a class="reference internal" href="generated/pliers.graph.Graph.html#pliers.graph.Graph" title="pliers.graph.Graph"><code class="xref py py-class docutils literal"><span class="pre">Graph</span></code></a> means that you probably won’t need to worry about calling <code class="docutils literal"><span class="pre">to_df</span></code> or <code class="docutils literal"><span class="pre">merge_results</span></code> explicitly. You’ll just get a single, already-merged pandas DataFrame as the result of a <code class="docutils literal"><span class="pre">Graph.transform</span></code> call.</p>
+<p>The main thing to be aware of in this case is that the <code class="docutils literal"><span class="pre">.transform</span></code> call takes any of the keyword arguments supported by <code class="docutils literal"><span class="pre">merge_results</span></code>, and simply passes them through. This means you can control the output format and inclusion of various columns exactly as documented above for <code class="docutils literal"><span class="pre">merge_results</span></code> (and <code class="docutils literal"><span class="pre">to_df</span></code>). Here’s a minimalistic example to illustrate:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pliers.graph</span> <span class="kn">import</span> <span class="n">Graph</span>
+<span class="kn">from</span> <span class="nn">pliers.filters</span> <span class="kn">import</span> <span class="n">FrameSamplingFilter</span>
+<span class="kn">from</span> <span class="nn">pliers.extractors</span> <span class="kn">import</span> <span class="n">FaceRecognitionFaceLandmarksExtractor</span>
+<span class="kn">from</span> <span class="nn">pliers.tests.utils</span> <span class="kn">import</span> <span class="n">get_test_data_path</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
+
+<span class="c1"># Use a short video from the pliers test suite</span>
+<span class="n">video</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">get_test_data_path</span><span class="p">(),</span> <span class="s1">&#39;video&#39;</span><span class="p">,</span> <span class="s1">&#39;obama_speech.mp4&#39;</span><span class="p">)</span>
+
+<span class="c1"># Sample image frames from video, then apply face recognition</span>
+<span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">FrameSamplingFilter</span><span class="p">(</span><span class="n">hertz</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="p">[</span><span class="s1">&#39;FaceRecognitionFaceLocationsExtractor&#39;</span><span class="p">])</span>
+<span class="p">]</span>
+
+<span class="c1"># Construct and run Graph</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">video</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s1">&#39;long&#39;</span><span class="p">,</span> <span class="n">extractor_names</span><span class="o">=</span><span class="s1">&#39;column&#39;</span><span class="p">)</span>
+
+<span class="s1">&#39;&#39;&#39; Outputs:</span>
+
+<span class="s1">object_id   duration    onset   feature         value               extractor</span>
+<span class="s1">0           0.50        0.0     face_locations  (36, 223, 79, 180)  FaceRecognitionFaceLocationsExtractor</span>
+<span class="s1">1           0.50        0.0     face_locations  (58, 101, 94, 65)   FaceRecognitionFaceLocationsExtractor</span>
+<span class="s1">0           0.50        0.5     face_locations  (26, 213, 70, 170)  FaceRecognitionFaceLocationsExtractor</span>
+<span class="s1">1           0.50        0.5     face_locations  (58, 101, 94, 65)   FaceRecognitionFaceLocationsExtractor</span>
+<span class="s1">...         ...         ...     ...             ...                 ...</span>
+</pre></div>
+</div>
+<p>If you don’t explicitly specify any formatting arguments, you’ll get the same sane defaults used in <code class="xref py py-func docutils literal"><span class="pre">merge_results()</span></code>, which should work well in most cases.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="config.html" class="btn btn-neutral float-right" title="Configuring pliers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="graphs.html" class="btn btn-neutral" title="Graphs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

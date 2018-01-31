@@ -93,10 +93,12 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="basic-concepts.html">Basic concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stimuli.html">Stims</a></li>
 <li class="toctree-l1"><a class="reference internal" href="transformers.html">Transformers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="results.html">Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config.html">Configuring pliers</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Pliers API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-pliers.converters">Converters (<code class="docutils literal"><span class="pre">pliers.converters</span></code>)</a><ul>
@@ -518,7 +520,7 @@ another <cite>Stim</cite> instance).</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.merge_results.html#pliers.extractors.merge_results" title="pliers.extractors.merge_results"><code class="xref py py-obj docutils literal"><span class="pre">merge_results</span></code></a>(results,&nbsp;**merge_feature_args)</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.merge_results.html#pliers.extractors.merge_results" title="pliers.extractors.merge_results"><code class="xref py py-obj docutils literal"><span class="pre">merge_results</span></code></a>(results[,&nbsp;format,&nbsp;timing,&nbsp;…])</td>
 <td>Merges a list of ExtractorResults instances and returns a pandas DF.</td>
 </tr>
 </tbody>
@@ -603,7 +605,7 @@ which features can potentially be extracted.</p>
 <tr class="row-even"><td><a class="reference internal" href="generated/pliers.stimuli.ImageStim.html#pliers.stimuli.ImageStim" title="pliers.stimuli.ImageStim"><code class="xref py py-obj docutils literal"><span class="pre">ImageStim</span></code></a>([filename,&nbsp;onset,&nbsp;duration,&nbsp;data,&nbsp;url])</td>
 <td>Represents a static image.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.stimuli.TextStim.html#pliers.stimuli.TextStim" title="pliers.stimuli.TextStim"><code class="xref py py-obj docutils literal"><span class="pre">TextStim</span></code></a>([filename,&nbsp;text,&nbsp;onset,&nbsp;duration,&nbsp;url])</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.stimuli.TextStim.html#pliers.stimuli.TextStim" title="pliers.stimuli.TextStim"><code class="xref py py-obj docutils literal"><span class="pre">TextStim</span></code></a>([filename,&nbsp;text,&nbsp;onset,&nbsp;duration,&nbsp;…])</td>
 <td>Any simple text stimulus–most commonly a single word.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="generated/pliers.stimuli.TweetStimFactory.html#pliers.stimuli.TweetStimFactory" title="pliers.stimuli.TweetStimFactory"><code class="xref py py-obj docutils literal"><span class="pre">TweetStimFactory</span></code></a>([consumer_key,&nbsp;…])</td>

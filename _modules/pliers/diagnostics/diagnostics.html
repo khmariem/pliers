@@ -92,10 +92,12 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../results.html">Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
 </ul>
@@ -164,10 +166,13 @@
   <h1>Source code for pliers.diagnostics.diagnostics</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">pliers.utils</span> <span class="k">import</span> <span class="n">attempt_to_import</span><span class="p">,</span> <span class="n">verify_dependencies</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="k">import</span> <span class="n">mahalanobis</span>
 <span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="k">import</span> <span class="n">LinAlgError</span>
+
+
+<span class="n">sns</span> <span class="o">=</span> <span class="n">attempt_to_import</span><span class="p">(</span><span class="s1">&#39;seaborn&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="correlation_matrix"><a class="viewcode-back" href="../../../generated/pliers.diagnostics.correlation_matrix.html#pliers.diagnostics.correlation_matrix">[docs]</a><span class="k">def</span> <span class="nf">correlation_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
@@ -310,6 +315,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Variances&#39;</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+            <span class="n">verify_dependencies</span><span class="p">(</span><span class="s1">&#39;seaborn&#39;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;CorrelationMatrix&#39;</span><span class="p">:</span>
                     <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span>

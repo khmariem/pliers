@@ -92,10 +92,12 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../results.html">Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
 </ul>
@@ -279,6 +281,7 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="s1">&#39;received invalid results from API: </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">_json</span><span class="p">)))</span>
         <span class="n">elements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;final&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="n">timestamps</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;timestamps&#39;</span><span class="p">]</span>
@@ -289,14 +292,18 @@
                         <span class="n">end</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
                         <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TextStim</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
                                                  <span class="n">onset</span><span class="o">=</span><span class="n">offset</span><span class="o">+</span><span class="n">start</span><span class="p">,</span>
-                                                 <span class="n">duration</span><span class="o">=</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">))</span>
+                                                 <span class="n">duration</span><span class="o">=</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">,</span>
+                                                 <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">))</span>
+                        <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="ow">is</span> <span class="s1">&#39;phrases&#39;</span><span class="p">:</span>
                     <span class="n">text</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;alternatives&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;transcript&#39;</span><span class="p">]</span>
                     <span class="n">start</span> <span class="o">=</span> <span class="n">timestamps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
                     <span class="n">end</span> <span class="o">=</span> <span class="n">timestamps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
                     <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TextStim</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span>
                                              <span class="n">onset</span><span class="o">=</span><span class="n">offset</span><span class="o">+</span><span class="n">start</span><span class="p">,</span>
-                                             <span class="n">duration</span><span class="o">=</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">))</span>
+                                             <span class="n">duration</span><span class="o">=</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">,</span>
+                                             <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">))</span>
+                    <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">ComplexTextStim</span><span class="p">(</span><span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="n">audio</span><span class="o">.</span><span class="n">onset</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_query_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clip</span><span class="p">):</span>

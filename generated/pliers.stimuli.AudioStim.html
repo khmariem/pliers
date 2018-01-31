@@ -91,10 +91,12 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../basic-concepts.html">Basic concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../stimuli.html">Stims</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../transformers.html">Transformers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../results.html">Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../config.html">Configuring pliers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference.html">Pliers API Reference</a></li>
 </ul>
@@ -164,7 +166,7 @@
 <h1>pliers.stimuli.AudioStim<a class="headerlink" href="#pliers-stimuli-audiostim" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pliers.stimuli.AudioStim">
-<em class="property">class </em><code class="descclassname">pliers.stimuli.</code><code class="descname">AudioStim</code><span class="sig-paren">(</span><em>filename=None</em>, <em>onset=None</em>, <em>sampling_rate=None</em>, <em>url=None</em>, <em>clip=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/stimuli/audio.html#AudioStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.stimuli.AudioStim" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pliers.stimuli.</code><code class="descname">AudioStim</code><span class="sig-paren">(</span><em>filename=None</em>, <em>onset=None</em>, <em>sampling_rate=None</em>, <em>url=None</em>, <em>clip=None</em>, <em>order=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/stimuli/audio.html#AudioStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.stimuli.AudioStim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">pliers.stimuli.base.Stim</span></code></p>
 <p>Represents an audio clip.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -177,6 +179,11 @@
 respect to some more general context or timeline the user wishes
 to keep track of.</li>
 <li><strong>sampling_rate</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Sampling rate of clip, in hertz.</li>
+<li><strong>url</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Optional url to read contents from.</li>
+<li><strong>clip</strong> (<em>AudioFileClip</em>) – Optional moviepy AudioFileClip to initialize
+from.</li>
+<li><strong>order</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) – Optional sequential index of the AudioStim within some
+containing context.</li>
 </ul>
 </td>
 </tr>
@@ -184,7 +191,7 @@ to keep track of.</li>
 </table>
 <dl class="method">
 <dt id="pliers.stimuli.AudioStim.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>filename=None</em>, <em>onset=None</em>, <em>sampling_rate=None</em>, <em>url=None</em>, <em>clip=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/stimuli/audio.html#AudioStim.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.stimuli.AudioStim.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>filename=None</em>, <em>onset=None</em>, <em>sampling_rate=None</em>, <em>url=None</em>, <em>clip=None</em>, <em>order=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/stimuli/audio.html#AudioStim.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.stimuli.AudioStim.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">

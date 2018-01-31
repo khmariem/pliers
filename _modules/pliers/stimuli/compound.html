@@ -92,10 +92,12 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../results.html">Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
 </ul>
@@ -267,8 +269,12 @@
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">stim</span> <span class="o">=</span> <span class="n">_get_stim_class</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">primary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_stim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_primary</span><span class="p">)</span>
+                <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_stim</span><span class="p">(</span><span class="n">stim</span><span class="p">)</span></div>
 
 
@@ -287,7 +293,8 @@
     <span class="n">_primary</span> <span class="o">=</span> <span class="n">AudioStim</span>
 
 <div class="viewcode-block" id="TranscribedAudioCompoundStim.__init__"><a class="viewcode-back" href="../../../generated/pliers.stimuli.TranscribedAudioCompoundStim.html#pliers.stimuli.TranscribedAudioCompoundStim.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">audio</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">TranscribedAudioCompoundStim</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="n">audio</span><span class="p">,</span> <span class="n">text</span><span class="p">])</span></div></div>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TranscribedAudioCompoundStim</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="n">audio</span><span class="p">,</span> <span class="n">text</span><span class="p">])</span></div></div>
 </pre></div>
 
            </div>

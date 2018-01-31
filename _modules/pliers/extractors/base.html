@@ -92,10 +92,12 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../results.html">Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
 </ul>
@@ -164,13 +166,13 @@
   <h1>Source code for pliers.extractors.base</h1><div class="highlight"><pre>
 <span></span><span class="sd">&#39;&#39;&#39; Base Extractor class and associated functionality. &#39;&#39;&#39;</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">six</span> <span class="k">import</span> <span class="n">with_metaclass</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">pliers.transformers</span> <span class="k">import</span> <span class="n">Transformer</span>
 <span class="kn">from</span> <span class="nn">pliers.utils</span> <span class="k">import</span> <span class="n">isgenerator</span><span class="p">,</span> <span class="n">flatten</span>
+<span class="kn">from</span> <span class="nn">pandas.api.types</span> <span class="k">import</span> <span class="n">is_numeric_dtype</span>
 
 
 <div class="viewcode-block" id="Extractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.Extractor.html#pliers.extractors.Extractor">[docs]</a><span class="k">class</span> <span class="nc">Extractor</span><span class="p">(</span><span class="n">with_metaclass</span><span class="p">(</span><span class="n">ABCMeta</span><span class="p">,</span> <span class="n">Transformer</span><span class="p">)):</span>
@@ -211,13 +213,15 @@
 <span class="sd">            rows in data. Length must match the input data.</span>
 <span class="sd">        durations (list, ndarray): Optional iterable giving the durations</span>
 <span class="sd">            associated with the rows in data.</span>
+<span class="sd">        orders (list, ndarray): Optional iterable giving the integer orders</span>
+<span class="sd">            associated with the rows in data.</span>
 <span class="sd">        raw: The raw result (net of any containers or overhead) returned by</span>
 <span class="sd">            the underlying feature extraction tool. Can be an object of any</span>
 <span class="sd">            type.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
 <div class="viewcode-block" id="ExtractorResult.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="n">extractor</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">onsets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">durations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">durations</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">orders</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">raw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least one of &#39;data&#39; and &#39;raw&#39; must be a &quot;</span>
@@ -233,8 +237,8 @@
         <span class="c1"># generate the .data property via calls to to_array() or to_df()</span>
         <span class="c1"># implemented in the Extractor. But to avoid breaking the API without</span>
         <span class="c1"># warning, we provide a backward-compatible version for the time being.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="p">,</span> <span class="s1">&#39;to_array&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="o">.</span><span class="n">to_array</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="p">,</span> <span class="s1">&#39;_to_array&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="o">.</span><span class="n">_to_array</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
@@ -244,46 +248,99 @@
 
         <span class="k">if</span> <span class="n">durations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">durations</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">duration</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">durations</span> <span class="o">=</span> <span class="n">durations</span> <span class="k">if</span> <span class="n">durations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">durations</span> <span class="o">=</span> <span class="n">durations</span> <span class="k">if</span> <span class="n">durations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
-<div class="viewcode-block" id="ExtractorResult.to_df"><a class="viewcode-back" href="../../../generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult.to_df">[docs]</a>    <span class="k">def</span> <span class="nf">to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">orders</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">orders</span> <span class="o">=</span> <span class="n">stim</span><span class="o">.</span><span class="n">order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orders</span> <span class="o">=</span> <span class="n">orders</span> <span class="k">if</span> <span class="n">orders</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
+
+<div class="viewcode-block" id="ExtractorResult.to_df"><a class="viewcode-back" href="../../../generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult.to_df">[docs]</a>    <span class="k">def</span> <span class="nf">to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;wide&#39;</span><span class="p">,</span>
+              <span class="n">extractor_name</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">object_id</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Convert current instance to a pandas DatasFrame.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            timing (bool): If True, adds columns for event onset and duration.</span>
 <span class="sd">                Note that these columns will be added even if there are no</span>
 <span class="sd">                valid values in the current object (NaNs will be inserted).</span>
+<span class="sd">                If &#39;auto&#39;, timing columns are only inserted if there&#39;s at least</span>
+<span class="sd">                one valid (i.e., non-NaN) onset/order/duration.</span>
 <span class="sd">            metadata (bool): If True, adds columns for key metadata (including</span>
 <span class="sd">                the name, filename, class, history, and source file of the</span>
 <span class="sd">                Stim).</span>
+<span class="sd">            format (str): Format to return the data in. Can be either &#39;wide&#39; or</span>
+<span class="sd">                &#39;long&#39;. In the wide case, every extracted feature is a column,</span>
+<span class="sd">                and every result object is in a row. In the long case, every</span>
+<span class="sd">                row contains a single record/feature combination.</span>
+<span class="sd">            extractor_name (bool): If True, includes the Extractor name as</span>
+<span class="sd">                a column (in &#39;long&#39; format) or index level (in &#39;wide&#39; format).</span>
+<span class="sd">            object_id (bool): If True, attempts to intelligently add an</span>
+<span class="sd">                &#39;object_id&#39; column that differentiates between multiple objects</span>
+<span class="sd">                in the results that may share onsets and durations (and would</span>
+<span class="sd">                otherwise be impossible to distinguish). This frequently occurs</span>
+<span class="sd">                for ImageExtractors that identify multiple target objects</span>
+<span class="sd">                (e.g., faces) within a single ImageStim. In addition to boolean</span>
+<span class="sd">                values, the special value &#39;auto&#39; can be passed, in which case</span>
+<span class="sd">                the object_id column will only be inserted if the resulting</span>
+<span class="sd">                constant would be non-constant.</span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">            A pandas DataFrame.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
 
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="p">,</span> <span class="s1">&#39;to_df&#39;</span><span class="p">):</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1"># Ideally, Extractors should implement their own _to_df() class method</span>
+        <span class="c1"># that produces a DataFrame in standardized format. Failing that, we</span>
+        <span class="c1"># assume self.data is already array-like and can be wrapped in a DF.</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="p">,</span> <span class="s1">&#39;_to_df&#39;</span><span class="p">):</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="o">.</span><span class="n">_to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="c1"># Handle duplicate features</span>
-                <span class="n">counts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-                <span class="n">features</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                        <span class="n">counts</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                        <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span> <span class="o">+</span> <span class="s1">&#39;_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">counts</span><span class="p">[</span><span class="n">f</span><span class="p">])</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-                <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">features</span>
+            <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span>
+            <span class="k">if</span> <span class="n">features</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;feature_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">features</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">timing</span><span class="p">:</span>
+        <span class="n">index_cols</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Generally we leave it to Extractors to properly track the number of</span>
+        <span class="c1"># objects returned in the result DF, using the &#39;object_id&#39; column.</span>
+        <span class="c1"># But in cases where the Extractor punt on this and_object_id=True, we</span>
+        <span class="c1"># take our best guess. The logic is that we increment the object</span>
+        <span class="c1"># counter for any row in the DF that cannot be uniquely distinguished</span>
+        <span class="c1"># from other rows by onset and duration.</span>
+        <span class="k">if</span> <span class="n">object_id</span> <span class="ow">and</span> <span class="s1">&#39;object_id&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onsets</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> \
+                <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">durations</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">object_id</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">or</span> <span class="p">(</span><span class="n">object_id</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span> <span class="ow">and</span>
+                                     <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">index</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> \
+                    <span class="k">else</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">cumcount</span><span class="p">()</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;object_id&#39;</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
+                <span class="n">index_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;object_id&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">timing</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">or</span> <span class="p">(</span><span class="n">timing</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span> <span class="ow">and</span>
+                              <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">durations</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span>
+                               <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orders</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">())):</span>
             <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">durations</span><span class="p">)</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;order&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">orders</span><span class="p">)</span>
             <span class="n">df</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">onsets</span><span class="p">)</span>
+            <span class="n">index_cols</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;order&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;long&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">index_cols</span><span class="p">,</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;feature&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">extractor_name</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extractor</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;long&#39;</span><span class="p">:</span>
+                <span class="n">df</span><span class="p">[</span><span class="s1">&#39;extractor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_product</span><span class="p">([[</span><span class="n">name</span><span class="p">],</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">])</span>
+
         <span class="k">if</span> <span class="n">metadata</span><span class="p">:</span>
             <span class="n">df</span><span class="p">[</span><span class="s1">&#39;stim_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stim</span><span class="o">.</span><span class="n">name</span>
             <span class="n">df</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stim</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
             <span class="n">df</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stim</span><span class="o">.</span><span class="n">filename</span>
-            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;history&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stim</span><span class="o">.</span><span class="n">history</span><span class="p">)</span>
+            <span class="n">hist</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stim</span><span class="o">.</span><span class="n">history</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stim</span><span class="o">.</span><span class="n">history</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;history&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span>
             <span class="n">df</span><span class="p">[</span><span class="s1">&#39;source_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">source_file</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
@@ -294,103 +351,128 @@
 
     <span class="nd">@history</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">history</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_history</span> <span class="o">=</span> <span class="n">history</span>
-
-<div class="viewcode-block" id="ExtractorResult.merge_features"><a class="viewcode-back" href="../../../generated/pliers.extractors.ExtractorResult.html#pliers.extractors.ExtractorResult.merge_features">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">merge_features</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">extractor_names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                       <span class="n">flatten_columns</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Merge a list of ExtractorResults bound to the same Stim into a</span>
-<span class="sd">        single DataFrame.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            results (list, tuple): A list of ExtractorResult instances to merge</span>
-<span class="sd">            extractor_names (bool): if True, stores the associated Extractor</span>
-<span class="sd">                names in the top level of the column MultiIndex.</span>
-<span class="sd">            metadata (bool): if True, stores all ExtractorResult metadata</span>
-<span class="sd">            flatten_columns (bool): if True, flattens the resultant column</span>
-<span class="sd">                MultiIndex such that feature columns are in the format</span>
-<span class="sd">                &lt;extractor class&gt;_&lt;feature name&gt;</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-
-        <span class="c1"># Make sure all ExtractorResults are associated with same Stim.</span>
-        <span class="n">stims</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">stim</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">])</span>
-        <span class="n">dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stims</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;merge_features() can only be called on a set of &quot;</span>
-                             <span class="s2">&quot;ExtractorResults associated with the same Stim.&quot;</span><span class="p">)</span>
-
-        <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">extractor</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span> <span class="k">if</span> <span class="n">extractor_names</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="n">extra_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">,</span>
-                         <span class="s1">&#39;stim_name&#39;</span><span class="p">,</span> <span class="s1">&#39;source_file&#39;</span><span class="p">]</span>
-
-        <span class="c1"># If onsets are all NaN</span>
-        <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">]):</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">]))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;If ExtractorResults do not specify onsets, &quot;</span>
-                                 <span class="s2">&quot;all ExtractorResults to merge must have &quot;</span>
-                                 <span class="s2">&quot;identical numbers of rows.&quot;</span><span class="p">)</span>
-            <span class="n">feature_dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">extra_columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">]</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">feature_dfs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="n">keys</span><span class="p">)</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
-
-        <span class="c1"># If onsets are specified</span>
-        <span class="k">elif</span> <span class="nb">all</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">notnull</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">]):</span>
-            <span class="n">feature_dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;onset&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">]</span>
-            <span class="n">feature_dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">extra_columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">feature_dfs</span><span class="p">]</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">feature_dfs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="n">keys</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;To merge a list of ExtractorResults, all &quot;</span>
-                             <span class="s2">&quot;instances must either contain onsets, or lack &quot;</span>
-                             <span class="s2">&quot;onsets and have the same number of rows. It is &quot;</span>
-                             <span class="s2">&quot;not possible to merge mismatched instances.&quot;</span><span class="p">)</span>
-
-        <span class="n">extra_columns</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;onset&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">metadata</span><span class="p">:</span>
-            <span class="n">extra_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">extra_columns</span><span class="p">:</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">col</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;onset&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">flatten_columns</span><span class="p">:</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">lvl</span><span class="p">)</span> <span class="k">for</span> <span class="n">lvl</span> <span class="ow">in</span> <span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">result</span></div>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">merge_stims</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
-            <span class="n">r</span><span class="p">,</span> <span class="n">ExtractorResult</span><span class="p">)</span> <span class="k">else</span> <span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;onset&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_history</span> <span class="o">=</span> <span class="n">history</span></div>
 
 
-<div class="viewcode-block" id="merge_results"><a class="viewcode-back" href="../../../generated/pliers.extractors.merge_results.html#pliers.extractors.merge_results">[docs]</a><span class="k">def</span> <span class="nf">merge_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="o">**</span><span class="n">merge_feature_args</span><span class="p">):</span>
+<div class="viewcode-block" id="merge_results"><a class="viewcode-back" href="../../../generated/pliers.extractors.merge_results.html#pliers.extractors.merge_results">[docs]</a><span class="k">def</span> <span class="nf">merge_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;wide&#39;</span><span class="p">,</span> <span class="n">timing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                  <span class="n">extractor_names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">object_id</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Merges a list of ExtractorResults instances and returns a pandas DF.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        results (list, tuple): A list of ExtractorResult instances to merge.</span>
-<span class="sd">        merge_feature_args (kwargs): Additional argument settings to use</span>
-<span class="sd">            when merging across features.</span>
+<span class="sd">        format (str): Format to return the data in. Can be either &#39;wide&#39; or</span>
+<span class="sd">            &#39;long&#39;. In the wide case, every extracted feature is a column,</span>
+<span class="sd">            and every Stim is a row. In the long case, every row contains a</span>
+<span class="sd">            single Stim/Extractor/feature combination.</span>
+<span class="sd">        timing (bool, str): Whether or not to include columns for onset,</span>
+<span class="sd">            order, and duration.</span>
+<span class="sd">        metadata (bool): if True, includes Stim metadata columns in the</span>
+<span class="sd">            returned DataFrame. These columns include &#39;stim_name&#39;, &#39;class&#39;,</span>
+<span class="sd">            &#39;filename&#39;, &#39;history&#39;, and &#39;source_file&#39;. Note that these values</span>
+<span class="sd">            are often long strings, so the returned DF will be considerably</span>
+<span class="sd">            larger.</span>
+<span class="sd">        extractor_names (str, bool): How to handle extractor names when</span>
+<span class="sd">            returning results. The specific behavior depends on whether format</span>
+<span class="sd">            is &#39;long&#39; or &#39;wide&#39;. Valid values include:</span>
 
-<span class="sd">    Returns: a pandas DataFrame with features concatenated along the column</span>
-<span class="sd">        axis and stims concatenated along the row axis.</span>
+<span class="sd">                - &#39;prepend&#39; or True: In both &#39;long&#39; and &#39;wide&#39; formats,</span>
+<span class="sd">                  feature names will be prepended with the Extractor name</span>
+<span class="sd">                  (e.g., &quot;FaceExtractor#face_likelihood&quot;).</span>
+<span class="sd">                - &#39;drop&#39; or False: In both &#39;long&#39; and &#39;wide&#39; formats, extractor</span>
+<span class="sd">                  names will be omitted entirely from the result. Note that</span>
+<span class="sd">                  this can create feature name conflicts when merging results</span>
+<span class="sd">                  from multiple Extractors, so is generally discouraged.</span>
+<span class="sd">                - &#39;column&#39;: In &#39;long&#39; format, extractor name will be included</span>
+<span class="sd">                  as a separate column. Not valid for &#39;wide&#39; format (and will</span>
+<span class="sd">                  raise an error).</span>
+<span class="sd">                - &#39;multi&#39;: In &#39;wide&#39; format, a MultiIndex will be used for the</span>
+<span class="sd">                  columns, with the first level of the index containing the</span>
+<span class="sd">                  Extractor name and the second level containing the feature</span>
+<span class="sd">                  name. This value is invalid if format=&#39;long&#39; (and will raise</span>
+<span class="sd">                  and error).</span>
+
+<span class="sd">        object_id (bool): If True, attempts to intelligently add an</span>
+<span class="sd">            &#39;object_id&#39; column that differentiates between multiple objects in</span>
+<span class="sd">            the results that may share onsets/orders/durations (and would</span>
+<span class="sd">            otherwise be impossible to distinguish). This frequently occurs for</span>
+<span class="sd">            ImageExtractors that identify multiple target objects (e.g., faces)</span>
+<span class="sd">            within a single ImageStim. Default is &#39;auto&#39;, which includes the</span>
+<span class="sd">            &#39;object_id&#39; column if and only if it has a non-constant value.</span>
+<span class="sd">        aggfunc (str, Callable): If format=&#39;wide&#39; and extractor_names=&#39;drop&#39;,</span>
+<span class="sd">            it&#39;s possible for name clashes between features to occur. In such</span>
+<span class="sd">            cases, the aggfunc argument is passed onto pandas&#39; pivot_table</span>
+<span class="sd">            function, and specifies how to aggregate multiple values for the</span>
+<span class="sd">            same index. Can be a callable or any string value recognized by</span>
+<span class="sd">            pandas. By default (None), &#39;mean&#39; will be used for numeric columns</span>
+<span class="sd">            and &#39;first&#39; will be used for object/categorical columns.</span>
+
+<span class="sd">    Returns: a pandas DataFrame. For format details, see &#39;format&#39; argument.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="c1"># Flatten list recursively</span>
     <span class="n">results</span> <span class="o">=</span> <span class="n">flatten</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
-    <span class="n">stims</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">_timing</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">timing</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span> <span class="k">else</span> <span class="n">timing</span>
+    <span class="n">_object_id</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">object_id</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span> <span class="k">else</span> <span class="n">object_id</span>
 
-    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-        <span class="n">stims</span><span class="p">[</span><span class="nb">hash</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">stim</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">extractor_names</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">extractor_names</span> <span class="o">=</span> <span class="s1">&#39;prepend&#39;</span>
+    <span class="k">elif</span> <span class="n">extractor_names</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">extractor_names</span> <span class="o">=</span> <span class="s1">&#39;drop&#39;</span>
 
-    <span class="c1"># First concatenate all features separately for each Stim</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">stims</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">stims</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">ExtractorResult</span><span class="o">.</span><span class="n">merge_features</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">merge_feature_args</span><span class="p">)</span>
+    <span class="n">dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">timing</span><span class="o">=</span><span class="n">_timing</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;long&#39;</span><span class="p">,</span>
+                   <span class="n">extractor_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">object_id</span><span class="o">=</span><span class="n">_object_id</span><span class="p">)</span>
+           <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
 
-    <span class="c1"># Now concatenate all Stims</span>
-    <span class="n">stims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">stims</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-    <span class="k">return</span> <span class="n">stims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stims</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> \
-        <span class="n">ExtractorResult</span><span class="o">.</span><span class="n">merge_stims</span><span class="p">(</span><span class="n">stims</span><span class="p">)</span></div>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">object_id</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;object_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;object_id&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">extractor_names</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;prepend&#39;</span><span class="p">,</span> <span class="s1">&#39;multi&#39;</span><span class="p">]:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;feature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;extractor&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;#&#39;</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;feature&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">extractor_names</span> <span class="o">!=</span> <span class="s1">&#39;column&#39;</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;extractor&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;wide&#39;</span><span class="p">:</span>
+        <span class="n">ind_cols</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;stim_name&#39;</span><span class="p">,</span> <span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;order&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;object_id&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;class&#39;</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">,</span> <span class="s1">&#39;source_file&#39;</span><span class="p">}</span>
+        <span class="n">ind_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ind_cols</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+        <span class="c1"># pandas groupby/index operations can&#39;t handle NaNs in index, (see</span>
+        <span class="c1"># issue at https://github.com/pandas-dev/pandas/issues/3729), so we</span>
+        <span class="c1"># replace NaNs with a placeholder and then re-substitute after</span>
+        <span class="c1"># pivoting.</span>
+        <span class="n">dtypes</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ind_cols</span><span class="p">]</span><span class="o">.</span><span class="n">dtypes</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">ind_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ind_cols</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s1">&#39;PlAcEholdER&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Set default aggfunc based on column type, otherwise bad things happen</span>
+        <span class="k">if</span> <span class="n">aggfunc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">aggfunc</span> <span class="o">=</span> <span class="s1">&#39;mean&#39;</span> <span class="k">if</span> <span class="n">is_numeric_dtype</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">])</span> <span class="k">else</span> <span class="s1">&#39;first&#39;</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ind_cols</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;feature&#39;</span><span class="p">,</span>
+                                <span class="n">values</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="n">aggfunc</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># vestigial--is set to &#39;feature&#39;</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">ind_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ind_cols</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;PlAcEholdER&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">ind_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">ind_cols</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">ind_cols</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="n">timing</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span> <span class="ow">and</span> <span class="s1">&#39;onset&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;order&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">&#39;onset&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;order&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)]</span> \
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="p">)</span> \
+            <span class="k">else</span> <span class="p">[</span><span class="s1">&#39;onset&#39;</span><span class="p">,</span> <span class="s1">&#39;order&#39;</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">extractor_names</span> <span class="o">==</span> <span class="s1">&#39;multi&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;long&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid extractor_names value &#39;multi&#39;. When &quot;</span>
+                             <span class="s2">&quot;format is &#39;long&#39;, extractor_names must be &quot;</span>
+                             <span class="s2">&quot;one of &#39;drop&#39;, &#39;prepend&#39;, or &#39;column&#39;.&quot;</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">data</span></div>
 </pre></div>
 
            </div>

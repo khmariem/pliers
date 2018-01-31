@@ -92,10 +92,12 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../results.html">Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
 </ul>
@@ -260,7 +262,8 @@
         <span class="n">values</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">values</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="n">values</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">values</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.</span>
         <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">,</span>
-                               <span class="n">onsets</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hop_size</span><span class="p">)</span></div>
+                               <span class="n">onsets</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hop_size</span><span class="p">,</span>
+                               <span class="n">orders</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">))))</span></div>
 
 
 <div class="viewcode-block" id="MeanAmplitudeExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.MeanAmplitudeExtractor.html#pliers.extractors.MeanAmplitudeExtractor">[docs]</a><span class="k">class</span> <span class="nc">MeanAmplitudeExtractor</span><span class="p">(</span><span class="n">Extractor</span><span class="p">):</span>
@@ -290,8 +293,11 @@
             <span class="n">mean_amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">amps</span><span class="p">[</span><span class="n">r_onset</span><span class="p">:</span><span class="n">r_offset</span><span class="p">])</span>
             <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mean_amplitude</span><span class="p">)</span>
 
+        <span class="n">orders</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)))</span>
+
         <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean_amplitude&#39;</span><span class="p">],</span>
-                               <span class="n">onsets</span><span class="o">=</span><span class="n">onsets</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="n">durations</span><span class="p">)</span></div>
+                               <span class="n">onsets</span><span class="o">=</span><span class="n">onsets</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="n">durations</span><span class="p">,</span>
+                               <span class="n">orders</span><span class="o">=</span><span class="n">orders</span><span class="p">)</span></div>
 
 
 <span class="k">class</span> <span class="nc">LibrosaFeatureExtractor</span><span class="p">(</span><span class="n">AudioExtractor</span><span class="p">):</span>
@@ -326,10 +332,9 @@
                                         <span class="n">hop_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hop_length</span><span class="p">)</span>
         <span class="n">onsets</span> <span class="o">=</span> <span class="n">onsets</span> <span class="o">+</span> <span class="n">stim</span><span class="o">.</span><span class="n">onset</span> <span class="k">if</span> <span class="n">stim</span><span class="o">.</span><span class="n">onset</span> <span class="k">else</span> <span class="n">onsets</span>
         <span class="n">durations</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hop_length</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">)]</span> <span class="o">*</span> <span class="n">n_frames</span>
-        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span>
-                               <span class="n">features</span><span class="o">=</span><span class="n">feature_names</span><span class="p">,</span>
-                               <span class="n">onsets</span><span class="o">=</span><span class="n">onsets</span><span class="p">,</span>
-                               <span class="n">durations</span><span class="o">=</span><span class="n">durations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="n">feature_names</span><span class="p">,</span>
+                               <span class="n">onsets</span><span class="o">=</span><span class="n">onsets</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="n">durations</span><span class="p">,</span>
+                               <span class="n">orders</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_frames</span><span class="p">)))</span>
 
 
 <div class="viewcode-block" id="SpectralCentroidExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.SpectralCentroidExtractor.html#pliers.extractors.SpectralCentroidExtractor">[docs]</a><span class="k">class</span> <span class="nc">SpectralCentroidExtractor</span><span class="p">(</span><span class="n">LibrosaFeatureExtractor</span><span class="p">):</span>
