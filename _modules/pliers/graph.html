@@ -167,7 +167,8 @@
 <span></span><span class="sd">&#39;&#39;&#39; The `graph` module contains tools for constructing and executing graphs</span>
 <span class="sd">of pliers Transformers. &#39;&#39;&#39;</span>
 
-<span class="kn">from</span> <span class="nn">pliers.extractors.base</span> <span class="k">import</span> <span class="n">Extractor</span><span class="p">,</span> <span class="n">merge_results</span>
+<span class="kn">from</span> <span class="nn">pliers.extractors.base</span> <span class="k">import</span> <span class="n">merge_results</span>
+<span class="kn">from</span> <span class="nn">pliers.stimuli</span> <span class="k">import</span> <span class="n">__all__</span> <span class="k">as</span> <span class="n">stim_list</span>
 <span class="kn">from</span> <span class="nn">pliers.transformers</span> <span class="k">import</span> <span class="n">get_transformer</span>
 <span class="kn">from</span> <span class="nn">pliers.utils</span> <span class="k">import</span> <span class="p">(</span><span class="n">listify</span><span class="p">,</span> <span class="n">flatten</span><span class="p">,</span> <span class="n">isgenerator</span><span class="p">,</span> <span class="n">attempt_to_import</span><span class="p">,</span>
                           <span class="n">verify_dependencies</span><span class="p">)</span>
@@ -178,6 +179,7 @@
 <span class="kn">import</span> <span class="nn">json</span>
 
 <span class="n">pgv</span> <span class="o">=</span> <span class="n">attempt_to_import</span><span class="p">(</span><span class="s1">&#39;pygraphviz&#39;</span><span class="p">,</span> <span class="s1">&#39;pgv&#39;</span><span class="p">)</span>
+<span class="n">stim_list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;ExtractorResult&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Node"><a class="viewcode-back" href="../../generated/pliers.graph.Node.html#pliers.graph.Node">[docs]</a><span class="k">class</span> <span class="nc">Node</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -197,6 +199,7 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transformer</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
             <span class="n">transformer</span> <span class="o">=</span> <span class="n">get_transformer</span><span class="p">(</span><span class="n">transformer</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transformer</span> <span class="o">=</span> <span class="n">transformer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">transformer</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">transformer</span><span class="p">)</span></div>
@@ -206,7 +209,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">is_leaf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;transformer&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="n">children</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">to_json</span><span class="p">())</span>
+            <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;children&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">children</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+            <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="k">return</span> <span class="n">spec</span></div>
 
 
 <div class="viewcode-block" id="Graph"><a class="viewcode-back" href="../../generated/pliers.graph.Graph.html#pliers.graph.Graph">[docs]</a><span class="k">class</span> <span class="nc">Graph</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -232,7 +248,29 @@
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="k">as</span> <span class="n">spec_file</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">add_nodes</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">spec_file</span><span class="p">)[</span><span class="s1">&#39;roots&#39;</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="Graph.add_nodes"><a class="viewcode-back" href="../../generated/pliers.graph.Graph.html#pliers.graph.Graph.add_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">add_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_parse_node_args</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">node</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;transformer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;children&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Node</span><span class="p">):</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;transformer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">transformer</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;children&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">children</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;transformer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
+
+        <span class="k">return</span> <span class="n">kwargs</span>
+
+<div class="viewcode-block" id="Graph.add_nodes"><a class="viewcode-back" href="../../generated/pliers.graph.Graph.html#pliers.graph.Graph.add_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">add_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Adds one or more nodes to the current graph.</span>
 
 <span class="sd">        Args:</span>
@@ -252,10 +290,32 @@
 <span class="sd">            parent (Node): Optional parent node (i.e., the node containing the</span>
 <span class="sd">                pliers Transformer from which the to-be-created nodes receive</span>
 <span class="sd">                their inputs).</span>
+<span class="sd">            mode (str): Indicates the direction with which to add the new nodes</span>
+<span class="sd">                * horizontal: the nodes should each be added as a child of the</span>
+<span class="sd">                  &#39;parent&#39; argument (or a Graph root by default).</span>
+<span class="sd">                * vertical: the nodes should each be added in sequence with</span>
+<span class="sd">                  the first node being the child of the &#39;parnet&#39; argument</span>
+<span class="sd">                  (a Graph root by default) and each subsequent node being</span>
+<span class="sd">                  the child of the previous node in the list.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
             <span class="n">node_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_node_args</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">node_args</span><span class="p">)</span></div>
+            <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;horizontal&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">node_args</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;vertical&#39;</span><span class="p">:</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span> <span class="n">return_node</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                       <span class="o">**</span><span class="n">node_args</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid mode for adding nodes to a graph:&quot;</span>
+                                 <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">mode</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Graph.add_chain"><a class="viewcode-back" href="../../generated/pliers.graph.Graph.html#pliers.graph.Graph.add_chain">[docs]</a>    <span class="k">def</span> <span class="nf">add_chain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; An alias for add_nodes with the mode preset to &#39;vertical&#39;. &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_nodes</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;vertical&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Graph.add_children"><a class="viewcode-back" href="../../generated/pliers.graph.Graph.html#pliers.graph.Graph.add_children">[docs]</a>    <span class="k">def</span> <span class="nf">add_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; An alias for add_nodes with the mode preset to &#39;horizontal&#39;. &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_nodes</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="s1">&#39;horizontal&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Graph.add_node"><a class="viewcode-back" href="../../generated/pliers.graph.Graph.html#pliers.graph.Graph.add_node">[docs]</a>    <span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transformer</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">children</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">return_node</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -297,51 +357,6 @@
         <span class="k">if</span> <span class="n">return_node</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">node</span></div>
 
-<div class="viewcode-block" id="Graph.draw"><a class="viewcode-back" href="../../generated/pliers.graph.Graph.html#pliers.graph.Graph.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Render a plot of the graph via pygraphviz.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            filename (str): Path to save the generated image to.</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;pgv&#39;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_results&#39;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Graph cannot be drawn before it is executed. &quot;</span>
-                               <span class="s2">&quot;Try calling run() first.&quot;</span><span class="p">)</span>
-
-        <span class="n">g</span> <span class="o">=</span> <span class="n">pgv</span><span class="o">.</span><span class="n">AGraph</span><span class="p">(</span><span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">node_list</span> <span class="o">=</span> <span class="p">{}</span>
-
-        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">):</span>
-                <span class="k">continue</span>
-            <span class="n">log</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">history</span>
-
-            <span class="n">has_parent</span> <span class="o">=</span> <span class="kc">True</span>
-
-            <span class="k">while</span> <span class="n">has_parent</span><span class="p">:</span>
-
-                <span class="c1"># Add nodes</span>
-                <span class="n">source_from</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="k">if</span> <span class="n">log</span><span class="o">.</span><span class="n">parent</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
-                <span class="n">s_node</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">((</span><span class="n">source_from</span><span class="p">,</span> <span class="n">log</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
-                <span class="k">if</span> <span class="n">s_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node_list</span><span class="p">:</span>
-                    <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">s_node</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">log</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;ellipse&#39;</span><span class="p">)</span>
-
-                <span class="n">t_node</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">((</span><span class="n">log</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">log</span><span class="p">[</span><span class="mi">7</span><span class="p">]))</span>
-                <span class="k">if</span> <span class="n">t_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node_list</span><span class="p">:</span>
-                    <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">t_node</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">log</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">)</span>
-
-                <span class="n">r_node</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">((</span><span class="n">log</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">log</span><span class="p">[</span><span class="mi">5</span><span class="p">]))</span>
-                <span class="k">if</span> <span class="n">r_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node_list</span><span class="p">:</span>
-                    <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">r_node</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">log</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;ellipse&#39;</span><span class="p">)</span>
-
-                <span class="c1"># Add edges</span>
-                <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">s_node</span><span class="p">,</span> <span class="n">t_node</span><span class="p">)</span>
-                <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">t_node</span><span class="p">,</span> <span class="n">r_node</span><span class="p">)</span>
-                <span class="n">has_parent</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">parent</span>
-                <span class="n">log</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">parent</span>
-
-        <span class="n">g</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">prog</span><span class="o">=</span><span class="s1">&#39;dot&#39;</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="Graph.run"><a class="viewcode-back" href="../../generated/pliers.graph.Graph.html#pliers.graph.Graph.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">merge_kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Executes the graph by calling all Transformers in sequence.</span>
 
@@ -375,7 +390,7 @@
             <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">transformer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">stim</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">transformer</span><span class="p">,</span> <span class="n">Extractor</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">listify</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
         <span class="n">stim</span> <span class="o">=</span> <span class="n">result</span>
@@ -385,28 +400,86 @@
             <span class="n">stim</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">stim</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">run_node</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">stim</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">]))</span></div>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_parse_node_args</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="Graph.draw"><a class="viewcode-back" href="../../generated/pliers.graph.Graph.html#pliers.graph.Graph.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Render a plot of the graph via pygraphviz.</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">node</span>
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): Path to save the generated image to.</span>
+<span class="sd">            color (bool): If True, will color graph nodes based on their type,</span>
+<span class="sd">                otherwise will draw a black-and-white graph.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;pgv&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_results&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Graph cannot be drawn before it is executed. &quot;</span>
+                               <span class="s2">&quot;Try calling run() first.&quot;</span><span class="p">)</span>
 
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">pgv</span><span class="o">.</span><span class="n">AGraph</span><span class="p">(</span><span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">node_attr</span><span class="p">[</span><span class="s1">&#39;colorscheme&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;set312&#39;</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;transformer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;children&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Node</span><span class="p">):</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;transformer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">transformer</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;children&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">children</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;transformer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="s1">&#39;history&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">log</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">history</span>
 
-        <span class="k">return</span> <span class="n">kwargs</span></div>
+            <span class="k">while</span> <span class="n">log</span><span class="p">:</span>
+                <span class="c1"># Configure nodes</span>
+                <span class="n">source_from</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">parent</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="k">if</span> <span class="n">log</span><span class="o">.</span><span class="n">parent</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">s_node</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">((</span><span class="n">source_from</span><span class="p">,</span> <span class="n">log</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+                <span class="n">s_color</span> <span class="o">=</span> <span class="n">stim_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">log</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                <span class="n">s_color</span> <span class="o">=</span> <span class="n">s_color</span> <span class="o">%</span> <span class="mi">12</span> <span class="o">+</span> <span class="mi">1</span>
+
+                <span class="n">t_node</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">((</span><span class="n">log</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">log</span><span class="p">[</span><span class="mi">7</span><span class="p">]))</span>
+                <span class="n">t_style</span> <span class="o">=</span> <span class="s1">&#39;filled,&#39;</span> <span class="k">if</span> <span class="n">color</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">t_style</span> <span class="o">+=</span> <span class="s1">&#39;dotted&#39;</span> <span class="k">if</span> <span class="n">log</span><span class="o">.</span><span class="n">implicit</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+                <span class="k">if</span> <span class="n">log</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;Extractor&#39;</span><span class="p">):</span>
+                    <span class="n">t_color</span> <span class="o">=</span> <span class="s1">&#39;#0082c8&#39;</span>
+                <span class="k">elif</span> <span class="n">log</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;Filter&#39;</span><span class="p">):</span>
+                    <span class="n">t_color</span> <span class="o">=</span> <span class="s1">&#39;#e6194b&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">t_color</span> <span class="o">=</span> <span class="s1">&#39;#3cb44b&#39;</span>
+
+                <span class="n">r_node</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">((</span><span class="n">log</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">log</span><span class="p">[</span><span class="mi">5</span><span class="p">]))</span>
+                <span class="n">r_color</span> <span class="o">=</span> <span class="n">stim_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">log</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+                <span class="n">r_color</span> <span class="o">=</span> <span class="n">r_color</span> <span class="o">%</span> <span class="mi">12</span> <span class="o">+</span> <span class="mi">1</span>
+
+                <span class="c1"># Add nodes</span>
+                <span class="k">if</span> <span class="n">color</span><span class="p">:</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">s_node</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">log</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;ellipse&#39;</span><span class="p">,</span>
+                               <span class="n">style</span><span class="o">=</span><span class="s1">&#39;filled&#39;</span><span class="p">,</span> <span class="n">fillcolor</span><span class="o">=</span><span class="n">s_color</span><span class="p">)</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">t_node</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">log</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">,</span>
+                               <span class="n">style</span><span class="o">=</span><span class="n">t_style</span><span class="p">,</span> <span class="n">fillcolor</span><span class="o">=</span><span class="n">t_color</span><span class="p">)</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">r_node</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">log</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;ellipse&#39;</span><span class="p">,</span>
+                               <span class="n">style</span><span class="o">=</span><span class="s1">&#39;filled&#39;</span><span class="p">,</span> <span class="n">fillcolor</span><span class="o">=</span><span class="n">r_color</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">s_node</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">log</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;ellipse&#39;</span><span class="p">)</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">t_node</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">log</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">,</span>
+                               <span class="n">style</span><span class="o">=</span><span class="n">t_style</span><span class="p">)</span>
+                    <span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">r_node</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">log</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">shape</span><span class="o">=</span><span class="s1">&#39;ellipse&#39;</span><span class="p">)</span>
+
+                <span class="c1"># Add edges</span>
+                <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">s_node</span><span class="p">,</span> <span class="n">t_node</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">t_style</span><span class="p">)</span>
+                <span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">t_node</span><span class="p">,</span> <span class="n">r_node</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">t_style</span><span class="p">)</span>
+                <span class="n">log</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="n">parent</span>
+
+        <span class="n">g</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">prog</span><span class="o">=</span><span class="s1">&#39;dot&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Graph.to_json"><a class="viewcode-back" href="../../generated/pliers.graph.Graph.html#pliers.graph.Graph.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Returns the JSON representation of this graph. &#39;&#39;&#39;</span>
+        <span class="n">roots</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">roots</span><span class="p">:</span>
+            <span class="n">roots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">to_json</span><span class="p">())</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;roots&#39;</span><span class="p">:</span> <span class="n">roots</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="Graph.save"><a class="viewcode-back" href="../../generated/pliers.graph.Graph.html#pliers.graph.Graph.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Writes the JSON representation of this graph to the provided</span>
+<span class="sd">        filename, such that the graph can be easily reconstructed using</span>
+<span class="sd">        Graph(spec=filename).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): Path at which to write out the json file.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_json</span><span class="p">(),</span> <span class="n">outfile</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

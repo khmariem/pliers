@@ -1,0 +1,11 @@
+pliers.extractors.MicrosoftVisionAPIImageTypeExtractor
+======================================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: MicrosoftVisionAPIImageTypeExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

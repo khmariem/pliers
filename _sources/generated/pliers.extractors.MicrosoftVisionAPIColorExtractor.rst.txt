@@ -1,0 +1,11 @@
+pliers.extractors.MicrosoftVisionAPIColorExtractor
+==================================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: MicrosoftVisionAPIColorExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

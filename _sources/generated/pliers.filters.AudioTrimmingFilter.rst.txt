@@ -1,0 +1,11 @@
+pliers.filters.AudioTrimmingFilter
+==================================
+
+.. currentmodule:: pliers.filters
+
+.. autoclass:: AudioTrimmingFilter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

@@ -381,20 +381,26 @@
 <span class="sd">    vectors for text.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        embedding_file (str): path to a word embedding file. Assumed to be in</span>
+<span class="sd">        embedding_file (str): Path to a word embedding file. Assumed to be in</span>
 <span class="sd">            word2vec format compatible with gensim.</span>
-<span class="sd">        binary (bool): flag indicating whether embedding file is saved in a</span>
-<span class="sd">            binary format</span>
-<span class="sd">        prefix (str): prefix for feature names in the ExtractorResult.</span>
+<span class="sd">        binary (bool): Flag indicating whether embedding file is saved in a</span>
+<span class="sd">            binary format.</span>
+<span class="sd">        prefix (str): Prefix for feature names in the ExtractorResult.</span>
+<span class="sd">        unk_vector (numpy array or str): Default vector to use for texts not</span>
+<span class="sd">            found in the embedding file. If None is specified, uses a</span>
+<span class="sd">            vector with all zeros. If &#39;random&#39; is specified, uses a vector with</span>
+<span class="sd">            random values between -1.0 and 1.0. Must have the same dimensions</span>
+<span class="sd">            as the embeddings.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;wvModel&#39;</span><span class="p">,</span> <span class="s1">&#39;prefix&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="WordEmbeddingExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.WordEmbeddingExtractor.html#pliers.extractors.WordEmbeddingExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_file</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;embedding_dim&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="WordEmbeddingExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.WordEmbeddingExtractor.html#pliers.extractors.WordEmbeddingExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embedding_file</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;embedding_dim&#39;</span><span class="p">,</span>
+                 <span class="n">unk_vector</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">verify_dependencies</span><span class="p">([</span><span class="s1">&#39;keyedvectors&#39;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wvModel</span> <span class="o">=</span> <span class="n">keyedvectors</span><span class="o">.</span><span class="n">KeyedVectors</span><span class="o">.</span><span class="n">load_word2vec_format</span><span class="p">(</span><span class="n">embedding_file</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="n">binary</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unk_vector</span> <span class="o">=</span> <span class="n">unk_vector</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">WordEmbeddingExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
@@ -402,8 +408,15 @@
         <span class="k">if</span> <span class="n">stim</span><span class="o">.</span><span class="n">text</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wvModel</span><span class="p">:</span>
             <span class="n">embedding_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wvModel</span><span class="p">[</span><span class="n">stim</span><span class="o">.</span><span class="n">text</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># UNKs will have zeroed-out vectors</span>
-            <span class="n">embedding_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_dims</span><span class="p">)</span>
+            <span class="n">unk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unk_vector</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">unk</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">unk</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">num_dims</span><span class="p">:</span>
+                <span class="n">embedding_vector</span> <span class="o">=</span> <span class="n">unk</span>
+            <span class="k">elif</span> <span class="n">unk</span> <span class="o">==</span> <span class="s1">&#39;random&#39;</span><span class="p">:</span>
+                <span class="n">embedding_vector</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">num_dims</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># By default, UNKs will have zeroed-out vectors</span>
+                <span class="n">embedding_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_dims</span><span class="p">)</span>
+
         <span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_dims</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">([</span><span class="n">embedding_vector</span><span class="p">],</span>
                                <span class="n">stim</span><span class="p">,</span>

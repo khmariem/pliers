@@ -355,7 +355,8 @@
 
 
 <div class="viewcode-block" id="merge_results"><a class="viewcode-back" href="../../../generated/pliers.extractors.merge_results.html#pliers.extractors.merge_results">[docs]</a><span class="k">def</span> <span class="nf">merge_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;wide&#39;</span><span class="p">,</span> <span class="n">timing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                  <span class="n">extractor_names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">object_id</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                  <span class="n">extractor_names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">object_id</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">invalid_results</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Merges a list of ExtractorResults instances and returns a pandas DF.</span>
 
 <span class="sd">    Args:</span>
@@ -405,6 +406,13 @@
 <span class="sd">            same index. Can be a callable or any string value recognized by</span>
 <span class="sd">            pandas. By default (None), &#39;mean&#39; will be used for numeric columns</span>
 <span class="sd">            and &#39;first&#39; will be used for object/categorical columns.</span>
+<span class="sd">        invalid_results (str): Specifies desired action for treating elements</span>
+<span class="sd">            of the passed in results argument that are not ExtractorResult</span>
+<span class="sd">            objects. Valid values include:</span>
+<span class="sd">                - &#39;ignore&#39; will ignore them and merge the valid</span>
+<span class="sd">                    ExtractorResults.</span>
+<span class="sd">                - &#39;fail&#39; will raise an exception on any invalid input</span>
+
 
 <span class="sd">    Returns: a pandas DataFrame. For format details, see &#39;format&#39; argument.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -419,9 +427,20 @@
     <span class="k">elif</span> <span class="n">extractor_names</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
         <span class="n">extractor_names</span> <span class="o">=</span> <span class="s1">&#39;drop&#39;</span>
 
-    <span class="n">dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">timing</span><span class="o">=</span><span class="n">_timing</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;long&#39;</span><span class="p">,</span>
-                   <span class="n">extractor_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">object_id</span><span class="o">=</span><span class="n">_object_id</span><span class="p">)</span>
-           <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">]</span>
+    <span class="n">dfs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ExtractorResult</span><span class="p">):</span>
+            <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">timing</span><span class="o">=</span><span class="n">_timing</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
+                               <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;long&#39;</span><span class="p">,</span> <span class="n">extractor_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                               <span class="n">object_id</span><span class="o">=</span><span class="n">_object_id</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">invalid_results</span> <span class="o">==</span> <span class="s1">&#39;fail&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least one of the provided results was not an&quot;</span>
+                             <span class="s2">&quot;ExtractorResult. Set the invalid_results&quot;</span>
+                             <span class="s2">&quot;parameter to &#39;ignore&#39; if you wish to ignore&quot;</span>
+                             <span class="s2">&quot;this.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dfs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 

@@ -1,0 +1,11 @@
+pliers.extractors.MicrosoftVisionAPITagExtractor
+================================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: MicrosoftVisionAPITagExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

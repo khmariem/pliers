@@ -1,0 +1,11 @@
+pliers.converters.MicrosoftAPITextConverter
+===========================================
+
+.. currentmodule:: pliers.converters
+
+.. autoclass:: MicrosoftAPITextConverter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

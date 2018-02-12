@@ -36,7 +36,7 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="pliers 0.2 documentation" href="index.html"/>
-        <link rel="next" title="pliers.filters.FrameSamplingFilter" href="generated/pliers.filters.FrameSamplingFilter.html"/>
+        <link rel="next" title="pliers.filters.AudioTrimmingFilter" href="generated/pliers.filters.AudioTrimmingFilter.html"/>
         <link rel="prev" title="Stims" href="stimuli.html"/> 
 
   
@@ -112,12 +112,16 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#filters">Filters</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#list-of-filter-classes">List of Filter classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.AudioTrimmingFilter.html">pliers.filters.AudioTrimmingFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.FrameSamplingFilter.html">pliers.filters.FrameSamplingFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.ImageCroppingFilter.html">pliers.filters.ImageCroppingFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.LowerCasingFilter.html">pliers.filters.LowerCasingFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.PillowImageFilter.html">pliers.filters.PillowImageFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.PunctuationRemovalFilter.html">pliers.filters.PunctuationRemovalFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.TemporalTrimmingFilter.html">pliers.filters.TemporalTrimmingFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.TokenizingFilter.html">pliers.filters.TokenizingFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.TokenRemovalFilter.html">pliers.filters.TokenRemovalFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.VideoTrimmingFilter.html">pliers.filters.VideoTrimmingFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="generated/pliers.filters.WordStemmingFilter.html">pliers.filters.WordStemmingFilter</a></li>
 </ul>
 </li>
@@ -336,6 +340,30 @@
 <tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.IndicoAPIImageExtractor.html#pliers.extractors.IndicoAPIImageExtractor" title="pliers.extractors.IndicoAPIImageExtractor"><code class="xref py py-obj docutils literal"><span class="pre">IndicoAPIImageExtractor</span></code></a>(**kwargs)</td>
 <td>Uses to Indico API to extract features from Images, such as facial emotion recognition or content filtering.</td>
 </tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.MicrosoftAPIFaceExtractor.html#pliers.extractors.MicrosoftAPIFaceExtractor" title="pliers.extractors.MicrosoftAPIFaceExtractor"><code class="xref py py-obj docutils literal"><span class="pre">MicrosoftAPIFaceExtractor</span></code></a>([face_id,&nbsp;…])</td>
+<td>Extracts face features (location, emotion, accessories, etc.).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.MicrosoftAPIFaceEmotionExtractor.html#pliers.extractors.MicrosoftAPIFaceEmotionExtractor" title="pliers.extractors.MicrosoftAPIFaceEmotionExtractor"><code class="xref py py-obj docutils literal"><span class="pre">MicrosoftAPIFaceEmotionExtractor</span></code></a>([face_id,&nbsp;…])</td>
+<td>Extracts facial emotions from images using the Microsoft API</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.MicrosoftVisionAPIExtractor.html#pliers.extractors.MicrosoftVisionAPIExtractor" title="pliers.extractors.MicrosoftVisionAPIExtractor"><code class="xref py py-obj docutils literal"><span class="pre">MicrosoftVisionAPIExtractor</span></code></a>([features])</td>
+<td>Base MicrosoftVisionAPIExtractor class.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.MicrosoftVisionAPITagExtractor.html#pliers.extractors.MicrosoftVisionAPITagExtractor" title="pliers.extractors.MicrosoftVisionAPITagExtractor"><code class="xref py py-obj docutils literal"><span class="pre">MicrosoftVisionAPITagExtractor</span></code></a>([features])</td>
+<td>Extracts image tags using the Microsoft API</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.MicrosoftVisionAPICategoryExtractor.html#pliers.extractors.MicrosoftVisionAPICategoryExtractor" title="pliers.extractors.MicrosoftVisionAPICategoryExtractor"><code class="xref py py-obj docutils literal"><span class="pre">MicrosoftVisionAPICategoryExtractor</span></code></a>([features])</td>
+<td>Extracts image categories using the Microsoft API</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.MicrosoftVisionAPIImageTypeExtractor.html#pliers.extractors.MicrosoftVisionAPIImageTypeExtractor" title="pliers.extractors.MicrosoftVisionAPIImageTypeExtractor"><code class="xref py py-obj docutils literal"><span class="pre">MicrosoftVisionAPIImageTypeExtractor</span></code></a>([features])</td>
+<td>Extracts image types (clipart, etc.) using the Microsoft API</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.MicrosoftVisionAPIColorExtractor.html#pliers.extractors.MicrosoftVisionAPIColorExtractor" title="pliers.extractors.MicrosoftVisionAPIColorExtractor"><code class="xref py py-obj docutils literal"><span class="pre">MicrosoftVisionAPIColorExtractor</span></code></a>([features])</td>
+<td>Extracts image color attributes using the Microsoft API</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.extractors.MicrosoftVisionAPIAdultExtractor.html#pliers.extractors.MicrosoftVisionAPIAdultExtractor" title="pliers.extractors.MicrosoftVisionAPIAdultExtractor"><code class="xref py py-obj docutils literal"><span class="pre">MicrosoftVisionAPIAdultExtractor</span></code></a>([features])</td>
+<td>Extracts the presence of adult content using the Microsoft API</td>
+</tr>
 <tr class="row-even"><td><a class="reference internal" href="generated/pliers.extractors.SaliencyExtractor.html#pliers.extractors.SaliencyExtractor" title="pliers.extractors.SaliencyExtractor"><code class="xref py py-obj docutils literal"><span class="pre">SaliencyExtractor</span></code></a>()</td>
 <td>Determines the saliency of the image using Itti &amp; Koch (1998) algorithm</td>
 </tr>
@@ -466,25 +494,28 @@
 <tr class="row-even"><td><a class="reference internal" href="generated/pliers.converters.GoogleVisionAPITextConverter.html#pliers.converters.GoogleVisionAPITextConverter" title="pliers.converters.GoogleVisionAPITextConverter"><code class="xref py py-obj docutils literal"><span class="pre">GoogleVisionAPITextConverter</span></code></a>([…])</td>
 <td>Detects text within images using the Google Cloud Vision API.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.converters.TesseractConverter.html#pliers.converters.TesseractConverter" title="pliers.converters.TesseractConverter"><code class="xref py py-obj docutils literal"><span class="pre">TesseractConverter</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.converters.MicrosoftAPITextConverter.html#pliers.converters.MicrosoftAPITextConverter" title="pliers.converters.MicrosoftAPITextConverter"><code class="xref py py-obj docutils literal"><span class="pre">MicrosoftAPITextConverter</span></code></a>([language])</td>
+<td>Detects text within images using the Microsoft Vision API.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.converters.TesseractConverter.html#pliers.converters.TesseractConverter" title="pliers.converters.TesseractConverter"><code class="xref py py-obj docutils literal"><span class="pre">TesseractConverter</span></code></a>()</td>
 <td>Uses the Tesseract library to extract text from images.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/pliers.converters.VideoFrameCollectionIterator.html#pliers.converters.VideoFrameCollectionIterator" title="pliers.converters.VideoFrameCollectionIterator"><code class="xref py py-obj docutils literal"><span class="pre">VideoFrameCollectionIterator</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.converters.VideoFrameCollectionIterator.html#pliers.converters.VideoFrameCollectionIterator" title="pliers.converters.VideoFrameCollectionIterator"><code class="xref py py-obj docutils literal"><span class="pre">VideoFrameCollectionIterator</span></code></a>()</td>
 <td>Iterates frames in a DerivedVideoStim as ImageStims.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.converters.VideoFrameIterator.html#pliers.converters.VideoFrameIterator" title="pliers.converters.VideoFrameIterator"><code class="xref py py-obj docutils literal"><span class="pre">VideoFrameIterator</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.converters.VideoFrameIterator.html#pliers.converters.VideoFrameIterator" title="pliers.converters.VideoFrameIterator"><code class="xref py py-obj docutils literal"><span class="pre">VideoFrameIterator</span></code></a>()</td>
 <td>Iterates frames in a VideoStim as ImageStims.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/pliers.converters.VideoToAudioConverter.html#pliers.converters.VideoToAudioConverter" title="pliers.converters.VideoToAudioConverter"><code class="xref py py-obj docutils literal"><span class="pre">VideoToAudioConverter</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.converters.VideoToAudioConverter.html#pliers.converters.VideoToAudioConverter" title="pliers.converters.VideoToAudioConverter"><code class="xref py py-obj docutils literal"><span class="pre">VideoToAudioConverter</span></code></a>()</td>
 <td>Convert a VideoStim to an AudioStim by extracting the audio track using moviepy.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.converters.VideoToComplexTextConverter.html#pliers.converters.VideoToComplexTextConverter" title="pliers.converters.VideoToComplexTextConverter"><code class="xref py py-obj docutils literal"><span class="pre">VideoToComplexTextConverter</span></code></a>([steps])</td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.converters.VideoToComplexTextConverter.html#pliers.converters.VideoToComplexTextConverter" title="pliers.converters.VideoToComplexTextConverter"><code class="xref py py-obj docutils literal"><span class="pre">VideoToComplexTextConverter</span></code></a>([steps])</td>
 <td>Converts a VideoStim directly to a ComplexTextStim.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/pliers.converters.VideoToTextConverter.html#pliers.converters.VideoToTextConverter" title="pliers.converters.VideoToTextConverter"><code class="xref py py-obj docutils literal"><span class="pre">VideoToTextConverter</span></code></a>([steps])</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.converters.VideoToTextConverter.html#pliers.converters.VideoToTextConverter" title="pliers.converters.VideoToTextConverter"><code class="xref py py-obj docutils literal"><span class="pre">VideoToTextConverter</span></code></a>([steps])</td>
 <td>Converts a VideoStim directly to a TextStim.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.converters.WitTranscriptionConverter.html#pliers.converters.WitTranscriptionConverter" title="pliers.converters.WitTranscriptionConverter"><code class="xref py py-obj docutils literal"><span class="pre">WitTranscriptionConverter</span></code></a>([api_key])</td>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.converters.WitTranscriptionConverter.html#pliers.converters.WitTranscriptionConverter" title="pliers.converters.WitTranscriptionConverter"><code class="xref py py-obj docutils literal"><span class="pre">WitTranscriptionConverter</span></code></a>([api_key])</td>
 <td>Speech-to-text transcription via the Wit.ai API.</td>
 </tr>
 </tbody>
@@ -503,11 +534,17 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.filters.FrameSamplingFilter.html#pliers.filters.FrameSamplingFilter" title="pliers.filters.FrameSamplingFilter"><code class="xref py py-obj docutils literal"><span class="pre">FrameSamplingFilter</span></code></a>([every,&nbsp;hertz,&nbsp;top_n])</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.filters.AudioTrimmingFilter.html#pliers.filters.AudioTrimmingFilter" title="pliers.filters.AudioTrimmingFilter"><code class="xref py py-obj docutils literal"><span class="pre">AudioTrimmingFilter</span></code></a>([start,&nbsp;end,&nbsp;frames,&nbsp;…])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.filters.FrameSamplingFilter.html#pliers.filters.FrameSamplingFilter" title="pliers.filters.FrameSamplingFilter"><code class="xref py py-obj docutils literal"><span class="pre">FrameSamplingFilter</span></code></a>([every,&nbsp;hertz,&nbsp;top_n])</td>
 <td>Samples frames from video stimuli, to improve efficiency.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/pliers.filters.ImageCroppingFilter.html#pliers.filters.ImageCroppingFilter" title="pliers.filters.ImageCroppingFilter"><code class="xref py py-obj docutils literal"><span class="pre">ImageCroppingFilter</span></code></a>([box])</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.filters.ImageCroppingFilter.html#pliers.filters.ImageCroppingFilter" title="pliers.filters.ImageCroppingFilter"><code class="xref py py-obj docutils literal"><span class="pre">ImageCroppingFilter</span></code></a>([box])</td>
 <td>Crops an image.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.filters.LowerCasingFilter.html#pliers.filters.LowerCasingFilter" title="pliers.filters.LowerCasingFilter"><code class="xref py py-obj docutils literal"><span class="pre">LowerCasingFilter</span></code></a>()</td>
+<td>Lower cases the text in a TextStim.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="generated/pliers.filters.PillowImageFilter.html#pliers.filters.PillowImageFilter" title="pliers.filters.PillowImageFilter"><code class="xref py py-obj docutils literal"><span class="pre">PillowImageFilter</span></code></a>([image_filter])</td>
 <td>Uses the ImageFilter module from PIL to run a pre-defined image enhancement filter on an ImageStim.</td>
@@ -515,11 +552,17 @@
 <tr class="row-even"><td><a class="reference internal" href="generated/pliers.filters.PunctuationRemovalFilter.html#pliers.filters.PunctuationRemovalFilter" title="pliers.filters.PunctuationRemovalFilter"><code class="xref py py-obj docutils literal"><span class="pre">PunctuationRemovalFilter</span></code></a>([tokens])</td>
 <td>Removes punctuation from a TextStim.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.filters.TokenizingFilter.html#pliers.filters.TokenizingFilter" title="pliers.filters.TokenizingFilter"><code class="xref py py-obj docutils literal"><span class="pre">TokenizingFilter</span></code></a>([tokenizer])</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.filters.TemporalTrimmingFilter.html#pliers.filters.TemporalTrimmingFilter" title="pliers.filters.TemporalTrimmingFilter"><code class="xref py py-obj docutils literal"><span class="pre">TemporalTrimmingFilter</span></code></a>([start,&nbsp;end,&nbsp;frames,&nbsp;…])</td>
+<td>Temporally trims the contents of the audio stimulus using the provided start and end points.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.filters.TokenizingFilter.html#pliers.filters.TokenizingFilter" title="pliers.filters.TokenizingFilter"><code class="xref py py-obj docutils literal"><span class="pre">TokenizingFilter</span></code></a>([tokenizer])</td>
 <td>Tokenizes a TextStim into several word TextStims.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/pliers.filters.TokenRemovalFilter.html#pliers.filters.TokenRemovalFilter" title="pliers.filters.TokenRemovalFilter"><code class="xref py py-obj docutils literal"><span class="pre">TokenRemovalFilter</span></code></a>([tokens,&nbsp;language])</td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/pliers.filters.TokenRemovalFilter.html#pliers.filters.TokenRemovalFilter" title="pliers.filters.TokenRemovalFilter"><code class="xref py py-obj docutils literal"><span class="pre">TokenRemovalFilter</span></code></a>([tokens,&nbsp;language])</td>
 <td>Removes tokens (e.g., stopwords, common words, punctuation) from a TextStim.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/pliers.filters.VideoTrimmingFilter.html#pliers.filters.VideoTrimmingFilter" title="pliers.filters.VideoTrimmingFilter"><code class="xref py py-obj docutils literal"><span class="pre">VideoTrimmingFilter</span></code></a>([start,&nbsp;end,&nbsp;frames,&nbsp;…])</td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="generated/pliers.filters.WordStemmingFilter.html#pliers.filters.WordStemmingFilter" title="pliers.filters.WordStemmingFilter"><code class="xref py py-obj docutils literal"><span class="pre">WordStemmingFilter</span></code></a>([stemmer,&nbsp;tokenize])</td>
 <td>Nltk-based word stemming Filter.</td>
@@ -544,7 +587,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="generated/pliers.filters.FrameSamplingFilter.html" class="btn btn-neutral float-right" title="pliers.filters.FrameSamplingFilter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="generated/pliers.filters.AudioTrimmingFilter.html" class="btn btn-neutral float-right" title="pliers.filters.AudioTrimmingFilter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="stimuli.html" class="btn btn-neutral" title="Stims" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

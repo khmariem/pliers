@@ -166,7 +166,7 @@
 <h1>pliers.extractors.WordEmbeddingExtractor<a class="headerlink" href="#pliers-extractors-wordembeddingextractor" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pliers.extractors.WordEmbeddingExtractor">
-<em class="property">class </em><code class="descclassname">pliers.extractors.</code><code class="descname">WordEmbeddingExtractor</code><span class="sig-paren">(</span><em>embedding_file</em>, <em>binary=False</em>, <em>prefix='embedding_dim'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/extractors/text.html#WordEmbeddingExtractor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.extractors.WordEmbeddingExtractor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pliers.extractors.</code><code class="descname">WordEmbeddingExtractor</code><span class="sig-paren">(</span><em>embedding_file</em>, <em>binary=False</em>, <em>prefix='embedding_dim'</em>, <em>unk_vector=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/extractors/text.html#WordEmbeddingExtractor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.extractors.WordEmbeddingExtractor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">pliers.extractors.text.TextExtractor</span></code></p>
 <p>An extractor that uses a word embedding file to look up embedding
 vectors for text.</p>
@@ -175,11 +175,16 @@ vectors for text.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>embedding_file</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – path to a word embedding file. Assumed to be in
+<li><strong>embedding_file</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Path to a word embedding file. Assumed to be in
 word2vec format compatible with gensim.</li>
-<li><strong>binary</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – flag indicating whether embedding file is saved in a
-binary format</li>
-<li><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – prefix for feature names in the ExtractorResult.</li>
+<li><strong>binary</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – Flag indicating whether embedding file is saved in a
+binary format.</li>
+<li><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Prefix for feature names in the ExtractorResult.</li>
+<li><strong>unk_vector</strong> (<em>numpy array</em><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Default vector to use for texts not
+found in the embedding file. If None is specified, uses a
+vector with all zeros. If ‘random’ is specified, uses a vector with
+random values between -1.0 and 1.0. Must have the same dimensions
+as the embeddings.</li>
 </ul>
 </td>
 </tr>
@@ -187,7 +192,7 @@ binary format</li>
 </table>
 <dl class="method">
 <dt id="pliers.extractors.WordEmbeddingExtractor.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>embedding_file</em>, <em>binary=False</em>, <em>prefix='embedding_dim'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/extractors/text.html#WordEmbeddingExtractor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.extractors.WordEmbeddingExtractor.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>embedding_file</em>, <em>binary=False</em>, <em>prefix='embedding_dim'</em>, <em>unk_vector=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/extractors/text.html#WordEmbeddingExtractor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.extractors.WordEmbeddingExtractor.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

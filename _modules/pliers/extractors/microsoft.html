@@ -1,0 +1,414 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pliers.extractors.microsoft &mdash; pliers 0.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="pliers 0.2 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> pliers
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installing pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic-concepts.html">Basic concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stimuli.html">Stims</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformers.html">Transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../graphs.html">Graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../results.html">Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../config.html">Configuring pliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference.html">Pliers API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pliers</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pliers.extractors.microsoft</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pliers.extractors.microsoft</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Extractors that interact with Microsoft Azure Cognitive Services API.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">pliers.extractors.base</span> <span class="k">import</span> <span class="n">ExtractorResult</span>
+<span class="kn">from</span> <span class="nn">pliers.extractors.image</span> <span class="k">import</span> <span class="n">ImageExtractor</span>
+<span class="kn">from</span> <span class="nn">pliers.transformers</span> <span class="k">import</span> <span class="p">(</span><span class="n">MicrosoftAPITransformer</span><span class="p">,</span>
+                                 <span class="n">MicrosoftVisionAPITransformer</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="MicrosoftAPIFaceExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.MicrosoftAPIFaceExtractor.html#pliers.extractors.MicrosoftAPIFaceExtractor">[docs]</a><span class="k">class</span> <span class="nc">MicrosoftAPIFaceExtractor</span><span class="p">(</span><span class="n">MicrosoftAPITransformer</span><span class="p">,</span> <span class="n">ImageExtractor</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Extracts face features (location, emotion, accessories, etc.). From an</span>
+<span class="sd">    image using the Microsoft Azure Cognitive Services API.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        face_id (bool): return faceIds of the detected faces or not. The</span>
+<span class="sd">            default value is False.</span>
+<span class="sd">        landmarks (str): return face landmarks of the detected faces or</span>
+<span class="sd">            not. The default value is False.</span>
+<span class="sd">        attributes (list): one or more specified face attributes as strings.</span>
+<span class="sd">            Supported face attributes include accessories, age, blur, emotion,</span>
+<span class="sd">            exposure, facialHair, gender, glasses, hair, headPose, makeup,</span>
+<span class="sd">            noise, occlusion, and smile. Note that each attribute has</span>
+<span class="sd">            additional computational and time cost.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">api_name</span> <span class="o">=</span> <span class="s1">&#39;face&#39;</span>
+    <span class="n">api_method</span> <span class="o">=</span> <span class="s1">&#39;detect&#39;</span>
+    <span class="n">_env_keys</span> <span class="o">=</span> <span class="s1">&#39;MICROSOFT_FACE_SUBSCRIPTION_KEY&#39;</span>
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;api_version&#39;</span><span class="p">,</span> <span class="s1">&#39;face_id&#39;</span><span class="p">,</span> <span class="s1">&#39;rectangle&#39;</span><span class="p">,</span> <span class="s1">&#39;landmarks&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;attributes&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MicrosoftAPIFaceExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.MicrosoftAPIFaceExtractor.html#pliers.extractors.MicrosoftAPIFaceExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">face_id</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rectangle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">landmarks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">attributes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">face_id</span> <span class="o">=</span> <span class="n">face_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rectangle</span> <span class="o">=</span> <span class="n">rectangle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">landmarks</span> <span class="o">=</span> <span class="n">landmarks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="n">attributes</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MicrosoftAPIFaceExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">attributes</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;returnFaceId&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">face_id</span><span class="p">,</span>
+            <span class="s1">&#39;returnFaceLandmarks&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">landmarks</span><span class="p">,</span>
+            <span class="s1">&#39;returnFaceAttributes&#39;</span><span class="p">:</span> <span class="n">attributes</span>
+        <span class="p">}</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_api</span><span class="p">(</span><span class="n">stim</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="n">raw</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_parse_response_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json</span><span class="p">):</span>
+        <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;faceRectangle&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rectangle</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;faceAttributes&#39;</span><span class="p">:</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="s1">&#39;face&#39;</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">subdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_response_json</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">sk</span><span class="p">,</span> <span class="n">sv</span> <span class="ow">in</span> <span class="n">subdata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">sk</span><span class="p">)]</span> <span class="o">=</span> <span class="n">sv</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="c1"># Hard coded to this extractor</span>
+                <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;hairColor&#39;</span><span class="p">:</span>
+                        <span class="n">key</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span>
+                    <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;accessories&#39;</span><span class="p">:</span>
+                        <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="s1">&#39;confidence&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">data_dict</span>
+
+    <span class="k">def</span> <span class="nf">_to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+        <span class="n">face_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">face</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">raw</span><span class="p">):</span>
+            <span class="n">face_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_response_json</span><span class="p">(</span><span class="n">face</span><span class="p">)</span>
+            <span class="n">face_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">face_data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">face_results</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MicrosoftAPIFaceEmotionExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.MicrosoftAPIFaceEmotionExtractor.html#pliers.extractors.MicrosoftAPIFaceEmotionExtractor">[docs]</a><span class="k">class</span> <span class="nc">MicrosoftAPIFaceEmotionExtractor</span><span class="p">(</span><span class="n">MicrosoftAPIFaceExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts facial emotions from images using the Microsoft API &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="MicrosoftAPIFaceEmotionExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.MicrosoftAPIFaceEmotionExtractor.html#pliers.extractors.MicrosoftAPIFaceEmotionExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">face_id</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rectangle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">landmarks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MicrosoftAPIFaceEmotionExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">face_id</span><span class="p">,</span>
+                                                               <span class="n">rectangle</span><span class="p">,</span>
+                                                               <span class="n">landmarks</span><span class="p">,</span>
+                                                               <span class="p">[</span><span class="s1">&#39;emotion&#39;</span><span class="p">],</span>
+                                                               <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="MicrosoftVisionAPIExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.MicrosoftVisionAPIExtractor.html#pliers.extractors.MicrosoftVisionAPIExtractor">[docs]</a><span class="k">class</span> <span class="nc">MicrosoftVisionAPIExtractor</span><span class="p">(</span><span class="n">MicrosoftVisionAPITransformer</span><span class="p">,</span>
+                                  <span class="n">ImageExtractor</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Base MicrosoftVisionAPIExtractor class.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        features (list): one or more specified vision features as strings.</span>
+<span class="sd">            Supported vision features include Tags, Categories, ImageType,</span>
+<span class="sd">            Color, and Adult. Note that each attribute has additional</span>
+<span class="sd">            computational and time cost. By default extracts all visual</span>
+<span class="sd">            features from an image.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">api_method</span> <span class="o">=</span> <span class="s1">&#39;analyze&#39;</span>
+    <span class="n">_log_attributes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;api_version&#39;</span><span class="p">,</span> <span class="s1">&#39;features&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MicrosoftVisionAPIExtractor.__init__"><a class="viewcode-back" href="../../../generated/pliers.extractors.MicrosoftVisionAPIExtractor.html#pliers.extractors.MicrosoftVisionAPIExtractor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_feature&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_feature</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="n">features</span> <span class="k">if</span> <span class="n">features</span> <span class="k">else</span> <span class="p">[</span><span class="s1">&#39;Tags&#39;</span><span class="p">,</span> <span class="s1">&#39;Categories&#39;</span><span class="p">,</span>
+                                                       <span class="s1">&#39;ImageType&#39;</span><span class="p">,</span> <span class="s1">&#39;Color&#39;</span><span class="p">,</span>
+                                                       <span class="s1">&#39;Adult&#39;</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MicrosoftVisionAPIExtractor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;visualFeatures&#39;</span><span class="p">:</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_api</span><span class="p">(</span><span class="n">stim</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ExtractorResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">stim</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="n">raw</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+        <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">:</span>
+            <span class="n">feat</span> <span class="o">=</span> <span class="n">feat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="n">feat</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="n">feat</span> <span class="o">==</span> <span class="s1">&#39;tags&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">raw</span><span class="p">[</span><span class="n">feat</span><span class="p">]:</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="n">tag</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">tag</span><span class="p">[</span><span class="s1">&#39;confidence&#39;</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">feat</span> <span class="o">==</span> <span class="s1">&#39;categories&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">raw</span><span class="p">[</span><span class="n">feat</span><span class="p">]:</span>
+                    <span class="n">data_dict</span><span class="p">[</span><span class="n">cat</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">cat</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">raw</span><span class="p">[</span><span class="n">feat</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">data_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()],</span> <span class="n">columns</span><span class="o">=</span><span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="MicrosoftVisionAPITagExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.MicrosoftVisionAPITagExtractor.html#pliers.extractors.MicrosoftVisionAPITagExtractor">[docs]</a><span class="k">class</span> <span class="nc">MicrosoftVisionAPITagExtractor</span><span class="p">(</span><span class="n">MicrosoftVisionAPIExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts image tags using the Microsoft API &#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;Tags&#39;</span></div>
+
+
+<div class="viewcode-block" id="MicrosoftVisionAPICategoryExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.MicrosoftVisionAPICategoryExtractor.html#pliers.extractors.MicrosoftVisionAPICategoryExtractor">[docs]</a><span class="k">class</span> <span class="nc">MicrosoftVisionAPICategoryExtractor</span><span class="p">(</span><span class="n">MicrosoftVisionAPIExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts image categories using the Microsoft API &#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;Categories&#39;</span></div>
+
+
+<div class="viewcode-block" id="MicrosoftVisionAPIImageTypeExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.MicrosoftVisionAPIImageTypeExtractor.html#pliers.extractors.MicrosoftVisionAPIImageTypeExtractor">[docs]</a><span class="k">class</span> <span class="nc">MicrosoftVisionAPIImageTypeExtractor</span><span class="p">(</span><span class="n">MicrosoftVisionAPIExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts image types (clipart, etc.) using the Microsoft API &#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;ImageType&#39;</span></div>
+
+
+<div class="viewcode-block" id="MicrosoftVisionAPIColorExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.MicrosoftVisionAPIColorExtractor.html#pliers.extractors.MicrosoftVisionAPIColorExtractor">[docs]</a><span class="k">class</span> <span class="nc">MicrosoftVisionAPIColorExtractor</span><span class="p">(</span><span class="n">MicrosoftVisionAPIExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts image color attributes using the Microsoft API &#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;Color&#39;</span></div>
+
+
+<div class="viewcode-block" id="MicrosoftVisionAPIAdultExtractor"><a class="viewcode-back" href="../../../generated/pliers.extractors.MicrosoftVisionAPIAdultExtractor.html#pliers.extractors.MicrosoftVisionAPIAdultExtractor">[docs]</a><span class="k">class</span> <span class="nc">MicrosoftVisionAPIAdultExtractor</span><span class="p">(</span><span class="n">MicrosoftVisionAPIExtractor</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Extracts the presence of adult content using the Microsoft API &#39;&#39;&#39;</span>
+
+    <span class="n">_feature</span> <span class="o">=</span> <span class="s1">&#39;Adult&#39;</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Developers of pliers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

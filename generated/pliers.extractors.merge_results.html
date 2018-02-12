@@ -186,7 +186,7 @@
 <h1>pliers.extractors.merge_results<a class="headerlink" href="#pliers-extractors-merge-results" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="pliers.extractors.merge_results">
-<code class="descclassname">pliers.extractors.</code><code class="descname">merge_results</code><span class="sig-paren">(</span><em>results</em>, <em>format='wide'</em>, <em>timing=True</em>, <em>metadata=True</em>, <em>extractor_names=True</em>, <em>object_id=True</em>, <em>aggfunc=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/extractors/base.html#merge_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.extractors.merge_results" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pliers.extractors.</code><code class="descname">merge_results</code><span class="sig-paren">(</span><em>results</em>, <em>format='wide'</em>, <em>timing=True</em>, <em>metadata=True</em>, <em>extractor_names=True</em>, <em>object_id=True</em>, <em>aggfunc=None</em>, <em>invalid_results='ignore'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/extractors/base.html#merge_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.extractors.merge_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>Merges a list of ExtractorResults instances and returns a pandas DF.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -242,6 +242,20 @@ function, and specifies how to aggregate multiple values for the
 same index. Can be a callable or any string value recognized by
 pandas. By default (None), ‘mean’ will be used for numeric columns
 and ‘first’ will be used for object/categorical columns.</li>
+<li><strong>invalid_results</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – <p>Specifies desired action for treating elements
+of the passed in results argument that are not ExtractorResult
+objects. Valid values include:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>’ignore’ will ignore them and merge the valid</dt>
+<dd>ExtractorResults.</dd>
+</dl>
+</li>
+<li>’fail’ will raise an exception on any invalid input</li>
+</ul>
+</div></blockquote>
+</li>
 </ul>
 </td>
 </tr>

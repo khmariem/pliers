@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview: module code &mdash; pliers 0.2 documentation</title>
+  <title>pliers.converters.MicrosoftAPITextConverter &mdash; pliers 0.2 documentation</title>
   
 
   
@@ -143,12 +143,14 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>Overview: module code</li>
+      <li>pliers.converters.MicrosoftAPITextConverter</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
+            <a href="../_sources/generated/pliers.converters.MicrosoftAPITextConverter.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -160,42 +162,64 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>All modules for which code is available</h1>
-<ul><li><a href="pliers/converters/api.html">pliers.converters.api</a></li>
-<li><a href="pliers/converters/base.html">pliers.converters.base</a></li>
-<li><a href="pliers/converters/google.html">pliers.converters.google</a></li>
-<li><a href="pliers/converters/image.html">pliers.converters.image</a></li>
-<li><a href="pliers/converters/iterators.html">pliers.converters.iterators</a></li>
-<li><a href="pliers/converters/microsoft.html">pliers.converters.microsoft</a></li>
-<li><a href="pliers/converters/multistep.html">pliers.converters.multistep</a></li>
-<li><a href="pliers/converters/video.html">pliers.converters.video</a></li>
-<li><a href="pliers/datasets/text.html">pliers.datasets.text</a></li>
-<li><a href="pliers/diagnostics/diagnostics.html">pliers.diagnostics.diagnostics</a></li>
-<li><a href="pliers/extractors/api.html">pliers.extractors.api</a></li>
-<li><a href="pliers/extractors/audio.html">pliers.extractors.audio</a></li>
-<li><a href="pliers/extractors/base.html">pliers.extractors.base</a></li>
-<li><a href="pliers/extractors/google.html">pliers.extractors.google</a></li>
-<li><a href="pliers/extractors/image.html">pliers.extractors.image</a></li>
-<li><a href="pliers/extractors/microsoft.html">pliers.extractors.microsoft</a></li>
-<li><a href="pliers/extractors/models.html">pliers.extractors.models</a></li>
-<li><a href="pliers/extractors/text.html">pliers.extractors.text</a></li>
-<li><a href="pliers/extractors/video.html">pliers.extractors.video</a></li>
-<li><a href="pliers/filters/audio.html">pliers.filters.audio</a></li>
-<li><a href="pliers/filters/base.html">pliers.filters.base</a></li>
-<li><a href="pliers/filters/image.html">pliers.filters.image</a></li>
-<li><a href="pliers/filters/text.html">pliers.filters.text</a></li>
-<li><a href="pliers/filters/video.html">pliers.filters.video</a></li>
-<li><a href="pliers/graph.html">pliers.graph</a></li>
-<li><a href="pliers/stimuli/api.html">pliers.stimuli.api</a></li>
-<li><a href="pliers/stimuli/audio.html">pliers.stimuli.audio</a></li>
-<li><a href="pliers/stimuli/base.html">pliers.stimuli.base</a></li>
-<li><a href="pliers/stimuli/compound.html">pliers.stimuli.compound</a></li>
-<li><a href="pliers/stimuli/image.html">pliers.stimuli.image</a></li>
-<li><a href="pliers/stimuli/text.html">pliers.stimuli.text</a></li>
-<li><a href="pliers/stimuli/video.html">pliers.stimuli.video</a></li>
-<li><a href="pliers/transformers/base.html">pliers.transformers.base</a></li>
-<li><a href="pliers/transformers/google.html">pliers.transformers.google</a></li>
+  <div class="section" id="pliers-converters-microsoftapitextconverter">
+<h1>pliers.converters.MicrosoftAPITextConverter<a class="headerlink" href="#pliers-converters-microsoftapitextconverter" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pliers.converters.MicrosoftAPITextConverter">
+<em class="property">class </em><code class="descclassname">pliers.converters.</code><code class="descname">MicrosoftAPITextConverter</code><span class="sig-paren">(</span><em>language='en'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/converters/microsoft.html#MicrosoftAPITextConverter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.converters.MicrosoftAPITextConverter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">pliers.transformers.microsoft.MicrosoftVisionAPITransformer</span></code>, <code class="xref py py-class docutils literal"><span class="pre">pliers.converters.image.ImageToTextConverter</span></code></p>
+<p>Detects text within images using the Microsoft Vision API.</p>
+<dl class="method">
+<dt id="pliers.converters.MicrosoftAPITextConverter.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>language='en'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/converters/microsoft.html#MicrosoftAPITextConverter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.converters.MicrosoftAPITextConverter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pliers.converters.MicrosoftAPITextConverter.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>stims</em>, <em>validation='strict'</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pliers.converters.MicrosoftAPITextConverter.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the transformation on the passed stim(s).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stims</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em>, </em><em>Stim</em><em>, </em><em>list</em>) – <p>One or more stimuli to process. Must be
+one of:</p>
+<blockquote>
+<div><ul>
+<li>A string giving the path to a file that can be read in
+as a Stim (e.g., a .txt file, .jpg image, etc.)</li>
+<li>A Stim instance of any type.</li>
+<li>An iterable of stims, where each element is either a
+string or a Stim.</li>
 </ul>
+</div></blockquote>
+</li>
+<li><strong>validation</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – <p>String specifying how validation errors should
+be handled. Must be one of:</p>
+<blockquote>
+<div><ul>
+<li>’strict’: Raise an exception on any validation error</li>
+<li>’warn’: Issue a warning for all validation errors</li>
+<li>’loose’: Silently ignore all validation errors</li>
+</ul>
+</div></blockquote>
+</li>
+<li><strong>args</strong> – Optional positional arguments to pass onto the internal
+_transform call.</li>
+<li><strong>kwargs</strong> – Optional positional arguments to pass onto the internal
+_transform call.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
 
            </div>
            <div class="articleComments">

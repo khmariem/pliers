@@ -209,6 +209,18 @@ specification.</li>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="pliers.graph.Graph.add_chain">
+<code class="descname">add_chain</code><span class="sig-paren">(</span><em>nodes</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.add_chain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.add_chain" title="Permalink to this definition">¶</a></dt>
+<dd><p>An alias for add_nodes with the mode preset to ‘vertical’.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pliers.graph.Graph.add_children">
+<code class="descname">add_children</code><span class="sig-paren">(</span><em>nodes</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.add_children"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.add_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>An alias for add_nodes with the mode preset to ‘horizontal’.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="pliers.graph.Graph.add_node">
 <code class="descname">add_node</code><span class="sig-paren">(</span><em>transformer</em>, <em>name=None</em>, <em>children=None</em>, <em>parent=None</em>, <em>parameters={}</em>, <em>return_node=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.add_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.add_node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds a node to the current graph.</p>
@@ -248,7 +260,7 @@ Transformer is passed.</li>
 
 <dl class="method">
 <dt id="pliers.graph.Graph.add_nodes">
-<code class="descname">add_nodes</code><span class="sig-paren">(</span><em>nodes</em>, <em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.add_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.add_nodes" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_nodes</code><span class="sig-paren">(</span><em>nodes</em>, <em>parent=None</em>, <em>mode='horizontal'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.add_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.add_nodes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds one or more nodes to the current graph.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -272,6 +284,17 @@ node.</li>
 <li><strong>parent</strong> (<a class="reference internal" href="pliers.graph.Node.html#pliers.graph.Node" title="pliers.graph.Node"><em>Node</em></a>) – Optional parent node (i.e., the node containing the
 pliers Transformer from which the to-be-created nodes receive
 their inputs).</li>
+<li><strong>mode</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – <p>Indicates the direction with which to add the new nodes
+* horizontal: the nodes should each be added as a child of the</p>
+<blockquote>
+<div>’parent’ argument (or a Graph root by default).</div></blockquote>
+<ul>
+<li>vertical: the nodes should each be added in sequence with
+the first node being the child of the ‘parnet’ argument
+(a Graph root by default) and each subsequent node being
+the child of the previous node in the list.</li>
+</ul>
+</li>
 </ul>
 </td>
 </tr>
@@ -281,13 +304,18 @@ their inputs).</li>
 
 <dl class="method">
 <dt id="pliers.graph.Graph.draw">
-<code class="descname">draw</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.draw" title="Permalink to this definition">¶</a></dt>
+<code class="descname">draw</code><span class="sig-paren">(</span><em>filename</em>, <em>color=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.draw" title="Permalink to this definition">¶</a></dt>
 <dd><p>Render a plot of the graph via pygraphviz.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Path to save the generated image to.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Path to save the generated image to.</li>
+<li><strong>color</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) – If True, will color graph nodes based on their type,
+otherwise will draw a black-and-white graph.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -335,6 +363,28 @@ at the target node.</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pliers.graph.Graph.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the JSON representation of this graph to the provided
+filename, such that the graph can be easily reconstructed using
+Graph(spec=filename).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Path at which to write out the json file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pliers.graph.Graph.to_json">
+<code class="descname">to_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/graph.html#Graph.to_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.graph.Graph.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the JSON representation of this graph.</p>
 </dd></dl>
 
 <dl class="method">

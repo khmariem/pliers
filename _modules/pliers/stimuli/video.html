@@ -214,15 +214,21 @@
 <span class="sd">            respect to some more general context or timeline the user wishes</span>
 <span class="sd">            to keep track of.</span>
 <span class="sd">        url (str): Optional url source for a video.</span>
+<span class="sd">        clip (VidoFileClip): Optional moviepy VideoFileClip to initialize</span>
+<span class="sd">            from.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">_default_file_extension</span> <span class="o">=</span> <span class="s1">&#39;.mp4&#39;</span>
 
-<div class="viewcode-block" id="VideoFrameCollectionStim.__init__"><a class="viewcode-back" href="../../../generated/pliers.stimuli.VideoFrameCollectionStim.html#pliers.stimuli.VideoFrameCollectionStim.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame_index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="VideoFrameCollectionStim.__init__"><a class="viewcode-back" href="../../../generated/pliers.stimuli.VideoFrameCollectionStim.html#pliers.stimuli.VideoFrameCollectionStim.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame_index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">clip</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_load_clip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">clip</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clip</span> <span class="o">=</span> <span class="n">clip</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_load_clip</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip</span><span class="o">.</span><span class="n">fps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip</span><span class="o">.</span><span class="n">w</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip</span><span class="o">.</span><span class="n">h</span>
@@ -306,12 +312,15 @@
 <span class="sd">            respect to some more general context or timeline the user wishes</span>
 <span class="sd">            to keep track of.</span>
 <span class="sd">        url (str): Optional url source for a video.</span>
+<span class="sd">        clip (VidoFileClip): Optional moviepy VideoFileClip to initialize</span>
+<span class="sd">            from.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-<div class="viewcode-block" id="VideoStim.__init__"><a class="viewcode-back" href="../../../generated/pliers.stimuli.VideoStim.html#pliers.stimuli.VideoStim.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="VideoStim.__init__"><a class="viewcode-back" href="../../../generated/pliers.stimuli.VideoStim.html#pliers.stimuli.VideoStim.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">VideoStim</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
                                         <span class="n">onset</span><span class="o">=</span><span class="n">onset</span><span class="p">,</span>
-                                        <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span></div></div>
+                                        <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                                        <span class="n">clip</span><span class="o">=</span><span class="n">clip</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

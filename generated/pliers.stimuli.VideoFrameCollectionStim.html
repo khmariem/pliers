@@ -166,7 +166,7 @@
 <h1>pliers.stimuli.VideoFrameCollectionStim<a class="headerlink" href="#pliers-stimuli-videoframecollectionstim" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pliers.stimuli.VideoFrameCollectionStim">
-<em class="property">class </em><code class="descclassname">pliers.stimuli.</code><code class="descname">VideoFrameCollectionStim</code><span class="sig-paren">(</span><em>filename=None</em>, <em>frame_index=None</em>, <em>onset=None</em>, <em>url=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/stimuli/video.html#VideoFrameCollectionStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.stimuli.VideoFrameCollectionStim" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pliers.stimuli.</code><code class="descname">VideoFrameCollectionStim</code><span class="sig-paren">(</span><em>filename=None</em>, <em>frame_index=None</em>, <em>onset=None</em>, <em>url=None</em>, <em>clip=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/stimuli/video.html#VideoFrameCollectionStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.stimuli.VideoFrameCollectionStim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">pliers.stimuli.base.Stim</span></code></p>
 <p>A collection of video frames.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -182,6 +182,8 @@ original video. Uses every frame by default
 respect to some more general context or timeline the user wishes
 to keep track of.</li>
 <li><strong>url</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Optional url source for a video.</li>
+<li><strong>clip</strong> (<em>VidoFileClip</em>) – Optional moviepy VideoFileClip to initialize
+from.</li>
 </ul>
 </td>
 </tr>
@@ -189,7 +191,7 @@ to keep track of.</li>
 </table>
 <dl class="method">
 <dt id="pliers.stimuli.VideoFrameCollectionStim.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>filename=None</em>, <em>frame_index=None</em>, <em>onset=None</em>, <em>url=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/stimuli/video.html#VideoFrameCollectionStim.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.stimuli.VideoFrameCollectionStim.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>filename=None</em>, <em>frame_index=None</em>, <em>onset=None</em>, <em>url=None</em>, <em>clip=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/stimuli/video.html#VideoFrameCollectionStim.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.stimuli.VideoFrameCollectionStim.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">

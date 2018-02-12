@@ -1,0 +1,11 @@
+pliers.extractors.MicrosoftVisionAPICategoryExtractor
+=====================================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: MicrosoftVisionAPICategoryExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

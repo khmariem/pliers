@@ -1,0 +1,11 @@
+pliers.filters.LowerCasingFilter
+================================
+
+.. currentmodule:: pliers.filters
+
+.. autoclass:: LowerCasingFilter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

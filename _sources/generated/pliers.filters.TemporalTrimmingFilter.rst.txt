@@ -1,0 +1,11 @@
+pliers.filters.TemporalTrimmingFilter
+=====================================
+
+.. currentmodule:: pliers.filters
+
+.. autoclass:: TemporalTrimmingFilter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

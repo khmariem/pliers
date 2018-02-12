@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pliers.filters.TokenRemovalFilter &mdash; pliers 0.2 documentation</title>
+  <title>pliers.filters.LowerCasingFilter &mdash; pliers 0.2 documentation</title>
   
 
   
@@ -37,8 +37,8 @@
         <link rel="search" title="Search" href="../search.html"/>
     <link rel="top" title="pliers 0.2 documentation" href="../index.html"/>
         <link rel="up" title="Transformers" href="../transformers.html"/>
-        <link rel="next" title="pliers.filters.VideoTrimmingFilter" href="pliers.filters.VideoTrimmingFilter.html"/>
-        <link rel="prev" title="pliers.filters.TokenizingFilter" href="pliers.filters.TokenizingFilter.html"/> 
+        <link rel="next" title="pliers.filters.PillowImageFilter" href="pliers.filters.PillowImageFilter.html"/>
+        <link rel="prev" title="pliers.filters.ImageCroppingFilter" href="pliers.filters.ImageCroppingFilter.html"/> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -105,12 +105,12 @@
 <li class="toctree-l4"><a class="reference internal" href="pliers.filters.AudioTrimmingFilter.html">pliers.filters.AudioTrimmingFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pliers.filters.FrameSamplingFilter.html">pliers.filters.FrameSamplingFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pliers.filters.ImageCroppingFilter.html">pliers.filters.ImageCroppingFilter</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pliers.filters.LowerCasingFilter.html">pliers.filters.LowerCasingFilter</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">pliers.filters.LowerCasingFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pliers.filters.PillowImageFilter.html">pliers.filters.PillowImageFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pliers.filters.PunctuationRemovalFilter.html">pliers.filters.PunctuationRemovalFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pliers.filters.TemporalTrimmingFilter.html">pliers.filters.TemporalTrimmingFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pliers.filters.TokenizingFilter.html">pliers.filters.TokenizingFilter</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">pliers.filters.TokenRemovalFilter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pliers.filters.TokenRemovalFilter.html">pliers.filters.TokenRemovalFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pliers.filters.VideoTrimmingFilter.html">pliers.filters.VideoTrimmingFilter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pliers.filters.WordStemmingFilter.html">pliers.filters.WordStemmingFilter</a></li>
 </ul>
@@ -170,13 +170,13 @@
         
           <li><a href="../transformers.html">Transformers</a> &raquo;</li>
         
-      <li>pliers.filters.TokenRemovalFilter</li>
+      <li>pliers.filters.LowerCasingFilter</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/generated/pliers.filters.TokenRemovalFilter.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/generated/pliers.filters.LowerCasingFilter.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -189,37 +189,21 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="pliers-filters-tokenremovalfilter">
-<h1>pliers.filters.TokenRemovalFilter<a class="headerlink" href="#pliers-filters-tokenremovalfilter" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="pliers-filters-lowercasingfilter">
+<h1>pliers.filters.LowerCasingFilter<a class="headerlink" href="#pliers-filters-lowercasingfilter" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="pliers.filters.TokenRemovalFilter">
-<em class="property">class </em><code class="descclassname">pliers.filters.</code><code class="descname">TokenRemovalFilter</code><span class="sig-paren">(</span><em>tokens=None</em>, <em>language='english'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/filters/text.html#TokenRemovalFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.filters.TokenRemovalFilter" title="Permalink to this definition">¶</a></dt>
+<dt id="pliers.filters.LowerCasingFilter">
+<em class="property">class </em><code class="descclassname">pliers.filters.</code><code class="descname">LowerCasingFilter</code><a class="reference internal" href="../_modules/pliers/filters/text.html#LowerCasingFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.filters.LowerCasingFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">pliers.filters.text.TextFilter</span></code></p>
-<p>Removes tokens (e.g., stopwords, common words, punctuation) from a
-TextStim.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>tokens</strong> (<em>list</em>) – a list of tokens (strings) to remove from a
-TextStim. Will use nltk’s default stopword list if none is
-specified.</li>
-<li><strong>language</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – if using the default nltk stopwords, specifies
-which language from which to use stopwords.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<p>Lower cases the text in a TextStim.</p>
 <dl class="method">
-<dt id="pliers.filters.TokenRemovalFilter.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>tokens=None</em>, <em>language='english'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/filters/text.html#TokenRemovalFilter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.filters.TokenRemovalFilter.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="pliers.filters.LowerCasingFilter.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pliers.filters.LowerCasingFilter.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="pliers.filters.TokenRemovalFilter.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>stims</em>, <em>validation='strict'</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pliers.filters.TokenRemovalFilter.transform" title="Permalink to this definition">¶</a></dt>
+<dt id="pliers.filters.LowerCasingFilter.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>stims</em>, <em>validation='strict'</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pliers.filters.LowerCasingFilter.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Executes the transformation on the passed stim(s).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -273,10 +257,10 @@ _transform call.</li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pliers.filters.VideoTrimmingFilter.html" class="btn btn-neutral float-right" title="pliers.filters.VideoTrimmingFilter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pliers.filters.PillowImageFilter.html" class="btn btn-neutral float-right" title="pliers.filters.PillowImageFilter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="pliers.filters.TokenizingFilter.html" class="btn btn-neutral" title="pliers.filters.TokenizingFilter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pliers.filters.ImageCroppingFilter.html" class="btn btn-neutral" title="pliers.filters.ImageCroppingFilter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

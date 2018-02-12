@@ -167,7 +167,7 @@
 <span></span><span class="sd">&#39;&#39;&#39; Filters that operate on TextStim inputs. &#39;&#39;&#39;</span>
 
 <span class="kn">from</span> <span class="nn">pliers.stimuli.video</span> <span class="k">import</span> <span class="n">VideoFrameCollectionStim</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">Filter</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">Filter</span><span class="p">,</span> <span class="n">TemporalTrimmingFilter</span>
 
 
 <span class="k">class</span> <span class="nc">VideoFilter</span><span class="p">(</span><span class="n">Filter</span><span class="p">):</span>
@@ -225,6 +225,10 @@
         <span class="k">return</span> <span class="n">VideoFrameCollectionStim</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">video</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
                                         <span class="n">frame_index</span><span class="o">=</span><span class="n">frame_index</span><span class="p">,</span>
                                         <span class="n">onset</span><span class="o">=</span><span class="n">video</span><span class="o">.</span><span class="n">onset</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VideoTrimmingFilter"><a class="viewcode-back" href="../../../generated/pliers.filters.VideoTrimmingFilter.html#pliers.filters.VideoTrimmingFilter">[docs]</a><span class="k">class</span> <span class="nc">VideoTrimmingFilter</span><span class="p">(</span><span class="n">TemporalTrimmingFilter</span><span class="p">,</span> <span class="n">VideoFilter</span><span class="p">):</span>
+    <span class="k">pass</span></div>
 </pre></div>
 
            </div>

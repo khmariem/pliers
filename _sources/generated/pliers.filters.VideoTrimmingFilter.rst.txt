@@ -1,0 +1,11 @@
+pliers.filters.VideoTrimmingFilter
+==================================
+
+.. currentmodule:: pliers.filters
+
+.. autoclass:: VideoTrimmingFilter
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

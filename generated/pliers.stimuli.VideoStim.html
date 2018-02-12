@@ -166,7 +166,7 @@
 <h1>pliers.stimuli.VideoStim<a class="headerlink" href="#pliers-stimuli-videostim" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pliers.stimuli.VideoStim">
-<em class="property">class </em><code class="descclassname">pliers.stimuli.</code><code class="descname">VideoStim</code><span class="sig-paren">(</span><em>filename=None</em>, <em>onset=None</em>, <em>url=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/stimuli/video.html#VideoStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.stimuli.VideoStim" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pliers.stimuli.</code><code class="descname">VideoStim</code><span class="sig-paren">(</span><em>filename=None</em>, <em>onset=None</em>, <em>url=None</em>, <em>clip=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/stimuli/video.html#VideoStim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.stimuli.VideoStim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">pliers.stimuli.video.VideoFrameCollectionStim</span></code></p>
 <p>A video.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -179,6 +179,8 @@
 respect to some more general context or timeline the user wishes
 to keep track of.</li>
 <li><strong>url</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) – Optional url source for a video.</li>
+<li><strong>clip</strong> (<em>VidoFileClip</em>) – Optional moviepy VideoFileClip to initialize
+from.</li>
 </ul>
 </td>
 </tr>
@@ -186,7 +188,7 @@ to keep track of.</li>
 </table>
 <dl class="method">
 <dt id="pliers.stimuli.VideoStim.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>filename=None</em>, <em>onset=None</em>, <em>url=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/stimuli/video.html#VideoStim.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.stimuli.VideoStim.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>filename=None</em>, <em>onset=None</em>, <em>url=None</em>, <em>clip=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pliers/stimuli/video.html#VideoStim.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pliers.stimuli.VideoStim.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">

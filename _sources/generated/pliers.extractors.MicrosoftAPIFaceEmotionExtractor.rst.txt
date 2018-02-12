@@ -1,0 +1,11 @@
+pliers.extractors.MicrosoftAPIFaceEmotionExtractor
+==================================================
+
+.. currentmodule:: pliers.extractors
+
+.. autoclass:: MicrosoftAPIFaceEmotionExtractor
+	:members:
+	:inherited-members:
+	:show-inheritance:
+
+	.. automethod:: __init__

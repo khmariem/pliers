@@ -264,8 +264,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">tokens</span> <span class="o">=</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
         <span class="n">stims</span> <span class="o">=</span> <span class="p">[</span><span class="n">TextStim</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">onset</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">onset</span><span class="p">,</span>
-                          <span class="n">duration</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
-                 <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">]</span>
+                          <span class="n">duration</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">token</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tokens</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">stims</span></div>
 
 
@@ -310,6 +310,15 @@
 
 <div class="viewcode-block" id="PunctuationRemovalFilter.__init__"><a class="viewcode-back" href="../../../generated/pliers.filters.PunctuationRemovalFilter.html#pliers.filters.PunctuationRemovalFilter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokens</span><span class="o">=</span><span class="n">string</span><span class="o">.</span><span class="n">punctuation</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PunctuationRemovalFilter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="LowerCasingFilter"><a class="viewcode-back" href="../../../generated/pliers.filters.LowerCasingFilter.html#pliers.filters.LowerCasingFilter">[docs]</a><span class="k">class</span> <span class="nc">LowerCasingFilter</span><span class="p">(</span><span class="n">TextFilter</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39; Lower cases the text in a TextStim. &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">stim</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">stim</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">onset</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">onset</span><span class="p">,</span>
+                        <span class="n">duration</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">stim</span><span class="o">.</span><span class="n">order</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
