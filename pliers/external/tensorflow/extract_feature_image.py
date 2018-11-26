@@ -58,13 +58,10 @@ def run_inference_on_image(image, layer):
     predictions = sess.run(layer_tensor,
                             {'DecodeJpeg/contents:0': image_data})
     predictions = np.squeeze(predictions)
-  k=0
+
   for i in predictions:  
-    k+=1
     print('Element = %.5f' % (i))
-    #if k==10:
-      #break
-#return predictions
+
 
 
 def maybe_download_and_extract():

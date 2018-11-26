@@ -5,17 +5,13 @@
 
 import os
 import tempfile
-import tarfile
 import subprocess
 import re
-import requests
-import numpy as np
-from pliers.utils import listify
-from pliers.extractors.image import ImageExtractor
+from pliers.extractors.models import TensorFlowInceptionV3Extractor
 from pliers.extractors.base import ExtractorResult
 
 
-class TensorFlowInceptionV3LayerExtractor(ImageExtractor):
+class TensorFlowInceptionV3LayerExtractor(TensorFlowInceptionV3Extractor):
 
     ''' Labels objects in images using a pretrained Inception V3 architecture
      implemented in TensorFlow.
@@ -33,38 +29,11 @@ class TensorFlowInceptionV3LayerExtractor(ImageExtractor):
 
     def __init__(self, layer='softmax:0', model_dir=None, data_url=None):
 
-        super(TensorFlowInceptionV3LayerExtractor, self).__init__()
+        super(TensorFlowInceptionV3LayerExtractor, self).__init__(model_dir,data_url)
 
-        if model_dir is None:
-            model_dir = os.path.join(tempfile.gettempdir(), 'TFInceptionV3')
-        self.model_dir = model_dir
+        del self.num_predictions
 
-        if data_url is None:
-            data_url = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'
-        self.data_url = data_url
-
-        filename = self.data_url.split('/')[-1]
-        self.model_file = os.path.join(self.model_dir, filename)
-        self.layer=layer
-
-        # Download the inception-v3 model if needed
-        if not os.path.exists(self.model_file):
-            self._download_pretrained_model()
-
-    def _download_pretrained_model(self):
-        # Adapted from def_maybe_download_and_extract() in TF's
-        # classify_image.py
-        print("Downloading Inception-V3 model from TensorFlow website...")
-        if not os.path.exists(self.model_dir):
-            os.makedirs(self.model_dir)
-        filename = os.path.basename(self.model_file)
-        if not os.path.exists(self.model_file):
-            r = requests.get(self.data_url)
-            with open(self.model_file, 'wb') as f:
-                f.write(r.content)
-            size = os.stat(self.model_file).st_size
-            print('\tSuccesfully downloaded', filename, size, 'bytes.')
-            tarfile.open(self.model_file, 'r:gz').extractall(self.model_dir)
+        self.layer = layer
 
 
     def _extract(self,stim):
@@ -87,9 +56,10 @@ class TensorFlowInceptionV3LayerExtractor(ImageExtractor):
           m = re.search('\=\s([0-9\.]+)', h.strip())
           extraction = m.groups()
           values.append(float(extraction[0]))
-          #features.append("Feature Vector")
 
         features.append("feature vector")
-        c=ExtractorResult([0], stim, self, features=features)
-        c._data=values
-        return c
+
+        feature_vector_extractor = ExtractorResult([0], stim, self, features=features)
+        feature_vector_extractor._data = values
+
+        return feature_vector_extractor
